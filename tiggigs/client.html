@@ -1,0 +1,895 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
+<title>Post a Job | TIG Creative Studio</title>
+<link rel="icon" type="image/png" href="logo-theintgen.png"/>
+<meta name="description" content="Work with TIG's vetted network of creative freelancers. Post a brief and get your design, video, and content needs handled fast."/>
+<meta property="og:title" content="Post a Job | TIG Creative Studio"/>
+<meta property="og:description" content="Briefing TIG takes 5 minutes. Our vetted network handles the rest."/>
+<meta property="og:type" content="website"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          "surface-container-low":     "#f6f3f2",
+          "surface-container":         "#f0edec",
+          "surface-container-high":    "#ebe7e7",
+          "surface-container-highest": "#e5e2e1",
+          "surface-container-lowest":  "#ffffff",
+          "on-surface-variant":        "#464555",
+          "outline-variant":           "#c8c4d8",
+          "outline":                   "#777586",
+          "surface":                   "#fcf9f8",
+          "on-surface":                "#1c1b1b",
+          "primary":                   "#000000",
+          "on-primary":                "#ffffff",
+          "primary-container":         "#1c1c1c",
+          "secondary":                 "#5d5d6a",
+          "secondary-fixed":           "#fddf29",
+          "secondary-container":       "#fddf29",
+          "on-secondary-fixed":        "#000000",
+          "on-secondary-container":    "#000000",
+          "error-container":           "#ffdad6",
+          "on-error-container":        "#93000a",
+          "error":                     "#ba1a1a",
+        },
+        fontFamily: {
+          headline: ["Plus Jakarta Sans", "sans-serif"],
+          body:     ["Inter", "sans-serif"],
+          label:    ["Inter", "sans-serif"],
+        },
+        borderRadius: {
+          DEFAULT: "0.25rem",
+          lg:      "0.5rem",
+          xl:      "0.75rem",
+          "2xl":   "1rem",
+          "3xl":   "1.5rem",
+          full:    "9999px",
+        },
+      },
+    },
+  }
+</script>
+<style>
+  .material-symbols-outlined { font-variation-settings: 'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24; }
+  html { overflow-x: hidden; scroll-behavior: smooth; }
+  body { font-family: 'Inter', sans-serif; background-color: #fcf9f8; color: #1c1b1b; overflow-x: hidden; }
+  .editorial-shadow { box-shadow: 0 20px 40px rgba(0,0,0,0.04); }
+  .hero-shadow { box-shadow: 0 32px 80px rgba(0,0,0,0.07); }
+
+  /* Animated gradient pill */
+  @keyframes shimmer {
+    0%   { background-position: -200% center; }
+    100% { background-position: 200% center; }
+  }
+  .shimmer-pill {
+    background: linear-gradient(90deg, #fddf29 0%, #fff4a3 40%, #fddf29 60%, #f7c900 100%);
+    background-size: 200% auto;
+    animation: shimmer 3s linear infinite;
+  }
+
+  /* Sticky nav blur */
+  .nav-blur { background: rgba(252,249,248,0.85); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); }
+
+  /* Card hover lift */
+  .lift { transition: transform 0.25s ease, box-shadow 0.25s ease; }
+  .lift:hover { transform: translateY(-4px); box-shadow: 0 32px 64px rgba(0,0,0,0.09); }
+
+  /* Step connector line */
+  .step-line::after {
+    content: '';
+    position: absolute;
+    top: 28px;
+    left: calc(50% + 28px);
+    width: calc(100% - 56px);
+    height: 2px;
+    background: linear-gradient(90deg, #c8c4d8 0%, transparent 100%);
+  }
+
+  /* Hero large italic accent */
+  .italic-accent { font-style: italic; color: #000; }
+
+  /* Section label pill */
+  .section-label {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: #f0edec; color: #464555;
+    font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
+    padding: 6px 14px; border-radius: 999px;
+  }
+
+  /* Gradient hero bg */
+  .hero-bg {
+    background: radial-gradient(ellipse 80% 60% at 60% 20%, #fddf2922 0%, transparent 70%),
+                radial-gradient(ellipse 40% 40% at 10% 80%, #00000008 0%, transparent 60%),
+                #fcf9f8;
+  }
+
+  /* ── FORM STYLES ──────────────────────────────────────────────────────── */
+
+  /* Step progress */
+  .step-progress { display:flex; align-items:center; }
+  .step-node { display:flex; flex-direction:column; align-items:center; gap:6px; position:relative; }
+  .step-node .dot {
+    width:32px; height:32px; border-radius:50%;
+    background:#f0edec; border:2px solid #c8c4d8;
+    display:flex; align-items:center; justify-content:center;
+    font-family:'Plus Jakarta Sans',sans-serif; font-weight:700; font-size:13px; color:#777586;
+    transition: all .25s;
+  }
+  .step-node.active .dot   { background:#fddf29; border-color:#fddf29; color:#000; }
+  .step-node.done .dot     { background:#000; border-color:#000; color:#fff; }
+  .step-node span          { font-size:11px; font-weight:700; color:#777586; font-family:'Inter',sans-serif; white-space:nowrap; }
+  .step-node.active span   { color:#1c1b1b; }
+  .step-connector { flex:1; height:2px; background:#e5e2e1; margin:0 6px; margin-bottom:18px; transition:background .3s; }
+  .step-connector.done     { background:#000; }
+
+  /* Field components */
+  .field-label  { display:block; font-size:13px; font-weight:700; color:#1c1b1b; margin-bottom:6px; font-family:'Inter',sans-serif; }
+  .req          { color:#ba1a1a; }
+  .optional     { font-weight:400; color:#777586; font-size:12px; }
+  .field-hint   { font-size:12px; color:#777586; margin-bottom:6px; font-family:'Inter',sans-serif; }
+  .field-input  {
+    width:100%; padding:11px 14px; border-radius:12px;
+    border:1.5px solid #c8c4d8; background:#fff; color:#1c1b1b;
+    font-size:14px; font-family:'Inter',sans-serif;
+    outline:none; transition:border-color .2s, box-shadow .2s;
+    -webkit-appearance:none;
+  }
+  .field-input:focus  { border-color:#000; box-shadow:0 0 0 3px rgba(0,0,0,0.07); }
+  .field-input.error  { border-color:#ba1a1a; }
+
+  /* Job-type cards */
+  .job-type-card {
+    display:flex; flex-direction:column; align-items:flex-start; gap:3px;
+    padding:14px; border-radius:14px; border:1.5px solid #e5e2e1;
+    cursor:pointer; transition:all .2s; background:#fff;
+  }
+  .job-type-card:hover          { border-color:#c8c4d8; background:#fafafa; }
+  .job-type-card.selected       { border-color:#000; background:#f9f9f9; box-shadow:0 0 0 3px rgba(0,0,0,0.06); }
+
+  /* Platform + budget pill toggles */
+  .pill-toggle {
+    display:inline-flex; align-items:center; gap:5px;
+    padding:7px 13px; border-radius:999px;
+    border:1.5px solid #e5e2e1; background:#fff;
+    font-size:12px; font-weight:700; font-family:'Inter',sans-serif; color:#464555;
+    cursor:pointer; transition:all .18s; user-select:none;
+  }
+  .pill-toggle:hover    { border-color:#c8c4d8; }
+  .pill-toggle.selected { border-color:#000; background:#000; color:#fddf29; }
+
+  /* Step buttons */
+  .step-next-btn {
+    display:inline-flex; align-items:center; gap:6px;
+    padding:12px 22px; border-radius:12px;
+    background:#000; color:#fddf29;
+    font-family:'Plus Jakarta Sans',sans-serif; font-weight:700; font-size:14px;
+    border:none; cursor:pointer; transition:background .2s, transform .15s;
+  }
+  .step-next-btn:hover   { background:#1a1a1a; }
+  .step-next-btn:active  { transform:scale(0.97); }
+  .step-next-btn:disabled { opacity:.5; cursor:not-allowed; transform:none; }
+
+  .step-back-btn {
+    display:inline-flex; align-items:center; gap:6px;
+    padding:12px 18px; border-radius:12px;
+    background:transparent; color:#464555;
+    font-family:'Plus Jakarta Sans',sans-serif; font-weight:700; font-size:14px;
+    border:1.5px solid #e5e2e1; cursor:pointer; transition:all .2s;
+  }
+  .step-back-btn:hover { border-color:#464555; color:#1c1b1b; }
+
+  /* Form step visibility */
+  .form-step.hidden { display:none; }
+</style>
+</head>
+<body class="antialiased">
+
+<!-- ── FIXED NAV ──────────────────────────────────────────────────────────── -->
+<nav class="fixed top-0 w-full z-50 nav-blur border-b border-[#c8c4d8]/20 flex justify-between items-center px-5 md:px-10" style="height:56px">
+  <a href="https://theintgen.com" target="_blank" class="shrink-0 flex items-center">
+    <img src="logo-theintgen.png" alt="The Intgen" class="h-8 w-auto object-contain"/>
+  </a>
+
+  <div class="hidden md:flex gap-8 items-center font-headline font-semibold text-sm text-[#1c1b1b]/60">
+    <a href="#services" class="hover:text-[#000] transition-colors">Services</a>
+    <a href="#how-it-works" class="hover:text-[#000] transition-colors">How it works</a>
+    <a href="#post-job" class="hover:text-[#000] transition-colors">Post a job</a>
+  </div>
+
+  <div class="flex items-center gap-2 shrink-0">
+    <a href="index.html" class="hidden md:flex items-center gap-1.5 px-3 py-2 rounded-xl border border-[#c8c4d8]/40 text-xs font-bold text-[#464555]/70 hover:bg-surface-container-high transition-colors">
+      <span class="material-symbols-outlined" style="font-size:16px">work</span>
+      Freelancer Board
+    </a>
+    <a href="#post-job" class="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#000] text-[#fddf29] text-xs font-bold tracking-tight hover:bg-[#1a1a1a] transition-colors">
+      <span class="material-symbols-outlined" style="font-size:16px">add_circle</span>
+      Post a Job
+    </a>
+  </div>
+</nav>
+
+
+<!-- ── HERO ───────────────────────────────────────────────────────────────── -->
+<section class="hero-bg pt-32 md:pt-40 pb-20 md:pb-28 px-5 md:px-12 max-w-7xl mx-auto">
+  <div class="max-w-3xl">
+    <!-- Eyebrow -->
+    <div class="section-label mb-6">
+      <span class="material-symbols-outlined" style="font-size:13px;font-variation-settings:'FILL' 1">bolt</span>
+      For Brands &amp; Agencies
+    </div>
+
+    <!-- Headline -->
+    <h1 class="font-headline font-bold text-[#1c1b1b] leading-[1.08] mb-6"
+        style="font-size:clamp(2.5rem,6vw,4.5rem)">
+      Your brief, live<br/>
+      <span class="italic-accent">in&nbsp;minutes.</span>
+    </h1>
+
+    <p class="font-body text-[#464555] text-lg md:text-xl leading-relaxed mb-10 max-w-xl">
+      TIG connects brands with a vetted network of creative freelancers — designers, editors, and production talent. Tell us what you need; we handle the rest.
+    </p>
+
+    <!-- CTAs -->
+    <div class="flex flex-col sm:flex-row gap-3">
+      <a href="#post-job" class="inline-flex items-center justify-center gap-2 px-7 py-4 rounded-2xl bg-[#000] text-[#fddf29] font-headline font-bold text-base shadow-lg hover:bg-[#1a1a1a] active:scale-95 transition-all">
+        <span class="material-symbols-outlined" style="font-size:20px;font-variation-settings:'FILL' 1">edit_note</span>
+        Submit a Brief
+      </a>
+      <a href="#contact" class="inline-flex items-center justify-center gap-2 px-7 py-4 rounded-2xl border-2 border-[#c8c4d8]/60 bg-white text-[#1c1b1b] font-headline font-bold text-base hover:border-[#464555] hover:bg-surface-container-low active:scale-95 transition-all">
+        <span class="material-symbols-outlined" style="font-size:20px">chat</span>
+        Talk to Us First
+      </a>
+    </div>
+  </div>
+
+  <!-- Floating stat chips -->
+  <div class="flex flex-wrap gap-3 mt-12 md:mt-16">
+    <div class="flex items-center gap-2 bg-white border border-[#c8c4d8]/30 rounded-full px-4 py-2 editorial-shadow">
+      <span class="w-2 h-2 rounded-full bg-[#1a9e75]"></span>
+      <span class="font-label text-xs font-semibold text-[#464555]">Vetted freelancers only</span>
+    </div>
+    <div class="flex items-center gap-2 bg-white border border-[#c8c4d8]/30 rounded-full px-4 py-2 editorial-shadow">
+      <span class="material-symbols-outlined text-[#fddf29]" style="font-size:14px;font-variation-settings:'FILL' 1">star</span>
+      <span class="font-label text-xs font-semibold text-[#464555]">QC on every delivery</span>
+    </div>
+    <div class="flex items-center gap-2 bg-white border border-[#c8c4d8]/30 rounded-full px-4 py-2 editorial-shadow">
+      <span class="material-symbols-outlined text-[#464555]" style="font-size:14px">schedule</span>
+      <span class="font-label text-xs font-semibold text-[#464555]">Fast turnarounds</span>
+    </div>
+  </div>
+</section>
+
+
+<!-- ── SERVICES ────────────────────────────────────────────────────────────── -->
+<section id="services" class="py-20 md:py-28 px-5 md:px-12 max-w-7xl mx-auto">
+  <div class="mb-12">
+    <div class="section-label mb-4">What we do</div>
+    <h2 class="font-headline font-bold text-[#1c1b1b] text-3xl md:text-4xl leading-tight">
+      Creative output,<br/>all under one roof.
+    </h2>
+  </div>
+
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+
+    <!-- Design -->
+    <div class="lift bg-white rounded-2xl p-7 editorial-shadow border border-[#c8c4d8]/15">
+      <div class="w-12 h-12 rounded-xl flex items-center justify-center mb-5" style="background:#fef9c3;color:#854d0e">
+        <span class="material-symbols-outlined text-2xl" style="font-variation-settings:'FILL' 1">palette</span>
+      </div>
+      <h3 class="font-headline font-bold text-lg text-[#1c1b1b] mb-2">Design</h3>
+      <p class="font-body text-sm text-[#464555]/80 leading-relaxed mb-4">Static posts, carousels, banners, packaging mockups, brand assets — pixel-perfect and on-brand.</p>
+      <div class="flex flex-wrap gap-1.5">
+        <span class="bg-[#f0edec] text-[#464555] px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider">Carousel</span>
+        <span class="bg-[#f0edec] text-[#464555] px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider">Static Post</span>
+        <span class="bg-[#f0edec] text-[#464555] px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider">Story</span>
+        <span class="bg-[#f0edec] text-[#464555] px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider">Banner</span>
+      </div>
+    </div>
+
+    <!-- Video & Edit -->
+    <div class="lift bg-white rounded-2xl p-7 editorial-shadow border border-[#c8c4d8]/15">
+      <div class="w-12 h-12 rounded-xl flex items-center justify-center mb-5" style="background:#fce7f3;color:#9d174d">
+        <span class="material-symbols-outlined text-2xl" style="font-variation-settings:'FILL' 1">movie</span>
+      </div>
+      <h3 class="font-headline font-bold text-lg text-[#1c1b1b] mb-2">Video &amp; Edit</h3>
+      <p class="font-body text-sm text-[#464555]/80 leading-relaxed mb-4">Reels, short-form content, YouTube edits, and motion graphics — cut to perform on any platform.</p>
+      <div class="flex flex-wrap gap-1.5">
+        <span class="bg-[#fce7f3] text-[#9d174d] px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider">Reel</span>
+        <span class="bg-[#fce7f3] text-[#9d174d] px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider">Short-Form</span>
+        <span class="bg-[#fce7f3] text-[#9d174d] px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider">YouTube</span>
+        <span class="bg-[#fce7f3] text-[#9d174d] px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider">Motion</span>
+      </div>
+    </div>
+
+    <!-- Production -->
+    <div class="lift bg-white rounded-2xl p-7 editorial-shadow border border-[#c8c4d8]/15">
+      <div class="w-12 h-12 rounded-xl flex items-center justify-center mb-5" style="background:#ecfdf5;color:#065f46">
+        <span class="material-symbols-outlined text-2xl" style="font-variation-settings:'FILL' 1">photo_camera</span>
+      </div>
+      <h3 class="font-headline font-bold text-lg text-[#1c1b1b] mb-2">Production</h3>
+      <p class="font-body text-sm text-[#464555]/80 leading-relaxed mb-4">On-location or studio shoots — product photography, lifestyle content, brand films, UGC creation.</p>
+      <div class="flex flex-wrap gap-1.5">
+        <span class="bg-[#ecfdf5] text-[#065f46] px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider">Product Shoot</span>
+        <span class="bg-[#ecfdf5] text-[#065f46] px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider">Lifestyle</span>
+        <span class="bg-[#ecfdf5] text-[#065f46] px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider">UGC</span>
+        <span class="bg-[#ecfdf5] text-[#065f46] px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider">Brand Film</span>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+
+<!-- ── HOW IT WORKS ────────────────────────────────────────────────────────── -->
+<section id="how-it-works" class="py-20 md:py-28 px-5 md:px-12 max-w-7xl mx-auto border-t border-[#c8c4d8]/20">
+  <div class="mb-14">
+    <div class="section-label mb-4">How it works</div>
+    <h2 class="font-headline font-bold text-[#1c1b1b] text-3xl md:text-4xl leading-tight">
+      Brief to delivered<br/>in&nbsp;three steps.
+    </h2>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-8 relative">
+
+    <!-- Step 1 -->
+    <div class="relative step-line md:pr-8">
+      <div class="flex items-center gap-3 mb-5">
+        <div class="w-14 h-14 rounded-2xl bg-[#fddf29] flex items-center justify-center">
+          <span class="font-headline font-bold text-2xl text-[#000]">1</span>
+        </div>
+      </div>
+      <h3 class="font-headline font-bold text-xl text-[#1c1b1b] mb-2">Submit your brief</h3>
+      <p class="font-body text-sm text-[#464555]/80 leading-relaxed">Fill in our short form — asset type, platform, deadline, brand references, and any copy you have. Takes less than 5 minutes.</p>
+    </div>
+
+    <!-- Step 2 -->
+    <div class="relative step-line md:pr-8">
+      <div class="flex items-center gap-3 mb-5">
+        <div class="w-14 h-14 rounded-2xl bg-[#1c1b1b] flex items-center justify-center">
+          <span class="font-headline font-bold text-2xl text-white">2</span>
+        </div>
+      </div>
+      <h3 class="font-headline font-bold text-xl text-[#1c1b1b] mb-2">We match &amp; assign</h3>
+      <p class="font-body text-sm text-[#464555]/80 leading-relaxed">Your job goes live on our board. A vetted freelancer claims it, and our ops team reviews every brief before work begins.</p>
+    </div>
+
+    <!-- Step 3 -->
+    <div>
+      <div class="flex items-center gap-3 mb-5">
+        <div class="w-14 h-14 rounded-2xl flex items-center justify-center" style="background:#ecfdf5">
+          <span class="font-headline font-bold text-2xl text-[#065f46]">3</span>
+        </div>
+      </div>
+      <h3 class="font-headline font-bold text-xl text-[#1c1b1b] mb-2">Receive &amp; approve</h3>
+      <p class="font-body text-sm text-[#464555]/80 leading-relaxed">Deliverables land in your shared folder. Review, request revisions if needed, and approve when ready. Simple.</p>
+    </div>
+
+  </div>
+</section>
+
+
+
+<!-- ── POST A JOB FORM ─────────────────────────────────────────────────────── -->
+<section id="post-job" class="py-20 md:py-28 px-5 md:px-12 border-t border-[#c8c4d8]/20">
+  <div class="max-w-2xl mx-auto">
+
+    <!-- Header -->
+    <div class="text-center mb-10">
+      <div class="section-label mb-4 mx-auto w-fit">
+        <span class="material-symbols-outlined" style="font-size:13px;font-variation-settings:'FILL' 1">edit_note</span>
+        Post a Job
+      </div>
+      <h2 class="font-headline font-bold text-[#1c1b1b] text-3xl md:text-4xl leading-tight mb-3">Tell us what you need.</h2>
+      <p class="font-body text-[#464555] text-base max-w-sm mx-auto leading-relaxed">Three quick steps. We'll review your brief and have it live within one business day.</p>
+    </div>
+
+    <!-- Step progress -->
+    <div class="step-progress mb-10" id="stepProgress">
+      <div class="step-node active" id="sn1">
+        <div class="dot">1</div>
+        <span>You</span>
+      </div>
+      <div class="step-connector" id="sc1"></div>
+      <div class="step-node" id="sn2">
+        <div class="dot">2</div>
+        <span>The Brief</span>
+      </div>
+      <div class="step-connector" id="sc2"></div>
+      <div class="step-node" id="sn3">
+        <div class="dot">3</div>
+        <span>References</span>
+      </div>
+    </div>
+
+    <!-- Form card -->
+    <div class="bg-white rounded-3xl p-8 md:p-10 editorial-shadow border border-[#c8c4d8]/15">
+      <form id="jobForm" novalidate>
+
+        <!-- ─ STEP 1: About You ─────────────────────────────────────────── -->
+        <div class="form-step" id="step1">
+          <h3 class="font-headline font-bold text-xl text-[#1c1b1b] mb-6">About you</h3>
+          <div class="space-y-5">
+            <div>
+              <label class="field-label">Your Name <span class="req">*</span></label>
+              <input type="text" name="name" placeholder="Rahul Sharma" class="field-input" required/>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+              <div>
+                <label class="field-label">Brand / Agency <span class="req">*</span></label>
+                <input type="text" name="brand" placeholder="Acme Brands" class="field-input" required/>
+              </div>
+              <div>
+                <label class="field-label">Email <span class="req">*</span></label>
+                <input type="email" name="email" placeholder="you@brand.com" class="field-input" required/>
+              </div>
+            </div>
+            <div>
+              <label class="field-label">WhatsApp / Phone <span class="optional">(optional)</span></label>
+              <input type="text" name="phone" placeholder="+91 98765 43210" class="field-input"/>
+            </div>
+          </div>
+          <div class="mt-8 flex justify-end">
+            <button type="button" onclick="nextStep(1)" class="step-next-btn">
+              Continue <span class="material-symbols-outlined" style="font-size:18px">arrow_forward</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- ─ STEP 2: The Brief ──────────────────────────────────────────── -->
+        <div class="form-step hidden" id="step2">
+          <h3 class="font-headline font-bold text-xl text-[#1c1b1b] mb-6">The brief</h3>
+          <div class="space-y-6">
+
+            <!-- Job type -->
+            <div>
+              <label class="field-label">What do you need? <span class="req">*</span></label>
+              <div class="grid grid-cols-2 gap-3 mt-2" id="jobTypeGrid">
+                <label class="job-type-card" data-val="Design">
+                  <input type="radio" name="jobType" value="Design" class="sr-only" required/>
+                  <span class="material-symbols-outlined" style="font-size:22px;color:#854d0e;font-variation-settings:'FILL' 1">palette</span>
+                  <span class="font-headline font-bold text-sm text-[#1c1b1b] mt-1">Design</span>
+                  <span class="text-[11px] text-[#464555]/60 font-label">Carousels, statics, banners</span>
+                </label>
+                <label class="job-type-card" data-val="Video &amp; Edit">
+                  <input type="radio" name="jobType" value="Video & Edit" class="sr-only"/>
+                  <span class="material-symbols-outlined" style="font-size:22px;color:#9d174d;font-variation-settings:'FILL' 1">movie</span>
+                  <span class="font-headline font-bold text-sm text-[#1c1b1b] mt-1">Video &amp; Edit</span>
+                  <span class="text-[11px] text-[#464555]/60 font-label">Reels, short-form, YouTube</span>
+                </label>
+                <label class="job-type-card" data-val="Production">
+                  <input type="radio" name="jobType" value="Production" class="sr-only"/>
+                  <span class="material-symbols-outlined" style="font-size:22px;color:#065f46;font-variation-settings:'FILL' 1">photo_camera</span>
+                  <span class="font-headline font-bold text-sm text-[#1c1b1b] mt-1">Production</span>
+                  <span class="text-[11px] text-[#464555]/60 font-label">Shoots, UGC, brand films</span>
+                </label>
+                <label class="job-type-card" data-val="Not sure">
+                  <input type="radio" name="jobType" value="Not sure" class="sr-only"/>
+                  <span class="material-symbols-outlined" style="font-size:22px;color:#777586;font-variation-settings:'FILL' 1">help</span>
+                  <span class="font-headline font-bold text-sm text-[#1c1b1b] mt-1">Not sure</span>
+                  <span class="text-[11px] text-[#464555]/60 font-label">Help me figure it out</span>
+                </label>
+              </div>
+            </div>
+
+            <!-- Description -->
+            <div>
+              <label class="field-label">Describe what you need <span class="req">*</span></label>
+              <p class="field-hint">What's the asset, what's it for, what should it say or show?</p>
+              <textarea name="description" rows="4" placeholder="e.g. A 30-second Instagram reel for our summer launch — product close-ups, upbeat music, text overlays. Target: women 18–28." class="field-input" style="resize:none" required></textarea>
+            </div>
+
+            <!-- Platforms -->
+            <div>
+              <label class="field-label">Where will this be used? <span class="optional">(optional)</span></label>
+              <div class="flex flex-wrap gap-2 mt-2" id="platformGrid"></div>
+            </div>
+
+            <!-- Deadline + urgency -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+              <div>
+                <label class="field-label">Deadline <span class="req">*</span></label>
+                <input type="date" name="deadline" class="field-input" required/>
+              </div>
+              <div>
+                <label class="field-label">Urgency <span class="optional">(optional)</span></label>
+                <div class="flex gap-2 mt-1" id="urgencyGrid"></div>
+              </div>
+            </div>
+
+            <!-- Budget -->
+            <div>
+              <label class="field-label">Approximate budget <span class="optional">(optional)</span></label>
+              <div class="flex flex-wrap gap-2 mt-2" id="budgetGrid"></div>
+            </div>
+
+          </div>
+          <div class="mt-8 flex justify-between">
+            <button type="button" onclick="prevStep(2)" class="step-back-btn">
+              <span class="material-symbols-outlined" style="font-size:18px">arrow_back</span> Back
+            </button>
+            <button type="button" onclick="nextStep(2)" class="step-next-btn">
+              Continue <span class="material-symbols-outlined" style="font-size:18px">arrow_forward</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- ─ STEP 3: References ─────────────────────────────────────────── -->
+        <div class="form-step hidden" id="step3">
+          <h3 class="font-headline font-bold text-xl text-[#1c1b1b] mb-1">References &amp; brand</h3>
+          <p class="font-body text-sm text-[#464555]/60 mb-6">All optional — but the more you share, the better the output.</p>
+          <div class="space-y-5">
+            <div>
+              <label class="field-label">Brand guidelines / Drive folder link</label>
+              <input type="url" name="brandUrl" placeholder="https://drive.google.com/…" class="field-input"/>
+            </div>
+            <div>
+              <label class="field-label">Reference links <span class="optional">(inspiration, competitor content)</span></label>
+              <textarea name="references" rows="3" placeholder="Paste URLs, Instagram posts, or describe the vibe you're going for…" class="field-input" style="resize:none"></textarea>
+            </div>
+            <div>
+              <label class="field-label">Copy / Caption / Script <span class="optional">(if you have it)</span></label>
+              <p class="field-hint">Paste here, or leave blank — we'll brief the freelancer separately.</p>
+              <textarea name="copy" rows="3" placeholder="Your copy here…" class="field-input" style="resize:none"></textarea>
+            </div>
+          </div>
+
+          <div id="formError" class="hidden mt-5 p-4 rounded-xl bg-[#ffdad6] text-[#93000a] text-sm font-label font-semibold"></div>
+
+          <div class="mt-8 flex justify-between items-center">
+            <button type="button" onclick="prevStep(3)" class="step-back-btn">
+              <span class="material-symbols-outlined" style="font-size:18px">arrow_back</span> Back
+            </button>
+            <button type="submit" id="submitBtn" class="step-next-btn">
+              <span id="submitLabel">Send Brief</span>
+              <span class="material-symbols-outlined" style="font-size:18px" id="submitIcon">send</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- ─ SUCCESS ────────────────────────────────────────────────────── -->
+        <div class="form-step hidden text-center py-10" id="stepSuccess">
+          <div class="w-16 h-16 rounded-full bg-[#fddf29] flex items-center justify-center mx-auto mb-5">
+            <span class="material-symbols-outlined text-3xl text-[#000]" style="font-variation-settings:'FILL' 1">check_circle</span>
+          </div>
+          <h3 class="font-headline font-bold text-2xl text-[#1c1b1b] mb-3">Brief received!</h3>
+          <p class="font-body text-sm text-[#464555]/70 max-w-xs mx-auto leading-relaxed">
+            We'll review it and get back to you within one business day. Keep an eye on <strong id="successEmail" class="text-[#1c1b1b]"></strong>.
+          </p>
+          <button type="button" onclick="resetForm()" class="mt-7 text-xs font-label font-bold text-[#464555]/40 hover:text-[#1c1b1b] transition-colors underline underline-offset-2">
+            Submit another brief
+          </button>
+        </div>
+
+      </form>
+    </div>
+
+    <!-- Secondary: Talk to us -->
+    <div id="contact" class="mt-6 flex flex-col sm:flex-row items-center justify-center gap-3 py-5">
+      <span class="text-sm text-[#464555]/50 font-label">Prefer to talk first?</span>
+      <div class="flex gap-3 flex-wrap justify-center">
+        <a href="mailto:jaytesh@theintgen.com"
+           class="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl border border-[#c8c4d8]/50 text-xs font-label font-bold text-[#464555] hover:border-[#464555] hover:bg-surface-container-low transition-all">
+          <span class="material-symbols-outlined" style="font-size:15px">mail</span>
+          jaytesh@theintgen.com
+        </a>
+        <a href="https://wa.me/919940237330?text=Hi%2C%20I%27d%20like%20to%20post%20a%20creative%20job%20with%20TIG."
+           target="_blank" rel="noopener"
+           class="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl border border-[#c8c4d8]/50 text-xs font-label font-bold text-[#464555] hover:border-[#25d366] hover:text-[#25d366] transition-all">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+          WhatsApp
+        </a>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+
+<!-- ── WHAT HAPPENS AFTER ─────────────────────────────────────────────────── -->
+<section class="py-16 px-5 md:px-12 max-w-7xl mx-auto border-t border-[#c8c4d8]/15">
+  <div class="max-w-2xl">
+    <div class="section-label mb-6">After you submit</div>
+    <div class="space-y-5">
+      <div class="flex gap-4 items-start">
+        <div class="w-8 h-8 rounded-full bg-[#fddf29] flex items-center justify-center shrink-0 mt-0.5">
+          <span class="font-headline font-bold text-sm text-[#000]">✓</span>
+        </div>
+        <div>
+          <p class="font-headline font-semibold text-[#1c1b1b] text-sm">Our ops team reviews and confirms your brief</p>
+          <p class="font-body text-xs text-[#464555]/70 mt-0.5">We'll reach out within a business day if we need any clarification before going live.</p>
+        </div>
+      </div>
+      <div class="flex gap-4 items-start">
+        <div class="w-8 h-8 rounded-full bg-[#1c1b1b] flex items-center justify-center shrink-0 mt-0.5">
+          <span class="font-headline font-bold text-sm text-white">✓</span>
+        </div>
+        <div>
+          <p class="font-headline font-semibold text-[#1c1b1b] text-sm">Job is posted and claimed by a vetted freelancer</p>
+          <p class="font-body text-xs text-[#464555]/70 mt-0.5">Freelancers are screened, NDA-signed, and rated before they can claim any work.</p>
+        </div>
+      </div>
+      <div class="flex gap-4 items-start">
+        <div class="w-8 h-8 rounded-full flex items-center justify-center shrink-0 mt-0.5" style="background:#ecfdf5">
+          <span class="font-headline font-bold text-sm text-[#065f46]">✓</span>
+        </div>
+        <div>
+          <p class="font-headline font-semibold text-[#1c1b1b] text-sm">Deliverables arrive in your shared folder, QC'd</p>
+          <p class="font-body text-xs text-[#464555]/70 mt-0.5">Every submission goes through our quality review before it lands in your hands.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ── FOOTER ──────────────────────────────────────────────────────────────── -->
+<footer class="border-t border-[#c8c4d8]/20 py-10 px-5 md:px-12 max-w-7xl mx-auto">
+  <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+    <div class="flex items-center gap-4">
+      <a href="https://theintgen.com" target="_blank">
+        <img src="logo-theintgen.png" alt="The Intgen" class="h-7 w-auto object-contain opacity-70 hover:opacity-100 transition-opacity"/>
+      </a>
+      <span class="text-[#c8c4d8]">|</span>
+      <a href="https://theintgen.com" target="_blank">
+        <img src="logo-tigital.png" alt="Tigital" class="h-7 w-auto object-contain opacity-50 hover:opacity-80 transition-opacity rounded"/>
+      </a>
+    </div>
+    <div class="flex flex-wrap gap-5 text-xs font-label font-semibold text-[#464555]/50">
+      <a href="index.html" class="hover:text-[#1c1b1b] transition-colors">Freelancer Board</a>
+      <a href="https://theintgen.com" target="_blank" class="hover:text-[#1c1b1b] transition-colors">theintgen.com</a>
+      <a href="mailto:jaytesh@theintgen.com" class="hover:text-[#1c1b1b] transition-colors">jaytesh@theintgen.com</a>
+    </div>
+  </div>
+  <p class="text-[10px] text-[#464555]/30 font-label mt-6">© 2025 The Intgen. All rights reserved.</p>
+</footer>
+
+
+<script>
+  // ── CONFIG — paste your Apps Script URL here after deploying ─────────────
+  const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwgftu_GnIA6jtuyHqnxg_3PrckGgwzE-3vBYtswCag5GDt2QAHmi2mHXJ7cE16xdiQ/exec';
+
+  // ── DATA ─────────────────────────────────────────────────────────────────
+  const PLATFORMS = ['Instagram','YouTube','LinkedIn','Facebook','Website','Print','Other'];
+  const BUDGETS   = ['Under ₹2k','₹2k – 5k','₹5k – 15k','₹15k+','Let TIG advise'];
+  const URGENCIES = ['🔥 Rush job','Standard'];
+
+  let currentStep   = 1;
+  let selectedPlats = new Set();
+
+  // ── INIT ─────────────────────────────────────────────────────────────────
+  document.addEventListener('DOMContentLoaded', () => {
+    buildPillGroup('platformGrid', PLATFORMS, selectedPlats, true);
+    buildPillGroup('budgetGrid',   BUDGETS,   new Set(),     false, 'budget');
+    buildPillGroup('urgencyGrid',  URGENCIES, new Set(),     false, 'urgent');
+    wirePillRadios('urgencyGrid',  'urgent');
+    wirePillRadios('budgetGrid',   'budget');
+    wireJobTypeCards();
+
+    // Set min date for deadline to today
+    const dl = document.querySelector('[name="deadline"]');
+    if (dl) dl.min = new Date().toISOString().split('T')[0];
+
+    document.getElementById('jobForm').addEventListener('submit', handleSubmit);
+  });
+
+  // ── PILL BUILDERS ─────────────────────────────────────────────────────────
+  function buildPillGroup(containerId, items, selectedSet, isCheckbox, radioName) {
+    const el = document.getElementById(containerId);
+    if (!el) return;
+    el.innerHTML = items.map(item => `
+      <label class="pill-toggle" data-val="${item}">
+        ${isCheckbox
+          ? `<input type="checkbox" name="${containerId}" value="${item}" class="sr-only"/>`
+          : `<input type="radio"    name="${radioName}"   value="${item}" class="sr-only"/>`
+        }
+        ${item}
+      </label>`).join('');
+
+    // Use 'change' not 'click' — label+input click fires twice, change fires once
+    el.querySelectorAll('input').forEach(inp => {
+      inp.addEventListener('change', () => {
+        const lbl = inp.closest('label');
+        if (isCheckbox) {
+          lbl.classList.toggle('selected', inp.checked);
+          if (inp.checked) selectedSet.add(inp.value);
+          else             selectedSet.delete(inp.value);
+        }
+      });
+    });
+  }
+
+  function wirePillRadios(containerId, radioName) {
+    const el = document.getElementById(containerId);
+    if (!el) return;
+    el.querySelectorAll('input[type="radio"]').forEach(inp => {
+      inp.addEventListener('change', () => {
+        el.querySelectorAll('label').forEach(l => l.classList.remove('selected'));
+        inp.closest('label').classList.add('selected');
+      });
+    });
+  }
+
+  function wireJobTypeCards() {
+    document.querySelectorAll('.job-type-card input[type="radio"]').forEach(inp => {
+      inp.addEventListener('change', () => {
+        document.querySelectorAll('.job-type-card').forEach(c => c.classList.remove('selected'));
+        inp.closest('.job-type-card').classList.add('selected');
+      });
+    });
+  }
+
+  // ── STEP NAVIGATION ───────────────────────────────────────────────────────
+  function nextStep(from) {
+    if (!validateStep(from)) return;
+    goToStep(from + 1);
+  }
+
+  function prevStep(from) {
+    goToStep(from - 1);
+  }
+
+  function goToStep(n) {
+    // Hide all steps
+    document.querySelectorAll('.form-step').forEach(s => s.classList.add('hidden'));
+    document.getElementById('step' + n).classList.remove('hidden');
+    currentStep = n;
+    updateProgress(n);
+    // Scroll form into view smoothly
+    document.getElementById('post-job').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  function updateProgress(active) {
+    for (let i = 1; i <= 3; i++) {
+      const node = document.getElementById('sn' + i);
+      node.classList.remove('active','done');
+      if (i < active)       node.classList.add('done');
+      else if (i === active) node.classList.add('active');
+
+      // Update dot to checkmark for completed steps
+      const dot = node.querySelector('.dot');
+      if (i < active) dot.innerHTML = '✓';
+      else            dot.textContent = i;
+    }
+    // Connectors
+    if (document.getElementById('sc1')) document.getElementById('sc1').classList.toggle('done', active > 1);
+    if (document.getElementById('sc2')) document.getElementById('sc2').classList.toggle('done', active > 2);
+  }
+
+  // ── VALIDATION ────────────────────────────────────────────────────────────
+  function validateStep(step) {
+    const form = document.getElementById('jobForm');
+    let ok = true;
+
+    if (step === 1) {
+      ['name','brand','email'].forEach(name => {
+        const el = form.querySelector(`[name="${name}"]`);
+        const valid = el.value.trim() && (name !== 'email' || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(el.value.trim()));
+        el.classList.toggle('error', !valid);
+        if (!valid) ok = false;
+      });
+    }
+
+    if (step === 2) {
+      const jobType = form.querySelector('[name="jobType"]:checked');
+      if (!jobType) {
+        document.querySelectorAll('.job-type-card').forEach(c => c.style.outline = '2px solid #ba1a1a');
+        ok = false;
+      } else {
+        document.querySelectorAll('.job-type-card').forEach(c => c.style.outline = '');
+      }
+      const desc = form.querySelector('[name="description"]');
+      desc.classList.toggle('error', !desc.value.trim());
+      if (!desc.value.trim()) ok = false;
+
+      const dl = form.querySelector('[name="deadline"]');
+      dl.classList.toggle('error', !dl.value);
+      if (!dl.value) ok = false;
+    }
+
+    return ok;
+  }
+
+  // ── SUBMIT ────────────────────────────────────────────────────────────────
+  async function handleSubmit(e) {
+    e.preventDefault();
+    const errEl  = document.getElementById('formError');
+    const btn    = document.getElementById('submitBtn');
+    const lbl    = document.getElementById('submitLabel');
+    const icon   = document.getElementById('submitIcon');
+
+    errEl.classList.add('hidden');
+
+    // Build payload
+    const fd = new FormData(e.target);
+    const data = {
+      name:        fd.get('name')?.trim(),
+      brand:       fd.get('brand')?.trim(),
+      email:       fd.get('email')?.trim(),
+      phone:       fd.get('phone')?.trim(),
+      jobType:     fd.get('jobType'),
+      description: fd.get('description')?.trim(),
+      platforms:   [...selectedPlats].join(', '),
+      deadline:    fd.get('deadline'),
+      urgent:      fd.get('urgent') || 'Standard',
+      budget:      fd.get('budget') || '',
+      brandUrl:    fd.get('brandUrl')?.trim(),
+      references:  fd.get('references')?.trim(),
+      copy:        fd.get('copy')?.trim(),
+    };
+
+    // Loading state
+    btn.disabled = true;
+    lbl.textContent = 'Sending…';
+    icon.textContent = 'hourglass_top';
+
+    try {
+      if (!SCRIPT_URL) {
+        // Dev mode — log payload and show success
+        console.log('Form payload (SCRIPT_URL not set):', data);
+        await new Promise(r => setTimeout(r, 800));
+      } else {
+        // Submit to Apps Script — no-cors avoids preflight, data still writes
+        await fetch(SCRIPT_URL, {
+          method:  'POST',
+          mode:    'no-cors',
+          headers: { 'Content-Type': 'text/plain' },
+          body:    JSON.stringify(data),
+        });
+      }
+
+      // Show success
+      document.getElementById('successEmail').textContent = data.email;
+      document.querySelectorAll('.form-step').forEach(s => s.classList.add('hidden'));
+      document.getElementById('stepSuccess').classList.remove('hidden');
+      updateProgress(4); // all done
+
+    } catch(err) {
+      btn.disabled = false;
+      lbl.textContent = 'Send Brief';
+      icon.textContent = 'send';
+      errEl.textContent = 'Something went wrong — please try again or email us directly.';
+      errEl.classList.remove('hidden');
+    }
+  }
+
+  // ── RESET ─────────────────────────────────────────────────────────────────
+  function resetForm() {
+    document.getElementById('jobForm').reset();
+    selectedPlats.clear();
+    document.querySelectorAll('.pill-toggle').forEach(p => p.classList.remove('selected'));
+    document.querySelectorAll('.job-type-card').forEach(c => c.classList.remove('selected'));
+    document.getElementById('submitBtn').disabled = false;
+    document.getElementById('submitLabel').textContent = 'Send Brief';
+    document.getElementById('submitIcon').textContent = 'send';
+    goToStep(1);
+  }
+
+  // ── NAV SCROLL HIGHLIGHT ─────────────────────────────────────────────────
+  const navLinks = document.querySelectorAll('nav a[href^="#"]');
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        navLinks.forEach(l => {
+          const isMatch = l.getAttribute('href') === '#' + e.target.id;
+          l.classList.toggle('text-[#000]', isMatch);
+          l.classList.toggle('text-[#1c1b1b]/60', !isMatch);
+        });
+      }
+    });
+  }, { threshold: 0.4 });
+  ['services','how-it-works','post-job'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) obs.observe(el);
+  });
+</script>
+
+</body>
+</html>

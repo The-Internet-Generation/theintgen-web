@@ -1,0 +1,7 @@
+# Cloudflare Pages redirects
+# These ensure clean routing for all sub-sections
+
+/tiggigs     /tiggigs/    301
+/tigital     /tigital/    301
+/tigpods     /tigpods/    301
+/tigom       /tigom/      301

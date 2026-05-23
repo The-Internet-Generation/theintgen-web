@@ -1,0 +1,926 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Tigital — Digital Marketing Intelligence by TIG</title>
+<meta name="description" content="Free digital marketing guides, tools and resources by The Internet Generation. Learn, grow, and build your brand online."/>
+<link rel="icon" type="image/png" href="/public/assets/logo-tigital.png"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    --navy:    #1A0A3C;
+    --yellow:  #FFD600;
+    --crimson: #9B1C3A;
+    --white:   #FFFFFF;
+    --ink:     #0F0A1E;
+    --paper:   #F7F5F0;
+    --muted:   #6B6580;
+    --border:  #E8E4F0;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--paper);
+    color: var(--ink);
+    overflow-x: hidden;
+  }
+
+  /* ── NAV ── */
+  .nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: var(--navy);
+    border-bottom: 3px solid var(--yellow);
+    padding: 0 clamp(1rem, 5vw, 3rem);
+    height: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+
+  .nav-brand {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    text-decoration: none;
+  }
+
+  .nav-brand img { height: 28px; width: auto; object-fit: contain; }
+
+  .nav-brand-name {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 800;
+    color: var(--white);
+    letter-spacing: -0.02em;
+  }
+
+  .nav-brand-name span { color: var(--yellow); }
+
+  .nav-links {
+    display: none;
+    gap: 1.5rem;
+    list-style: none;
+  }
+
+  @media (min-width: 768px) { .nav-links { display: flex; } }
+
+  .nav-links a {
+    font-family: 'Syne', sans-serif;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.5);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  .nav-links a:hover, .nav-links a.active { color: var(--yellow); }
+
+  .nav-cta {
+    font-family: 'Syne', sans-serif;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    padding: 7px 16px;
+    background: var(--yellow);
+    color: var(--navy);
+    border-radius: 6px;
+    text-decoration: none;
+    white-space: nowrap;
+    transition: opacity 0.2s;
+  }
+  .nav-cta:hover { opacity: 0.85; }
+
+  /* ── MASTHEAD ── */
+  .masthead {
+    background: var(--navy);
+    padding: clamp(3rem, 8vw, 6rem) clamp(1rem, 5vw, 3rem) clamp(2rem, 5vw, 4rem);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .masthead::after {
+    content: 'TIGITAL';
+    position: absolute;
+    bottom: -2rem;
+    right: -1rem;
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(5rem, 18vw, 16rem);
+    font-weight: 800;
+    color: rgba(255,214,0,0.04);
+    line-height: 1;
+    pointer-events: none;
+    user-select: none;
+    letter-spacing: -0.05em;
+  }
+
+  .masthead-inner {
+    max-width: 900px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .masthead-label {
+    font-family: 'Syne', sans-serif;
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--yellow);
+    margin-bottom: 1.25rem;
+  }
+
+  .masthead h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2.5rem, 7vw, 5.5rem);
+    font-weight: 900;
+    line-height: 1;
+    color: var(--white);
+    letter-spacing: -0.02em;
+    margin-bottom: 1.5rem;
+  }
+
+  .masthead h1 em {
+    font-style: italic;
+    color: var(--yellow);
+  }
+
+  .masthead-desc {
+    font-size: clamp(0.9rem, 2vw, 1.05rem);
+    font-weight: 300;
+    color: rgba(255,255,255,0.55);
+    max-width: 560px;
+    line-height: 1.75;
+    margin-bottom: 2.5rem;
+  }
+
+  .masthead-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    align-items: center;
+  }
+
+  .btn-primary {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 12px 24px;
+    background: var(--yellow);
+    color: var(--navy);
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 0.82rem;
+    letter-spacing: 0.04em;
+    border-radius: 8px;
+    text-decoration: none;
+    transition: opacity 0.2s, transform 0.2s;
+  }
+  .btn-primary:hover { opacity: 0.9; transform: translateY(-1px); }
+
+  .btn-ghost {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 12px 20px;
+    border: 1px solid rgba(255,255,255,0.2);
+    color: rgba(255,255,255,0.6);
+    font-family: 'Syne', sans-serif;
+    font-weight: 600;
+    font-size: 0.82rem;
+    letter-spacing: 0.04em;
+    border-radius: 8px;
+    text-decoration: none;
+    transition: border-color 0.2s, color 0.2s;
+  }
+  .btn-ghost:hover { border-color: var(--yellow); color: var(--yellow); }
+
+  /* ── TICKER ── */
+  .ticker-wrap {
+    background: var(--yellow);
+    overflow: hidden;
+    padding: 10px 0;
+  }
+
+  .ticker {
+    display: flex;
+    gap: 3rem;
+    animation: ticker 25s linear infinite;
+    width: max-content;
+    white-space: nowrap;
+  }
+
+  .ticker span {
+    font-family: 'Syne', sans-serif;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--navy);
+  }
+
+  .ticker-dot { color: var(--crimson); }
+
+  @keyframes ticker {
+    from { transform: translateX(0); }
+    to   { transform: translateX(-50%); }
+  }
+
+  /* ── MAIN LAYOUT ── */
+  .main {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: clamp(2rem, 5vw, 4rem) clamp(1rem, 4vw, 3rem);
+  }
+
+  /* ── SECTION HEADERS ── */
+  .section-header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    margin-bottom: 1.75rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 2px solid var(--ink);
+    gap: 1rem;
+  }
+
+  .section-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--navy);
+  }
+
+  .section-link {
+    font-size: 0.72rem;
+    font-weight: 500;
+    color: var(--crimson);
+    text-decoration: none;
+    white-space: nowrap;
+  }
+  .section-link:hover { text-decoration: underline; }
+
+  /* ── FEATURED ARTICLE (BIG CARD) ── */
+  .featured-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+    margin-bottom: 3.5rem;
+  }
+
+  @media (min-width: 768px) {
+    .featured-grid { grid-template-columns: 2fr 1fr; }
+  }
+
+  .article-card {
+    background: var(--white);
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    text-decoration: none;
+    color: inherit;
+    display: flex;
+    flex-direction: column;
+    transition: box-shadow 0.25s, transform 0.25s;
+  }
+  .article-card:hover {
+    box-shadow: 0 12px 40px rgba(26,10,60,0.1);
+    transform: translateY(-3px);
+  }
+
+  .card-img {
+    width: 100%;
+    aspect-ratio: 16/9;
+    background: linear-gradient(135deg, var(--navy) 0%, #2D1060 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Playfair Display', serif;
+    font-size: 4rem;
+    color: var(--yellow);
+    opacity: 0.8;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .card-img-placeholder {
+    font-size: 3rem;
+    opacity: 0.3;
+  }
+
+  .card-img-label {
+    position: absolute;
+    bottom: 0.75rem;
+    left: 0.75rem;
+    font-family: 'Syne', sans-serif;
+    font-size: 0.6rem;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    background: var(--yellow);
+    color: var(--navy);
+    padding: 3px 8px;
+    border-radius: 4px;
+  }
+
+  .card-body { padding: 1.25rem; flex: 1; display: flex; flex-direction: column; }
+
+  .card-category {
+    font-family: 'Syne', sans-serif;
+    font-size: 0.6rem;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--crimson);
+    margin-bottom: 0.6rem;
+  }
+
+  .card-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.1rem, 2.5vw, 1.5rem);
+    font-weight: 700;
+    line-height: 1.25;
+    color: var(--navy);
+    margin-bottom: 0.75rem;
+  }
+
+  .card-title-sm {
+    font-family: 'Playfair Display', serif;
+    font-size: 1rem;
+    font-weight: 700;
+    line-height: 1.3;
+    color: var(--navy);
+    margin-bottom: 0.5rem;
+  }
+
+  .card-excerpt {
+    font-size: 0.85rem;
+    font-weight: 300;
+    color: var(--muted);
+    line-height: 1.65;
+    flex: 1;
+  }
+
+  .card-meta {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-top: 1rem;
+    padding-top: 0.75rem;
+    border-top: 1px solid var(--border);
+  }
+
+  .meta-date {
+    font-size: 0.7rem;
+    font-weight: 400;
+    color: var(--muted);
+  }
+
+  .meta-read {
+    font-size: 0.7rem;
+    font-weight: 500;
+    color: var(--navy);
+    margin-left: auto;
+  }
+
+  /* ── STACKED SIDEBAR CARDS ── */
+  .sidebar-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .article-card-sm {
+    background: var(--white);
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    padding: 1rem;
+    text-decoration: none;
+    color: inherit;
+    display: flex;
+    gap: 0.75rem;
+    align-items: flex-start;
+    transition: box-shadow 0.2s, transform 0.2s;
+    flex: 1;
+  }
+  .article-card-sm:hover {
+    box-shadow: 0 6px 20px rgba(26,10,60,0.07);
+    transform: translateY(-2px);
+  }
+
+  .card-sm-img {
+    width: 60px;
+    height: 60px;
+    border-radius: 8px;
+    background: linear-gradient(135deg, var(--navy) 0%, #2D1060 100%);
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    color: var(--yellow);
+    opacity: 0.7;
+  }
+
+  /* ── TOOLS SECTION ── */
+  .tools-section { margin-bottom: 3.5rem; }
+
+  .tools-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 1rem;
+  }
+
+  .tool-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.5rem;
+    text-decoration: none;
+    color: inherit;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    transition: box-shadow 0.2s, transform 0.2s, border-color 0.2s;
+  }
+  .tool-card:hover {
+    box-shadow: 0 8px 24px rgba(26,10,60,0.08);
+    transform: translateY(-3px);
+    border-color: var(--yellow);
+  }
+
+  .tool-icon {
+    width: 44px; height: 44px;
+    border-radius: 10px;
+    background: var(--navy);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.3rem;
+  }
+
+  .tool-name {
+    font-family: 'Syne', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--navy);
+  }
+
+  .tool-desc {
+    font-size: 0.78rem;
+    font-weight: 300;
+    color: var(--muted);
+    line-height: 1.6;
+    flex: 1;
+  }
+
+  .tool-cta {
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: var(--crimson);
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+  }
+
+  /* ── NEWSLETTER BLOCK ── */
+  .newsletter-block {
+    background: var(--navy);
+    border-radius: 16px;
+    padding: clamp(2rem, 5vw, 3.5rem);
+    margin-bottom: 3.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .newsletter-block::before {
+    content: '';
+    position: absolute;
+    top: -40px; right: -40px;
+    width: 200px; height: 200px;
+    border-radius: 50%;
+    background: rgba(255,214,0,0.1);
+    pointer-events: none;
+  }
+
+  @media (min-width: 640px) {
+    .newsletter-block { flex-direction: row; align-items: center; }
+  }
+
+  .newsletter-text { flex: 1; position: relative; z-index: 1; }
+
+  .newsletter-text h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.3rem, 3vw, 1.8rem);
+    font-weight: 700;
+    color: var(--white);
+    margin-bottom: 0.5rem;
+    line-height: 1.25;
+  }
+
+  .newsletter-text h3 em {
+    font-style: italic;
+    color: var(--yellow);
+  }
+
+  .newsletter-text p {
+    font-size: 0.85rem;
+    font-weight: 300;
+    color: rgba(255,255,255,0.55);
+    line-height: 1.6;
+  }
+
+  .newsletter-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    position: relative;
+    z-index: 1;
+    flex-shrink: 0;
+  }
+
+  .newsletter-actions a {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 11px 20px;
+    border-radius: 8px;
+    font-family: 'Syne', sans-serif;
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    text-decoration: none;
+    transition: opacity 0.2s, transform 0.2s;
+    white-space: nowrap;
+  }
+  .newsletter-actions a:hover { opacity: 0.88; transform: translateY(-1px); }
+
+  .btn-wa { background: #25D366; color: #fff; }
+  .btn-guide { background: var(--yellow); color: var(--navy); }
+
+  /* ── WORK WITH US (SUBTLE) ── */
+  .work-with-us {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-left: 4px solid var(--crimson);
+    border-radius: 10px;
+    padding: 1.25rem 1.5rem;
+    margin-bottom: 3.5rem;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+
+  .work-with-us p {
+    font-size: 0.82rem;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+
+  .work-with-us strong { color: var(--navy); }
+
+  .work-with-us a {
+    font-family: 'Syne', sans-serif;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    padding: 8px 18px;
+    background: var(--crimson);
+    color: var(--white);
+    border-radius: 6px;
+    text-decoration: none;
+    white-space: nowrap;
+    transition: opacity 0.2s;
+    flex-shrink: 0;
+  }
+  .work-with-us a:hover { opacity: 0.88; }
+
+  /* ── COMING SOON OVERLAY ── */
+  .coming-soon-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(15,10,30,0.75);
+    z-index: 200;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem;
+    backdrop-filter: blur(8px);
+  }
+
+  .coming-soon-box {
+    background: var(--white);
+    border-radius: 16px;
+    padding: 2.5rem;
+    max-width: 480px;
+    width: 100%;
+    text-align: center;
+    position: relative;
+  }
+
+  .coming-soon-box h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--navy);
+    margin-bottom: 0.75rem;
+  }
+
+  .coming-soon-box h2 em { font-style: italic; color: var(--crimson); }
+
+  .coming-soon-box p {
+    font-size: 0.88rem;
+    color: var(--muted);
+    line-height: 1.7;
+    margin-bottom: 1.75rem;
+  }
+
+  .preview-badge {
+    display: inline-block;
+    font-family: 'Syne', sans-serif;
+    font-size: 0.6rem;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    background: rgba(26,10,60,0.08);
+    color: var(--navy);
+    padding: 4px 10px;
+    border-radius: 20px;
+    margin-bottom: 1rem;
+  }
+
+  .dismiss-btn {
+    display: block;
+    width: 100%;
+    padding: 12px;
+    background: var(--navy);
+    color: var(--white);
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 0.82rem;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    transition: opacity 0.2s;
+    margin-bottom: 0.75rem;
+  }
+  .dismiss-btn:hover { opacity: 0.88; }
+
+  .notify-link {
+    font-size: 0.78rem;
+    color: var(--crimson);
+    text-decoration: underline;
+    cursor: pointer;
+  }
+
+  /* ── FOOTER ── */
+  .footer {
+    background: var(--navy);
+    padding: 2.5rem clamp(1rem, 5vw, 3rem);
+    text-align: center;
+  }
+
+  .footer-brand {
+    font-family: 'Syne', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--yellow);
+    letter-spacing: 0.05em;
+    margin-bottom: 0.5rem;
+  }
+
+  .footer p {
+    font-size: 0.72rem;
+    color: rgba(255,255,255,0.3);
+  }
+
+  .footer a { color: rgba(255,255,255,0.45); text-decoration: none; }
+  .footer a:hover { color: var(--yellow); }
+</style>
+</head>
+<body>
+
+<!-- ── NAV ── -->
+<nav class="nav">
+  <a href="/tigital/" class="nav-brand">
+    <img src="/public/assets/logo-tigital.png" alt="Tigital"/>
+    <span class="nav-brand-name">tigi<span>tal</span></span>
+  </a>
+  <ul class="nav-links">
+    <li><a href="#blog" class="active">Blog</a></li>
+    <li><a href="#tools">Tools</a></li>
+    <li><a href="#guides">Guides</a></li>
+  </ul>
+  <a href="https://wa.me/919940237330" target="_blank" class="nav-cta">Join WhatsApp →</a>
+</nav>
+
+<!-- ── MASTHEAD ── -->
+<section class="masthead">
+  <div class="masthead-inner">
+    <p class="masthead-label">Digital Marketing Intelligence · By TIG</p>
+    <h1>Learn Digital.<br/><em>Grow Fast.</em><br/>Build Yourself.</h1>
+    <p class="masthead-desc">Free guides, tools and weekly insights from the team that's run campaigns for 50+ brands across India and beyond. No agency fluff — just what works.</p>
+    <div class="masthead-actions">
+      <a href="#guides" class="btn-primary">↓ Free Guides</a>
+      <a href="https://wa.me/919940237330" target="_blank" class="btn-ghost">📲 Join the Community</a>
+    </div>
+  </div>
+</section>
+
+<!-- ── TICKER ── -->
+<div class="ticker-wrap">
+  <div class="ticker">
+    <span>Meta Ads</span><span class="ticker-dot">✦</span>
+    <span>Content Strategy</span><span class="ticker-dot">✦</span>
+    <span>Instagram Growth</span><span class="ticker-dot">✦</span>
+    <span>Reels Playbook</span><span class="ticker-dot">✦</span>
+    <span>Google Ads</span><span class="ticker-dot">✦</span>
+    <span>Brand Building</span><span class="ticker-dot">✦</span>
+    <span>Influencer Marketing</span><span class="ticker-dot">✦</span>
+    <span>Analytics</span><span class="ticker-dot">✦</span>
+    <span>Meta Ads</span><span class="ticker-dot">✦</span>
+    <span>Content Strategy</span><span class="ticker-dot">✦</span>
+    <span>Instagram Growth</span><span class="ticker-dot">✦</span>
+    <span>Reels Playbook</span><span class="ticker-dot">✦</span>
+    <span>Google Ads</span><span class="ticker-dot">✦</span>
+    <span>Brand Building</span><span class="ticker-dot">✦</span>
+    <span>Influencer Marketing</span><span class="ticker-dot">✦</span>
+    <span>Analytics</span><span class="ticker-dot">✦</span>
+  </div>
+</div>
+
+<!-- ── MAIN ── -->
+<main class="main">
+
+  <!-- LATEST FROM THE BLOG -->
+  <section id="blog" style="margin-bottom:3.5rem;">
+    <div class="section-header">
+      <span class="section-title">Latest from the Blog</span>
+      <a href="#blog" class="section-link">All posts →</a>
+    </div>
+    <div class="featured-grid">
+      <!-- Featured large card -->
+      <a href="#" class="article-card">
+        <div class="card-img">
+          <span class="card-img-placeholder">📲</span>
+          <span class="card-img-label">Latest</span>
+        </div>
+        <div class="card-body">
+          <p class="card-category">Meta Ads</p>
+          <h2 class="card-title">Why Your Meta Ads Are Burning Money — And What to Do About It in 2025</h2>
+          <p class="card-excerpt">Most businesses running Meta Ads are wasting 30–50% of their budget on the wrong audience targeting. Here's a step-by-step breakdown of how we audit ad accounts and the fixes that actually move the needle.</p>
+          <div class="card-meta">
+            <span class="meta-date">May 2025</span>
+            <span class="meta-read">8 min read →</span>
+          </div>
+        </div>
+      </a>
+
+      <!-- Sidebar stack -->
+      <div class="sidebar-stack">
+        <a href="#" class="article-card-sm">
+          <div class="card-sm-img">📊</div>
+          <div>
+            <p class="card-category" style="font-family:'Syne',sans-serif;font-size:0.55rem;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;color:var(--crimson);margin-bottom:0.3rem;">Instagram</p>
+            <p class="card-title-sm">The 3-Post Formula That Doubled Engagement for Our Clients</p>
+            <p class="meta-date" style="font-size:0.7rem;color:var(--muted);margin-top:0.4rem;">April 2025 · 5 min</p>
+          </div>
+        </a>
+        <a href="#" class="article-card-sm">
+          <div class="card-sm-img">🎬</div>
+          <div>
+            <p class="card-category" style="font-family:'Syne',sans-serif;font-size:0.55rem;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;color:var(--crimson);margin-bottom:0.3rem;">Reels</p>
+            <p class="card-title-sm">Reels in 2025: The Format, Length and Hook Formula That Still Works</p>
+            <p class="meta-date" style="font-size:0.7rem;color:var(--muted);margin-top:0.4rem;">April 2025 · 6 min</p>
+          </div>
+        </a>
+        <a href="#" class="article-card-sm">
+          <div class="card-sm-img">🎯</div>
+          <div>
+            <p class="card-category" style="font-family:'Syne',sans-serif;font-size:0.55rem;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;color:var(--crimson);margin-bottom:0.3rem;">Strategy</p>
+            <p class="card-title-sm">How to Build a 3-Month Content Calendar From Scratch</p>
+            <p class="meta-date" style="font-size:0.7rem;color:var(--muted);margin-top:0.4rem;">March 2025 · 7 min</p>
+          </div>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- NEWSLETTER / COMMUNITY BLOCK -->
+  <div class="newsletter-block">
+    <div class="newsletter-text">
+      <h3>Get weekly digital marketing drops.<br/><em>Straight to WhatsApp.</em></h3>
+      <p>No spam, no noise. Just the strategies, tools and platform updates that matter — every week from the TIG team.</p>
+    </div>
+    <div class="newsletter-actions">
+      <a href="https://wa.me/919940237330" target="_blank" class="btn-wa">📲 Join WhatsApp Community</a>
+      <a href="#guides" class="btn-guide">📥 Get a Free Guide First</a>
+    </div>
+  </div>
+
+  <!-- FREE TOOLS -->
+  <section id="tools" class="tools-section">
+    <div class="section-header">
+      <span class="section-title">Free Tools</span>
+      <a href="#tools" class="section-link">All tools →</a>
+    </div>
+    <div class="tools-grid">
+      <a href="#" class="tool-card">
+        <div class="tool-icon">📅</div>
+        <p class="tool-name">Content Calendar Generator</p>
+        <p class="tool-desc">Input your business type and get a 30-day content plan with post ideas, formats and captions.</p>
+        <span class="tool-cta">Use free →</span>
+      </a>
+      <a href="#" class="tool-card">
+        <div class="tool-icon">💰</div>
+        <p class="tool-name">Ad Budget Calculator</p>
+        <p class="tool-desc">Figure out how much to spend on Meta & Google Ads based on your revenue goals and industry.</p>
+        <span class="tool-cta">Use free →</span>
+      </a>
+      <a href="#" class="tool-card">
+        <div class="tool-icon">✍️</div>
+        <p class="tool-name">Caption Formula Builder</p>
+        <p class="tool-desc">Build scroll-stopping Instagram captions using proven hook → body → CTA frameworks.</p>
+        <span class="tool-cta">Use free →</span>
+      </a>
+      <a href="#" class="tool-card">
+        <div class="tool-icon">📈</div>
+        <p class="tool-name">Engagement Rate Checker</p>
+        <p class="tool-desc">Paste any Instagram handle and see whether their engagement is good, average or fake.</p>
+        <span class="tool-cta">Use free →</span>
+      </a>
+    </div>
+  </section>
+
+  <!-- FREE GUIDES -->
+  <section id="guides" style="margin-bottom:3.5rem;">
+    <div class="section-header">
+      <span class="section-title">Free Guides & Resources</span>
+      <a href="#guides" class="section-link">All guides →</a>
+    </div>
+    <div class="tools-grid">
+      <a href="#" class="tool-card" style="border-color:var(--yellow);">
+        <div class="tool-icon">📖</div>
+        <p class="tool-name">The SMB Social Media Starter Kit</p>
+        <p class="tool-desc">A complete 20-page guide to setting up, running and growing your brand's social media from scratch.</p>
+        <span class="tool-cta" style="color:var(--navy);font-weight:700;">↓ Download Free PDF</span>
+      </a>
+      <a href="#" class="tool-card">
+        <div class="tool-icon">🎯</div>
+        <p class="tool-name">The Meta Ads Beginner Playbook</p>
+        <p class="tool-desc">Step-by-step guide to running your first profitable Meta Ad campaign without burning your budget.</p>
+        <span class="tool-cta">↓ Download Free PDF</span>
+      </a>
+      <a href="#" class="tool-card">
+        <div class="tool-icon">🎬</div>
+        <p class="tool-name">Reels Script Templates</p>
+        <p class="tool-desc">10 fill-in-the-blank reel scripts for product brands, service businesses and personal brands.</p>
+        <span class="tool-cta">↓ Download Free PDF</span>
+      </a>
+    </div>
+  </section>
+
+  <!-- SUBTLE WORK WITH US -->
+  <div class="work-with-us">
+    <p>
+      <strong>Running a business with a serious marketing budget?</strong><br/>
+      If you're spending ₹1 lakh or more a month on your growth, we build customised strategies — not templates.
+    </p>
+    <a href="mailto:hi@theintgen.com">Let's Talk →</a>
+  </div>
+
+</main>
+
+<!-- ── FOOTER ── -->
+<footer class="footer">
+  <p class="footer-brand">Tigital — by The Internet Generation</p>
+  <p>T. Nagar, Chennai &nbsp;·&nbsp; <a href="mailto:hi@theintgen.com">hi@theintgen.com</a> &nbsp;·&nbsp; <a href="/">theintgen.com</a></p>
+</footer>
+
+<!-- Notion content hook — will populate articles dynamically once CMS is connected -->
+<script>
+  // Notion integration will go here
+  // Posts will be fetched from the Tigital Notion database
+  // and injected into .featured-grid and .tools-grid
+  console.log('Tigital v1.0 — Notion CMS integration pending');
+</script>
+
+</body>
+</html>
