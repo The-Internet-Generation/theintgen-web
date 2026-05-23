@@ -914,13 +914,78 @@
   <p>T. Nagar, Chennai &nbsp;·&nbsp; <a href="mailto:hi@theintgen.com">hi@theintgen.com</a> &nbsp;·&nbsp; <a href="/">theintgen.com</a></p>
 </footer>
 
-<!-- Notion content hook — will populate articles dynamically once CMS is connected -->
+<!-- Notion CMS — live posts injected from /api/posts (Cloudflare Pages Function) -->
 <script>
-  // Notion integration will go here
-  // Posts will be fetched from the Tigital Notion database
-  // and injected into .featured-grid and .tools-grid
-  console.log('Tigital v1.0 — Notion CMS integration pending');
+(async () => {
+  const FALLBACK_EMOJI = { Blog:'📝', Guide:'📖', Tool:'🛠️', Resource:'📦', default:'📲' };
+
+  function fmtDate(iso) {
+    if (!iso) return '';
+    return new Date(iso).toLocaleDateString('en-GB', { month:'short', year:'numeric' });
+  }
+
+  function buildFeaturedCard(post) {
+    const href = post.slug ? `/tigital/${post.slug}/` : '#';
+    const emoji = FALLBACK_EMOJI[post.category] || FALLBACK_EMOJI.default;
+    return `
+      <a href="${href}" class="article-card">
+        <div class="card-img">
+          <span class="card-img-placeholder">${emoji}</span>
+          <span class="card-img-label">${post.featured ? 'Featured' : 'Latest'}</span>
+        </div>
+        <div class="card-body">
+          <p class="card-category">${post.category}</p>
+          <h2 class="card-title">${post.title}</h2>
+          <p class="card-excerpt">${post.excerpt}</p>
+          <div class="card-meta">
+            <span class="meta-date">${fmtDate(post.date)}</span>
+            <span class="meta-read">Read →</span>
+          </div>
+        </div>
+      </a>`;
+  }
+
+  function buildSidebarCard(post) {
+    const href = post.slug ? `/tigital/${post.slug}/` : '#';
+    const emoji = FALLBACK_EMOJI[post.category] || FALLBACK_EMOJI.default;
+    return `
+      <a href="${href}" class="article-card-sm">
+        <div class="card-sm-img">${emoji}</div>
+        <div>
+          <p class="card-category" style="font-family:'Syne',sans-serif;font-size:0.55rem;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;color:var(--crimson);margin-bottom:0.3rem;">${post.category}</p>
+          <p class="card-title-sm">${post.title}</p>
+          <p class="meta-date" style="font-size:0.7rem;color:var(--muted);margin-top:0.4rem;">${fmtDate(post.date)}</p>
+        </div>
+      </a>`;
+  }
+
+  try {
+    const res = await fetch('/api/posts');
+    if (!res.ok) throw new Error('API error');
+    const { posts } = await res.json();
+    if (!posts || posts.length === 0) return; // keep static fallback
+
+    // Sort: featured first, then by date
+    const sorted = posts.sort((a, b) => (b.featured - a.featured));
+    const [hero, ...rest] = sorted;
+
+    const grid = document.querySelector('.featured-grid');
+    if (!grid) return;
+
+    grid.innerHTML =
+      buildFeaturedCard(hero) +
+      `<div class="sidebar-stack">` +
+      rest.slice(0, 3).map(buildSidebarCard).join('') +
+      `</div>`;
+
+    console.log(`Tigital CMS: ${posts.length} posts loaded from Notion`);
+  } catch (e) {
+    // Static fallback stays in place — fail silently
+    console.log('Tigital CMS: using static fallback', e.message);
+  }
+})();
 </script>
 
 </body>
 </html>
+
