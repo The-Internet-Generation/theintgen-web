@@ -586,6 +586,8 @@ function tagsFor(ep) {
 }
 
 const SUGGESTED_TAGS = ['Tamil cinema','Comedy','Content creation','Bigg Boss','Editing','Music','Tech','Business','Acting','Radio'];
+const BUSINESS_TAGS  = ['Business', 'Advertising', 'Tech'];
+const CREATIVE_TAGS  = ['Tamil cinema', 'Music', 'Comedy', 'Acting', 'Editing', 'Content creation', 'Art', 'Radio', 'Writing', 'Filmmaking', 'Storytelling'];
 
 /* ============================================================
    SVG ICONS
@@ -989,14 +991,23 @@ function Welcome() {
   spPlayer.className = 'sp-player';
   el.appendChild(spPlayer);
 
+  /* Pre-load the Spotify embed immediately (autoplay=0) so the player SDK is warm.
+     On disc tap we reload src with autoplay=1 inside the user-gesture event —
+     Chrome/Android autoplays; iOS/Brave show the visible embed for one-tap play. */
+  if (epSpId) {
+    spIframe = document.createElement('iframe');
+    spIframe.style.cssText = 'width:100%;height:152px;border:none;display:block;';
+    spIframe.setAttribute('allow', 'autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture');
+    spIframe.src = `https://open.spotify.com/embed/episode/${epSpId}?utm_source=generator&theme=0&autoplay=0`;
+    spPlayer.appendChild(spIframe);
+  }
+
   /* Init: show paused state */
   setPlaying(false);
 
   /* Disc center tap:
-     - First tap: loads Spotify embed in the mini-player, slides it up, starts disc
-     - Chrome/desktop: autoplay=1 plays immediately
-     - iOS Safari: iframe is now VISIBLE so the user can tap play inside it (iOS blocks
-       cross-origin audio autoplay in hidden iframes — this is a hard browser policy)
+     - First tap: reloads Spotify src with autoplay=1 (user-gesture context → Chrome autoplays),
+       slides the mini-player up so iOS/Brave users can tap once inside the visible embed.
      - Subsequent taps: pause/resume both the disc and Spotify via postMessage */
   centerBtn.addEventListener('click', () => {
     if (!audioUnlocked) {
@@ -1004,12 +1015,9 @@ function Welcome() {
       discRipple.style.animation = 'none';
       discRipple.style.opacity = '0';
       audioUnlocked = true;
-      if (epSpId) {
-        spIframe = document.createElement('iframe');
+      if (epSpId && spIframe) {
+        /* Reload with autoplay=1 inside this user-gesture call stack — browser allows autoplay */
         spIframe.src = `https://open.spotify.com/embed/episode/${epSpId}?utm_source=generator&theme=0&autoplay=1`;
-        spIframe.style.cssText = 'width:100%;height:152px;border:none;display:block;';
-        spIframe.setAttribute('allow', 'autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture');
-        spPlayer.appendChild(spIframe);
         spPlayer.classList.add('visible');
       }
       setPlaying(true);
@@ -1086,7 +1094,7 @@ function Reel() {
     /* Background: solid dark — YouTube video covers this when loaded */
     card.innerHTML = `
       <div style="position:absolute;inset:0;background:#0d0d0d;"></div>
-      <div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,0.55) 0%,rgba(0,0,0,0) 22%,rgba(0,0,0,0) 55%,rgba(0,0,0,0.85) 100%);pointer-events:none;"></div>
+      <div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,0.97) 0%,rgba(0,0,0,0.92) 9%,rgba(0,0,0,0.35) 22%,rgba(0,0,0,0) 32%,rgba(0,0,0,0) 55%,rgba(0,0,0,0.88) 100%);pointer-events:none;z-index:3;"></div>
     `;
 
     /* Progress bar */
@@ -1251,6 +1259,7 @@ function Reel() {
 function Library() {
   let query = '';
   let activeTag = null;
+  let activeCat = null; // 'business' | 'creative' | null
 
   const epsTagged = EPISODES.map(e => ({ ...e, tags: tagsFor(e) }));
 
@@ -1297,10 +1306,40 @@ function Library() {
   header.appendChild(searchWrap);
   el.appendChild(header);
 
+  /* ── Category tabs: Business | Creative ── */
+  const catTabs = document.createElement('div');
+  catTabs.style.cssText = 'padding:0 20px 10px;display:flex;gap:10px;flex-shrink:0;';
+
+  function renderCatTabs() {
+    catTabs.innerHTML = '';
+    [['business', 'Business'], ['creative', 'Creative']].forEach(([key, label]) => {
+      const isActive = activeCat === key;
+      const btn = document.createElement('button');
+      btn.style.cssText = [
+        'flex:1;padding:13px 8px;border-radius:14px;',
+        `font-family:var(--display);font-size:15px;font-weight:700;letter-spacing:-0.015em;`,
+        'cursor:pointer;transition:background 180ms,border-color 180ms,color 180ms;',
+        `border:1.5px solid ${isActive ? 'var(--green)' : 'var(--line-2)'};`,
+        `background:${isActive ? 'var(--green-dim)' : 'transparent'};`,
+        `color:${isActive ? 'var(--green)' : 'var(--fg-muted)'};`,
+      ].join('');
+      btn.textContent = label;
+      btn.addEventListener('click', () => {
+        activeCat = isActive ? null : key;
+        if (!isActive) activeTag = null; // reset tag when switching category
+        renderCatTabs();
+        renderChips();
+        renderGrid();
+      });
+      catTabs.appendChild(btn);
+    });
+  }
+  el.appendChild(catTabs);
+
   /* Topic chips */
   const chipsRow = document.createElement('div');
   chipsRow.className = 'hrow no-scrollbar';
-  chipsRow.style.cssText = 'padding-top:4px;padding-bottom:14px;flex-shrink:0;';
+  chipsRow.style.cssText = 'padding-top:2px;padding-bottom:12px;flex-shrink:0;';
   el.appendChild(chipsRow);
 
   /* Grid container */
@@ -1315,7 +1354,10 @@ function Library() {
   /* Render chips */
   function renderChips() {
     chipsRow.innerHTML = '';
-    SUGGESTED_TAGS.forEach(tag => {
+    const visibleTags = activeCat === 'business' ? BUSINESS_TAGS
+      : activeCat === 'creative' ? CREATIVE_TAGS.filter(t => SUGGESTED_TAGS.includes(t) || true)
+      : SUGGESTED_TAGS;
+    visibleTags.forEach(tag => {
       const isActive = activeTag === tag;
       const btn = document.createElement('button');
       btn.style.cssText = 'cursor:pointer;font-size:12px;padding:6px 12px;';
@@ -1334,6 +1376,9 @@ function Library() {
   function renderGrid() {
     const q = query.toLowerCase();
     let filtered = epsTagged;
+    /* Category filter */
+    if (activeCat === 'business') filtered = filtered.filter(e => e.tags.some(t => BUSINESS_TAGS.includes(t)));
+    else if (activeCat === 'creative') filtered = filtered.filter(e => e.tags.some(t => CREATIVE_TAGS.includes(t)));
     if (activeTag) filtered = filtered.filter(e => e.tags.includes(activeTag));
     if (q) filtered = filtered.filter(e =>
       e.guest.toLowerCase().includes(q) ||
@@ -1405,6 +1450,7 @@ function Library() {
   function onKey(e) { if (e.key === 'Escape') navigate(Welcome, {}, 'left'); }
   document.addEventListener('keydown', onKey);
 
+  renderCatTabs();
   renderChips();
   renderGrid();
 
