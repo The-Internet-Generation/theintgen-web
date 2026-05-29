@@ -107,29 +107,21 @@ button, a {
 }
 
 /* ============================================================
-   DESKTOP — remove phone chrome, fill viewport
+   DESKTOP — full viewport, no phone chrome
    ============================================================ */
-@media (min-width: 769px) {
+@media (min-width: 481px) {
   .stage { padding: 0; }
   .phone {
-    width: 100%;
-    max-width: 520px;
-    height: 100vh;
-    max-height: none;
-    border-radius: 0;
-    padding: 0;
-    box-shadow: none;
+    width: 100vw !important;
+    max-width: none !important;
+    height: 100vh !important;
+    max-height: none !important;
+    border-radius: 0 !important;
+    padding: 0 !important;
+    box-shadow: none !important;
   }
-  .phone-screen { border-radius: 0; }
-  .phone-notch { display: none; }
-}
-/* Wide desktop: subtle centre-column framing */
-@media (min-width: 1100px) {
-  .phone {
-    border-left: 1px solid rgba(255,255,255,0.06);
-    border-right: 1px solid rgba(255,255,255,0.06);
-    box-shadow: -80px 0 180px rgba(0,0,0,0.55), 80px 0 180px rgba(0,0,0,0.55);
-  }
+  .phone-screen { border-radius: 0 !important; }
+  .phone-notch { display: none !important; }
 }
 
 /* ============================================================
@@ -572,6 +564,13 @@ function ytVideoId(url) {
   return null;
 }
 
+/* Compute best available thumbnail for an episode */
+function epThumb(ep) {
+  if (ep.thumbnail_url) return ep.thumbnail_url;
+  const vid = ytVideoId(ep.youtube_url);
+  return vid ? `https://img.youtube.com/vi/${vid}/hqdefault.jpg` : null;
+}
+
 /* Extract Spotify episode ID from episode URL */
 function spotifyEpId(url) {
   if (!url) return null;
@@ -682,25 +681,58 @@ function logoEl(size = 26, withWordmark = true) {
 let currentCleanup = null;
 const root = document.getElementById('screen-root');
 
-function navigate(screenFn, params = {}) {
-  if (currentCleanup) { currentCleanup(); currentCleanup = null; }
-  root.innerHTML = '';
+function navigate(screenFn, params = {}, dir = 'instant') {
+  const prevEl = root.firstElementChild;
+  const prevCleanup = currentCleanup;
+  if (prevCleanup) { prevCleanup(); currentCleanup = null; }
+
   const { el, cleanup } = screenFn(params);
-  root.appendChild(el);
   currentCleanup = cleanup || null;
+
+  const TXS = {
+    up:    { enter: 'translateY(100%)',  exit: 'translateY(-22%) scale(0.97)' },
+    down:  { enter: 'translateY(-100%)', exit: 'translateY(22%) scale(0.97)' },
+    right: { enter: 'translateX(100%)',  exit: 'translateX(-22%) scale(0.97)' },
+    left:  { enter: 'translateX(-100%)', exit: 'translateX(22%) scale(0.97)' },
+  };
+  const tx = TXS[dir];
+
+  if (!prevEl || !tx) {
+    root.innerHTML = '';
+    root.appendChild(el);
+    return;
+  }
+
+  /* Prepare new screen off-screen, no transition yet */
+  el.style.cssText += `transform:${tx.enter};transition:none;position:absolute;inset:0;`;
+  root.appendChild(el);
+
+  /* Double rAF → browser paints initial positions before animating */
+  requestAnimationFrame(() => requestAnimationFrame(() => {
+    const dur = '400ms cubic-bezier(0.16, 1, 0.3, 1)';
+    el.style.transition  = `transform ${dur}`;
+    el.style.transform   = 'translateY(0) translateX(0) scale(1)';
+    prevEl.style.transition = `transform ${dur}, opacity 400ms ease`;
+    prevEl.style.transform  = tx.exit;
+    prevEl.style.opacity    = '0.15';
+
+    el.addEventListener('transitionend', () => {
+      el.style.transition = '';
+      el.style.transform  = '';
+      if (prevEl.parentNode) prevEl.remove();
+    }, { once: true });
+  }));
 }
 
 /* ============================================================
    SCREEN: WELCOME
    ============================================================ */
 function Welcome() {
-  let muted = true;   // start silent; first tap loads Spotify
-  let showPopup = true;
+  let playing = true;   // optimistically playing on mount
   let progress = 0;
   let rafId = null;
   let startTime = null;
-  let popupDismissTimer = null;
-  let spEl = null;    // Spotify mini-player element
+  let spIframe = null;  // hidden Spotify audio iframe
 
   // Pick a random episode for the now-playing chip
   const eps = (EPISODES || []).filter(e => e.no > 0);
@@ -724,7 +756,7 @@ function Welcome() {
   glow.style.cssText = 'position:absolute;top:38%;left:50%;transform:translate(-50%,-50%);width:460px;height:460px;border-radius:50%;background:radial-gradient(circle,rgba(29,185,84,0.10) 0%,rgba(29,185,84,0.04) 35%,transparent 70%);filter:blur(10px);pointer-events:none;opacity:1;transition:opacity 500ms ease;';
   el.appendChild(glow);
 
-  /* Header: logo → Spotify + speaker */
+  /* Header: logo only (no speaker button) */
   const header = document.createElement('div');
   header.style.cssText = 'position:absolute;top:56px;left:0;right:0;padding:0 20px;display:flex;align-items:center;justify-content:space-between;z-index:10;';
 
@@ -734,36 +766,8 @@ function Welcome() {
   logoLink.style.cssText = 'text-decoration:none;display:inline-flex;align-items:center;';
   logoLink.setAttribute('aria-label', 'Open TigPods on Spotify');
   logoLink.appendChild(logoEl(26, true));
-
-  const speakerBtn = document.createElement('button');
-  speakerBtn.className = 'icon-btn';
-  speakerBtn.style.cssText = 'width:36px;height:36px;background:rgba(255,255,255,0.06);border:1px solid var(--line);';
-  speakerBtn.setAttribute('aria-label', 'Play');
-  speakerBtn.innerHTML = Icons.speakerOff; // starts muted
-
   header.appendChild(logoLink);
-  header.appendChild(speakerBtn);
   el.appendChild(header);
-
-  /* Popup */
-  const popup = document.createElement('div');
-  popup.className = 'welcome-popup';
-  popup.innerHTML = `<span class="pulse-dot"></span><span>Tap ${Icons.speakerOn} to play a random episode</span>`;
-  const dismissBtn = document.createElement('button');
-  dismissBtn.innerHTML = Icons.close;
-  dismissBtn.style.cssText = 'color:var(--fg-dim);display:inline-flex;padding:2px;';
-  dismissBtn.setAttribute('aria-label', 'Dismiss');
-  popup.appendChild(dismissBtn);
-  el.appendChild(popup);
-
-  function hidePopup() {
-    if (!showPopup) return;
-    showPopup = false;
-    popup.classList.add('dismissed');
-    setTimeout(() => { if (popup.parentNode) popup.remove(); }, 250);
-  }
-  dismissBtn.addEventListener('click', hidePopup);
-  popupDismissTimer = setTimeout(hidePopup, 6500);
 
   /* Hero block — space-between: wordmark / turntable / nowplaying */
   const hero = document.createElement('div');
@@ -780,14 +784,13 @@ function Welcome() {
 
   /* Turntable area */
   const turntable = document.createElement('div');
-  turntable.style.cssText = 'position:relative;width:260px;height:260px;display:flex;align-items:center;justify-content:center;cursor:pointer;';
-  turntable.addEventListener('click', hidePopup);
+  turntable.style.cssText = 'position:relative;width:260px;height:260px;display:flex;align-items:center;justify-content:center;';
 
   /* Vinyl disc */
   const disc = document.createElement('div');
   disc.style.cssText = `width:220px;height:220px;border-radius:50%;position:relative;
     background:radial-gradient(circle at 50% 50%,#0a0a0a 0%,#0a0a0a 18%,#1f1f1f 19%,#0e0e0e 40%,#1a1a1a 60%,#0e0e0e 78%,#1a1a1a 92%,#0a0a0a 100%);
-    animation:spin 9s linear infinite;animation-play-state:paused;
+    animation:spin 9s linear infinite;animation-play-state:running;
     box-shadow:inset 0 0 0 1px rgba(255,255,255,0.04),inset 0 0 30px rgba(0,0,0,0.6),0 18px 50px rgba(0,0,0,0.65),0 4px 12px rgba(0,0,0,0.5);`;
   const grooveRows = Array.from({length: 18}).map((_,i) => {
     const r = (110 * (0.96 - i * 0.025)).toFixed(1);
@@ -879,6 +882,23 @@ function Welcome() {
   pivot.innerHTML = `<div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:8px;height:8px;border-radius:50%;background:#1a1816;box-shadow:inset 0 1px 1px rgba(0,0,0,0.8);"><div style="position:absolute;top:50%;left:10%;right:10%;height:1px;background:rgba(255,255,255,0.25);transform:translateY(-50%);"></div></div>`;
   tonearmWrap.appendChild(pivot);
   turntable.appendChild(tonearmWrap);
+
+  /* Disc-center play/pause button — sits above the tonearm, at disc center */
+  const centerBtn = document.createElement('button');
+  centerBtn.style.cssText = 'position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:92px;height:92px;border-radius:50%;background:transparent;cursor:pointer;z-index:8;display:flex;align-items:center;justify-content:center;color:#fff;transition:background 200ms;border:none;';
+  centerBtn.setAttribute('aria-label', 'Pause');
+  const pauseIcon = `<svg width="26" height="26" viewBox="0 0 24 24" fill="currentColor"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>`;
+  const playIcon  = `<svg width="30" height="30" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>`;
+  // Pause icon is hidden when playing (sticker shows through transparent btn)
+  const centerOverlay = document.createElement('div');
+  centerOverlay.style.cssText = 'position:absolute;inset:0;border-radius:50%;background:rgba(0,0,0,0.5);display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity 250ms;';
+  centerOverlay.innerHTML = pauseIcon;
+  centerBtn.appendChild(centerOverlay);
+  // Show overlay on hover/focus
+  centerBtn.addEventListener('mouseenter', () => { if (playing) centerOverlay.style.opacity = '1'; });
+  centerBtn.addEventListener('mouseleave', () => { centerOverlay.style.opacity = '0'; });
+  turntable.appendChild(centerBtn);
+
   hero.appendChild(turntable);
 
   /* Now-playing chip + brand tagline */
@@ -944,43 +964,27 @@ function Welcome() {
     arcDot.setAttribute('cy', String(cy + r * Math.sin(angle)));
   }
 
-  function setMuted(val) {
-    muted = val;
-    speakerBtn.innerHTML = muted ? Icons.speakerOff : Icons.speakerOn;
-    speakerBtn.setAttribute('aria-label', muted ? 'Play' : 'Mute');
-    disc.style.animationPlayState = muted ? 'paused' : 'running';
-    arm.style.transform = `translateY(-50%) rotate(${muted ? 75 : 110}deg)`;
-    arcSvg.style.opacity = muted ? '0' : '1';
-    glow.style.opacity = muted ? '0.55' : '1';
-    if (muted) { startTime = null; }
-
-    /* Spotify mini-player */
-    if (!muted && epSpId) {
-      if (!spEl) {
-        // First unmute → create the iframe player
-        spEl = document.createElement('div');
-        spEl.className = 'sp-player';
-        const iframe = document.createElement('iframe');
-        iframe.src = `https://open.spotify.com/embed/episode/${epSpId}?utm_source=generator&theme=0&autoplay=1`;
-        iframe.width = '100%';
-        iframe.height = '152';
-        iframe.setAttribute('frameborder', '0');
-        iframe.setAttribute('allow', 'autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture');
-        iframe.setAttribute('loading', 'lazy');
-        spEl.appendChild(iframe);
-        el.appendChild(spEl);
-      }
-      // Animate in (double rAF to ensure paint before transition)
-      requestAnimationFrame(() => requestAnimationFrame(() => spEl.classList.add('visible')));
-    } else if (muted && spEl) {
-      spEl.classList.remove('visible');
+  function setPlaying(val) {
+    playing = val;
+    disc.style.animationPlayState = playing ? 'running' : 'paused';
+    arm.style.transform = `translateY(-50%) rotate(${playing ? 110 : 75}deg)`;
+    arcSvg.style.opacity = playing ? '1' : '0';
+    glow.style.opacity = playing ? '1' : '0.55';
+    if (!playing) startTime = null;
+    // Update center button aria + icon
+    centerBtn.setAttribute('aria-label', playing ? 'Pause' : 'Play');
+    centerOverlay.innerHTML = playing ? pauseIcon : playIcon;
+    centerOverlay.style.opacity = playing ? '0' : '1';
+    // Control Spotify playback via postMessage
+    if (spIframe && spIframe.contentWindow) {
+      spIframe.contentWindow.postMessage({ command: playing ? 'play' : 'pause' }, '*');
     }
   }
 
-  /* RAF loop for progress */
+  /* RAF loop for progress arc */
   function loop(t) {
-    if (!muted) {
-      if (!startTime) startTime = t - 22000; // 22s headstart so arc is already visible on load
+    if (playing) {
+      if (!startTime) startTime = t - 22000; // 22s headstart so arc is already visible
       progress = ((t - startTime) / 1000 % 90) / 90;
       updateArc(progress);
     }
@@ -988,11 +992,18 @@ function Welcome() {
   }
   rafId = requestAnimationFrame(loop);
 
-  /* Speaker button */
-  speakerBtn.addEventListener('click', () => {
-    setMuted(!muted);
-    hidePopup();
-  });
+  /* Disc center play/pause */
+  centerBtn.addEventListener('click', () => setPlaying(!playing));
+
+  /* Load Spotify player immediately (autoplay on user-engaged browsers) */
+  if (epSpId) {
+    spIframe = document.createElement('iframe');
+    spIframe.src = `https://open.spotify.com/embed/episode/${epSpId}?utm_source=generator&theme=0&autoplay=1`;
+    spIframe.style.cssText = 'position:fixed;left:-9999px;top:-9999px;width:300px;height:152px;border:none;pointer-events:none;';
+    spIframe.setAttribute('allow', 'autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture');
+    spIframe.setAttribute('loading', 'lazy');
+    document.body.appendChild(spIframe);
+  }
 
   /* Gesture handling */
   let touchStart = { x: 0, y: 0 };
@@ -1002,20 +1013,20 @@ function Welcome() {
   el.addEventListener('touchend', e => {
     const dx = e.changedTouches[0].clientX - touchStart.x;
     const dy = e.changedTouches[0].clientY - touchStart.y;
-    if (Math.abs(dy) > 50 && dy < 0 && Math.abs(dy) > Math.abs(dx)) navigate(Reel);
-    else if (Math.abs(dx) > 50 && dx > 0 && Math.abs(dx) > Math.abs(dy)) navigate(Library);
+    if (Math.abs(dy) > 50 && dy < 0 && Math.abs(dy) > Math.abs(dx)) navigate(Reel, {}, 'up');
+    else if (Math.abs(dx) > 50 && dx > 0 && Math.abs(dx) > Math.abs(dy)) navigate(Library, {}, 'right');
   }, { passive: true });
   el.addEventListener('wheel', e => {
-    if (e.deltaY > 20) navigate(Reel);
+    if (e.deltaY > 20) navigate(Reel, {}, 'up');
   }, { passive: true });
 
-  hintUp.addEventListener('click', () => navigate(Reel));
-  hintRight.addEventListener('click', () => navigate(Library));
+  hintUp.addEventListener('click', () => navigate(Reel, {}, 'up'));
+  hintRight.addEventListener('click', () => navigate(Library, {}, 'right'));
 
   /* Cleanup */
   function cleanup() {
     cancelAnimationFrame(rafId);
-    clearTimeout(popupDismissTimer);
+    if (spIframe && spIframe.parentNode) spIframe.parentNode.removeChild(spIframe);
   }
 
   return { el, cleanup };
@@ -1035,7 +1046,7 @@ function Reel() {
   el.style.padding = '0';
 
   el.appendChild(statusBarEl());
-  el.appendChild(backBtnEl(() => navigate(Welcome)));
+  el.appendChild(backBtnEl(() => navigate(Welcome, {}, 'down')));
 
   /* Snap-scroll feed */
   const feed = document.createElement('div');
@@ -1049,16 +1060,17 @@ function Reel() {
     const { ep, clipTitle, id, clipYtUrl } = item;
     let paused = false;
     let ytIframe = null;
-    // prefer the short-clip URL; fall back to full-episode URL
-    const videoId = ytVideoId(clipYtUrl) || ytVideoId(ep?.youtube_url);
+    // ONLY embed if it's an actual YouTube Short (portrait format)
+    const videoId = (clipYtUrl && clipYtUrl.includes('/shorts/')) ? ytVideoId(clipYtUrl) : null;
 
     const card = document.createElement('div');
-    card.className = `reel-card ${ep.thumbnail_url ? '' : thumbBg(ep.no)}`;
+    const thumb = epThumb(ep);
+    card.className = `reel-card ${thumb ? '' : thumbBg(ep.no)}`;
 
     /* Background: real thumbnail or gradient placeholder + watermarks */
     card.innerHTML = `
-      ${ep.thumbnail_url
-        ? `<img src="${ep.thumbnail_url}" alt="${ep.guest}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;">`
+      ${thumb
+        ? `<img src="${thumb}" alt="${ep.guest}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;">`
         : `<div style="position:absolute;inset:0;background-image:radial-gradient(ellipse at 30% 25%, rgba(29,185,84,0.18) 0%, transparent 50%),radial-gradient(ellipse at 80% 75%, rgba(255,255,255,0.05) 0%, transparent 60%);">
              <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;opacity:0.18;pointer-events:none;">
                <div style="font-family:var(--display);font-weight:900;font-size:220px;line-height:0.85;letter-spacing:-0.05em;color:#fff;">${String(ep.no).padStart(2,'0')}</div>
@@ -1083,11 +1095,6 @@ function Reel() {
     brandMark.appendChild(logoEl(22, false));
     card.appendChild(brandMark);
 
-    /* Shuffle pill */
-    const shufflePill = document.createElement('div');
-    shufflePill.style.cssText = 'position:absolute;top:60px;right:14px;z-index:10;font-size:12px;font-weight:600;color:var(--fg);padding:6px 10px;background:rgba(255,255,255,0.08);border-radius:999px;border:1px solid var(--line);';
-    shufflePill.textContent = 'shuffle';
-    card.appendChild(shufflePill);
 
     /* Pause overlay */
     const pauseOverlay = document.createElement('button');
@@ -1120,7 +1127,7 @@ function Reel() {
     const fullEpBtn = document.createElement('button');
     fullEpBtn.style.cssText = 'margin-top:12px;font-size:12.5px;font-weight:600;color:var(--fg);display:inline-flex;align-items:center;gap:6px;padding:6px 10px;border-radius:999px;background:rgba(255,255,255,0.1);border:1px solid var(--line);';
     fullEpBtn.innerHTML = 'full episode ' + Icons.arrowRight;
-    fullEpBtn.addEventListener('click', (e) => { e.stopPropagation(); navigate(Wiki, { epNo: ep.no }); });
+    fullEpBtn.addEventListener('click', (e) => { e.stopPropagation(); navigate(Wiki, { epNo: ep.no }, 'up'); });
     info.appendChild(fullEpBtn);
     card.appendChild(info);
 
@@ -1129,10 +1136,6 @@ function Reel() {
     rail.style.cssText = 'position:absolute;right:12px;bottom:44px;z-index:10;display:flex;flex-direction:column;gap:18px;align-items:center;';
     rail.innerHTML = `
       <a href="${ep.spotify_url || '#'}" ${ep.spotify_url ? 'target="_blank" rel="noopener"' : 'onclick="return false"'} style="width:48px;height:48px;border-radius:50%;background:rgba(0,0,0,0.4);backdrop-filter:blur(12px);border:1px solid var(--line-2);display:flex;align-items:center;justify-content:center;" aria-label="Listen on Spotify">${Icons.spotify}</a>
-      <a href="${ep.youtube_url || '#'}" ${ep.youtube_url ? 'target="_blank" rel="noopener"' : 'onclick="return false"'} style="width:48px;height:48px;border-radius:50%;background:rgba(0,0,0,0.4);backdrop-filter:blur(12px);border:1px solid var(--line-2);display:flex;align-items:center;justify-content:center;" aria-label="Watch on YouTube">${Icons.youtube}</a>
-      <div style="display:flex;flex-direction:column;align-items:center;gap:2px;color:var(--fg-dim);font-size:10px;">
-        ${Icons.share}<span>share</span>
-      </div>
     `;
     card.appendChild(rail);
 
@@ -1204,7 +1207,7 @@ function Reel() {
   }, { passive: true });
 
   /* Keyboard */
-  function onKey(e) { if (e.key === 'Escape') navigate(Welcome); }
+  function onKey(e) { if (e.key === 'Escape') navigate(Welcome, {}, 'down'); }
   document.addEventListener('keydown', onKey);
 
   return { el, cleanup: () => document.removeEventListener('keydown', onKey) };
@@ -1223,7 +1226,7 @@ function Library() {
   el.className = 'screen screen-enter';
 
   el.appendChild(statusBarEl());
-  el.appendChild(backBtnEl(() => navigate(Welcome)));
+  el.appendChild(backBtnEl(() => navigate(Welcome, {}, 'left')));
 
   /* Header */
   const header = document.createElement('div');
@@ -1326,11 +1329,12 @@ function Library() {
       card.style.cssText = 'text-align:left;display:flex;flex-direction:column;gap:8px;';
 
       const thumb = document.createElement('div');
-      thumb.className = ep.thumbnail_url ? '' : thumbBg(ep.no);
+      const epT = epThumb(ep);
+      thumb.className = epT ? '' : thumbBg(ep.no);
       thumb.style.cssText = 'position:relative;aspect-ratio:3/4;border-radius:14px;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,0.4),inset 0 0 0 1px rgba(255,255,255,0.05);';
       thumb.innerHTML = `
-        ${ep.thumbnail_url
-          ? `<img src="${ep.thumbnail_url}" alt="${ep.guest}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;">`
+        ${epT
+          ? `<img src="${epT}" alt="${ep.guest}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;">`
           : `<div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:var(--display);font-weight:900;font-size:60px;color:rgba(255,255,255,0.18);letter-spacing:-0.04em;">${initials(ep.guest)}</div>`
         }
         <div style="position:absolute;left:0;right:0;bottom:0;height:60%;background:linear-gradient(180deg,transparent,rgba(0,0,0,0.85));"></div>
@@ -1347,7 +1351,7 @@ function Library() {
 
       card.appendChild(thumb);
       card.appendChild(titleEl);
-      card.addEventListener('click', () => navigate(Wiki, { epNo: ep.no }));
+      card.addEventListener('click', () => navigate(Wiki, { epNo: ep.no }, 'right'));
       grid.appendChild(card);
     });
   }
@@ -1366,7 +1370,7 @@ function Library() {
   });
 
   /* Keyboard */
-  function onKey(e) { if (e.key === 'Escape') navigate(Welcome); }
+  function onKey(e) { if (e.key === 'Escape') navigate(Welcome, {}, 'left'); }
   document.addEventListener('keydown', onKey);
 
   renderChips();
@@ -1388,7 +1392,7 @@ function Wiki({ epNo }) {
   el.style.padding = '0';
 
   el.appendChild(statusBarEl());
-  el.appendChild(backBtnEl(() => navigate(Library)));
+  el.appendChild(backBtnEl(() => navigate(Library, {}, 'left')));
 
   /* Scrollable content */
   const scroll = document.createElement('div');
@@ -1533,7 +1537,7 @@ function Wiki({ epNo }) {
   el.appendChild(scroll);
 
   /* Keyboard */
-  function onKey(e) { if (e.key === 'Escape') navigate(Library); }
+  function onKey(e) { if (e.key === 'Escape') navigate(Library, {}, 'left'); }
   document.addEventListener('keydown', onKey);
 
   return { el, cleanup: () => document.removeEventListener('keydown', onKey) };
