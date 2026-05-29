@@ -533,12 +533,16 @@ function spotifyEpId(url) {
 }
 
 function buildShortsPool() {
-  return SHORTS_SEED.map((s, i) => ({
+  const all = SHORTS_SEED.map((s, i) => ({
     id: i,
     ep: EPISODES.find(e => e.no === s.ep),
     clipTitle: s.clipTitle,
     clipYtUrl: s.youtube_url || null,
   }));
+  /* Only include clips that have an embeddable YouTube video URL.
+     This prevents blank reel cards from dominating the feed. */
+  const withVideo = all.filter(item => item.ep && item.clipYtUrl && ytVideoId(item.clipYtUrl));
+  return withVideo.length >= 2 ? withVideo : all;
 }
 
 /* Tags for library filtering */
@@ -962,18 +966,29 @@ function Welcome() {
   }
   rafId = requestAnimationFrame(loop);
 
+  /* Spotify mini-player — slides up from bottom on first disc tap */
+  const spPlayer = document.createElement('div');
+  spPlayer.className = 'sp-player';
+  el.appendChild(spPlayer);
+
   /* Init: show paused state */
   setPlaying(false);
 
-  /* Disc center play/pause — creates Spotify iframe on first tap (user gesture = autoplay allowed) */
+  /* Disc center tap:
+     - First tap: loads Spotify embed in the mini-player, slides it up, starts disc
+     - Chrome/desktop: autoplay=1 plays immediately
+     - iOS Safari: iframe is now VISIBLE so the user can tap play inside it (iOS blocks
+       cross-origin audio autoplay in hidden iframes — this is a hard browser policy)
+     - Subsequent taps: pause/resume both the disc and Spotify via postMessage */
   centerBtn.addEventListener('click', () => {
     if (!audioUnlocked && epSpId) {
       audioUnlocked = true;
       spIframe = document.createElement('iframe');
       spIframe.src = `https://open.spotify.com/embed/episode/${epSpId}?utm_source=generator&theme=0&autoplay=1`;
-      spIframe.style.cssText = 'position:fixed;left:-9999px;top:-9999px;width:300px;height:152px;border:none;pointer-events:none;';
+      spIframe.style.cssText = 'width:100%;height:152px;border:none;display:block;';
       spIframe.setAttribute('allow', 'autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture');
-      document.body.appendChild(spIframe);
+      spPlayer.appendChild(spIframe);
+      spPlayer.classList.add('visible');
       setPlaying(true);
     } else {
       setPlaying(!playing);
@@ -1004,7 +1019,7 @@ function Welcome() {
   /* Cleanup */
   function cleanup() {
     cancelAnimationFrame(rafId);
-    if (spIframe && spIframe.parentNode) spIframe.parentNode.removeChild(spIframe);
+    if (spIframe) spIframe.src = ''; // stop playback
     document.removeEventListener('touchstart', onTouchStart);
     document.removeEventListener('touchend', onTouchEnd);
   }
@@ -1040,8 +1055,7 @@ function Reel() {
     const { ep, clipTitle, id, clipYtUrl } = item;
     let paused = false;
     let ytIframe = null;
-    // ONLY embed if it's an actual YouTube Short (portrait format)
-    const videoId = (clipYtUrl && clipYtUrl.includes('/shorts/')) ? ytVideoId(clipYtUrl) : null;
+    const videoId = ytVideoId(clipYtUrl); // null if no URL
 
     const card = document.createElement('div');
     card.className = 'reel-card';
@@ -1132,9 +1146,10 @@ function Reel() {
           if (!paused) restartProgress();
           if (videoId) {
             if (preloadIframe) {
-              /* Preloaded — promote to active iframe, swap to autoplay src */
+              /* Preloaded — promote to active iframe, make visible, swap to autoplay src */
               ytIframe = preloadIframe;
               preloadIframe = null;
+              ytIframe.style.opacity = '1';
               ytIframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&controls=0&rel=0&modestbranding=1&playsinline=1&loop=1&playlist=${videoId}`;
             } else if (!ytIframe) {
               /* No preload — create fresh */
