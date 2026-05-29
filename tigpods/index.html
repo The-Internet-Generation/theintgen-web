@@ -107,6 +107,32 @@ button, a {
 }
 
 /* ============================================================
+   DESKTOP — remove phone chrome, fill viewport
+   ============================================================ */
+@media (min-width: 769px) {
+  .stage { padding: 0; }
+  .phone {
+    width: 100%;
+    max-width: 520px;
+    height: 100vh;
+    max-height: none;
+    border-radius: 0;
+    padding: 0;
+    box-shadow: none;
+  }
+  .phone-screen { border-radius: 0; }
+  .phone-notch { display: none; }
+}
+/* Wide desktop: subtle centre-column framing */
+@media (min-width: 1100px) {
+  .phone {
+    border-left: 1px solid rgba(255,255,255,0.06);
+    border-right: 1px solid rgba(255,255,255,0.06);
+    box-shadow: -80px 0 180px rgba(0,0,0,0.55), 80px 0 180px rgba(0,0,0,0.55);
+  }
+}
+
+/* ============================================================
    STATUS BAR
    ============================================================ */
 .status-bar {
@@ -399,6 +425,22 @@ button, a {
 .search-input::placeholder { color: var(--fg-dim); }
 .search-input:focus { border-color: var(--green); }
 
+/* Episode grid: 2 cols on mobile, 3 on desktop */
+.episode-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+@media (min-width: 769px) {
+  .episode-grid { grid-template-columns: 1fr 1fr 1fr; }
+}
+
+/* Spotify mini-player */
+.sp-player {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  z-index: 20;
+  transform: translateY(100%);
+  transition: transform 420ms cubic-bezier(0.16,1,0.3,1);
+}
+.sp-player.visible { transform: translateY(0); }
+
 /* ============================================================
    WIKI SCREEN
    ============================================================ */
@@ -515,11 +557,34 @@ function shuffleArray(arr) {
   return a;
 }
 
+/* Extract YouTube video ID from any YT URL format */
+function ytVideoId(url) {
+  if (!url) return null;
+  let m;
+  m = url.match(/youtu\.be\/([A-Za-z0-9_-]{11})/);
+  if (m) return m[1];
+  m = url.match(/[?&]v=([A-Za-z0-9_-]{11})/);
+  if (m) return m[1];
+  m = url.match(/\/shorts\/([A-Za-z0-9_-]{11})/);
+  if (m) return m[1];
+  m = url.match(/\/embed\/([A-Za-z0-9_-]{11})/);
+  if (m) return m[1];
+  return null;
+}
+
+/* Extract Spotify episode ID from episode URL */
+function spotifyEpId(url) {
+  if (!url) return null;
+  const m = url.match(/episode\/([A-Za-z0-9]+)/);
+  return m ? m[1] : null;
+}
+
 function buildShortsPool() {
   return SHORTS_SEED.map((s, i) => ({
     id: i,
     ep: EPISODES.find(e => e.no === s.ep),
     clipTitle: s.clipTitle,
+    clipYtUrl: s.youtube_url || null,
   }));
 }
 
@@ -629,12 +694,13 @@ function navigate(screenFn, params = {}) {
    SCREEN: WELCOME
    ============================================================ */
 function Welcome() {
-  let muted = false;
+  let muted = true;   // start silent; first tap loads Spotify
   let showPopup = true;
   let progress = 0;
   let rafId = null;
   let startTime = null;
   let popupDismissTimer = null;
+  let spEl = null;    // Spotify mini-player element
 
   // Pick a random episode for the now-playing chip
   const eps = (EPISODES || []).filter(e => e.no > 0);
@@ -650,10 +716,8 @@ function Welcome() {
   /* Status bar */
   el.appendChild(statusBarEl());
 
-  /* Audio (hookpoint) */
-  const audio = document.createElement('audio');
-  audio.loop = true; audio.preload = 'none'; audio.style.display = 'none';
-  el.appendChild(audio);
+  /* Spotify mini-player (injected on first unmute) */
+  const epSpId = currentEp ? spotifyEpId(currentEp.spotify_url) : null;
 
   /* Ambient glow behind the player */
   const glow = document.createElement('div');
@@ -674,8 +738,8 @@ function Welcome() {
   const speakerBtn = document.createElement('button');
   speakerBtn.className = 'icon-btn';
   speakerBtn.style.cssText = 'width:36px;height:36px;background:rgba(255,255,255,0.06);border:1px solid var(--line);';
-  speakerBtn.setAttribute('aria-label', 'Mute');
-  speakerBtn.innerHTML = Icons.speakerOn;
+  speakerBtn.setAttribute('aria-label', 'Play');
+  speakerBtn.innerHTML = Icons.speakerOff; // starts muted
 
   header.appendChild(logoLink);
   header.appendChild(speakerBtn);
@@ -684,7 +748,7 @@ function Welcome() {
   /* Popup */
   const popup = document.createElement('div');
   popup.className = 'welcome-popup';
-  popup.innerHTML = `<span class="pulse-dot"></span><span>Audio playing — tap ${Icons.speakerOff} to mute</span>`;
+  popup.innerHTML = `<span class="pulse-dot"></span><span>Tap ${Icons.speakerOn} to play a random episode</span>`;
   const dismissBtn = document.createElement('button');
   dismissBtn.innerHTML = Icons.close;
   dismissBtn.style.cssText = 'color:var(--fg-dim);display:inline-flex;padding:2px;';
@@ -723,7 +787,7 @@ function Welcome() {
   const disc = document.createElement('div');
   disc.style.cssText = `width:220px;height:220px;border-radius:50%;position:relative;
     background:radial-gradient(circle at 50% 50%,#0a0a0a 0%,#0a0a0a 18%,#1f1f1f 19%,#0e0e0e 40%,#1a1a1a 60%,#0e0e0e 78%,#1a1a1a 92%,#0a0a0a 100%);
-    animation:spin 9s linear infinite;animation-play-state:running;
+    animation:spin 9s linear infinite;animation-play-state:paused;
     box-shadow:inset 0 0 0 1px rgba(255,255,255,0.04),inset 0 0 30px rgba(0,0,0,0.6),0 18px 50px rgba(0,0,0,0.65),0 4px 12px rgba(0,0,0,0.5);`;
   const grooveRows = Array.from({length: 18}).map((_,i) => {
     const r = (110 * (0.96 - i * 0.025)).toFixed(1);
@@ -883,12 +947,34 @@ function Welcome() {
   function setMuted(val) {
     muted = val;
     speakerBtn.innerHTML = muted ? Icons.speakerOff : Icons.speakerOn;
-    speakerBtn.setAttribute('aria-label', muted ? 'Unmute' : 'Mute');
+    speakerBtn.setAttribute('aria-label', muted ? 'Play' : 'Mute');
     disc.style.animationPlayState = muted ? 'paused' : 'running';
     arm.style.transform = `translateY(-50%) rotate(${muted ? 75 : 110}deg)`;
     arcSvg.style.opacity = muted ? '0' : '1';
     glow.style.opacity = muted ? '0.55' : '1';
-    if (muted) startTime = null;
+    if (muted) { startTime = null; }
+
+    /* Spotify mini-player */
+    if (!muted && epSpId) {
+      if (!spEl) {
+        // First unmute → create the iframe player
+        spEl = document.createElement('div');
+        spEl.className = 'sp-player';
+        const iframe = document.createElement('iframe');
+        iframe.src = `https://open.spotify.com/embed/episode/${epSpId}?utm_source=generator&theme=0&autoplay=1`;
+        iframe.width = '100%';
+        iframe.height = '152';
+        iframe.setAttribute('frameborder', '0');
+        iframe.setAttribute('allow', 'autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture');
+        iframe.setAttribute('loading', 'lazy');
+        spEl.appendChild(iframe);
+        el.appendChild(spEl);
+      }
+      // Animate in (double rAF to ensure paint before transition)
+      requestAnimationFrame(() => requestAnimationFrame(() => spEl.classList.add('visible')));
+    } else if (muted && spEl) {
+      spEl.classList.remove('visible');
+    }
   }
 
   /* RAF loop for progress */
@@ -906,7 +992,6 @@ function Welcome() {
   speakerBtn.addEventListener('click', () => {
     setMuted(!muted);
     hidePopup();
-    if (audio) audio.muted = muted;
   });
 
   /* Gesture handling */
@@ -961,8 +1046,11 @@ function Reel() {
   const cardRegistry = new Map(); // id -> { setActive }
 
   function createCard(item) {
-    const { ep, clipTitle, id } = item;
+    const { ep, clipTitle, id, clipYtUrl } = item;
     let paused = false;
+    let ytIframe = null;
+    // prefer the short-clip URL; fall back to full-episode URL
+    const videoId = ytVideoId(clipYtUrl) || ytVideoId(ep?.youtube_url);
 
     const card = document.createElement('div');
     card.className = `reel-card ${ep.thumbnail_url ? '' : thumbBg(ep.no)}`;
@@ -1063,8 +1151,27 @@ function Reel() {
 
     cardRegistry.set(id, {
       setActive(active) {
-        if (active && !paused) restartProgress();
-        else stopProgress();
+        if (active) {
+          if (!paused) restartProgress();
+          /* Inject YouTube iframe (muted autoplay – works in all browsers) */
+          if (videoId && !ytIframe) {
+            ytIframe = document.createElement('iframe');
+            ytIframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&controls=0&rel=0&modestbranding=1&playsinline=1&loop=1&playlist=${videoId}`;
+            ytIframe.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;border:none;pointer-events:none;';
+            ytIframe.setAttribute('allow', 'autoplay; encrypted-media; fullscreen');
+            ytIframe.setAttribute('allowfullscreen', '');
+            /* Insert after bg placeholder, before the gradient scrim (children[1]) */
+            if (card.children.length > 1) {
+              card.insertBefore(ytIframe, card.children[1]);
+            } else {
+              card.appendChild(ytIframe);
+            }
+          }
+        } else {
+          stopProgress();
+          /* Remove iframe to stop buffering when card is off-screen */
+          if (ytIframe) { ytIframe.remove(); ytIframe = null; }
+        }
       },
     });
 
@@ -1166,7 +1273,7 @@ function Library() {
   gridWrap.className = 'no-scrollbar';
   gridWrap.style.cssText = 'flex:1;overflow-y:auto;padding:4px 20px 40px;';
   const grid = document.createElement('div');
-  grid.style.cssText = 'display:grid;grid-template-columns:1fr 1fr;gap:16px;';
+  grid.className = 'episode-grid';
   gridWrap.appendChild(grid);
   el.appendChild(gridWrap);
 
