@@ -1,26 +1,1450 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>TigPods — Coming Soon</title>
-<link rel="icon" type="image/png" href="/public/assets/logo-theintgen.png"/>
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@300;400&display=swap" rel="stylesheet"/>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>TigPods · Chennai Podcast</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800;12..96,900&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-  :root { --navy:#1A0A3C; --yellow:#FFD600; --white:#FFFFFF; }
-  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
-  body{font-family:'DM Sans',sans-serif;background:var(--navy);color:var(--white);min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:2rem;}
-  .eyebrow{font-family:'Syne',sans-serif;font-size:0.65rem;font-weight:700;letter-spacing:0.25em;text-transform:uppercase;color:var(--yellow);margin-bottom:1.5rem;}
-  h1{font-family:'Syne',sans-serif;font-size:clamp(3rem,10vw,7rem);font-weight:800;line-height:0.95;letter-spacing:-0.03em;margin-bottom:1.5rem;}
-  p{font-size:1rem;font-weight:300;color:rgba(255,255,255,0.5);max-width:400px;line-height:1.7;margin-bottom:2.5rem;}
-  a{display:inline-block;padding:10px 22px;border:1px solid rgba(255,255,255,0.2);color:rgba(255,255,255,0.6);font-family:'Syne',sans-serif;font-size:0.75rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;text-decoration:none;border-radius:8px;transition:border-color 0.2s,color 0.2s;}
-  a:hover{border-color:var(--yellow);color:var(--yellow);}
+/* ============================================================
+   DESIGN TOKENS
+   ============================================================ */
+:root {
+  --bg: #0a0a0a;
+  --bg-elev: #161616;
+  --bg-card: #1a1a1a;
+  --line: rgba(255,255,255,0.08);
+  --line-2: rgba(255,255,255,0.18);
+  --fg: #f5f5f5;
+  --fg-muted: rgba(245,245,245,0.62);
+  --fg-dim: rgba(245,245,245,0.38);
+  --green: #1DB954;
+  --green-dim: rgba(29,185,84,0.18);
+  --display: "Bricolage Grotesque", "Space Grotesk", system-ui, sans-serif;
+  --body: "Space Grotesk", system-ui, sans-serif;
+}
+
+/* ============================================================
+   BASE
+   ============================================================ */
+*, *::before, *::after { box-sizing: border-box; -webkit-font-smoothing: antialiased; }
+html, body { margin: 0; padding: 0; height: 100%; }
+body {
+  background: #06060a;
+  color: var(--fg);
+  font-family: var(--body);
+  overflow: hidden;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+button, a {
+  font: inherit;
+  background: none;
+  border: none;
+  color: inherit;
+  cursor: pointer;
+  padding: 0;
+  text-decoration: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* ============================================================
+   STAGE + PHONE FRAME
+   ============================================================ */
+.stage {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background:
+    radial-gradient(ellipse 60% 50% at 50% 40%, rgba(29,185,84,0.06) 0%, transparent 70%),
+    #06060a;
+  padding: 20px;
+}
+.phone {
+  width: 393px;
+  height: min(852px, calc(100vh - 40px));
+  border-radius: 48px;
+  background: #000;
+  padding: 9px;
+  position: relative;
+  box-shadow:
+    0 30px 80px rgba(0,0,0,0.7),
+    inset 0 0 0 1px rgba(255,255,255,0.05),
+    0 0 0 11px #0d0d0d,
+    0 0 0 13px rgba(255,255,255,0.04);
+  flex-shrink: 0;
+}
+.phone-screen {
+  width: 100%;
+  height: 100%;
+  border-radius: 40px;
+  background: var(--bg);
+  overflow: hidden;
+  position: relative;
+  isolation: isolate;
+}
+.phone-notch {
+  position: absolute;
+  top: 14px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 110px;
+  height: 30px;
+  background: #000;
+  border-radius: 18px;
+  z-index: 100;
+  pointer-events: none;
+}
+@media (max-width: 480px) {
+  .stage { padding: 0; background: #000; }
+  .phone { width: 100vw; height: 100vh; border-radius: 0; padding: 0; box-shadow: none; }
+  .phone-screen { border-radius: 0; }
+  .phone-notch { display: none; }
+}
+
+/* ============================================================
+   STATUS BAR
+   ============================================================ */
+.status-bar {
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 32px 0;
+  font-size: 15px;
+  font-weight: 600;
+  font-family: var(--display);
+  letter-spacing: 0.3px;
+  z-index: 50;
+  pointer-events: none;
+  color: #fff;
+}
+
+/* ============================================================
+   SHARED COMPONENTS
+   ============================================================ */
+.screen {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  padding-top: 50px;
+}
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.08);
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--fg);
+  white-space: nowrap;
+  font-family: var(--body);
+  border: 1px solid var(--line);
+}
+.pill.green {
+  color: var(--green);
+  background: var(--green-dim);
+  border-color: rgba(29,185,84,0.35);
+}
+.pill.solid-green {
+  background: var(--green);
+  color: #000;
+  font-weight: 600;
+  border-color: var(--green);
+}
+.icon-btn {
+  width: 44px; height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  color: var(--fg);
+}
+.back-btn {
+  position: absolute;
+  top: 56px; left: 12px;
+  width: 40px; height: 40px;
+  border-radius: 999px;
+  background: rgba(20,20,20,0.55);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--line);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 30;
+  color: var(--fg);
+}
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { scrollbar-width: none; }
+.clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.hrow {
+  display: flex;
+  gap: 10px;
+  overflow-x: auto;
+  scroll-snap-type: x proximity;
+  scroll-padding-left: 16px;
+  padding-left: 16px;
+  padding-right: 16px;
+}
+.hrow > * { flex-shrink: 0; scroll-snap-align: start; }
+
+/* ============================================================
+   ANIMATIONS
+   ============================================================ */
+@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+@keyframes screenIn {
+  from { transform: translateY(12px); opacity: 0.92; }
+  to   { transform: translateY(0);    opacity: 1; }
+}
+.screen-enter { animation: screenIn 280ms ease-out both; }
+
+@keyframes nudgeUp {
+  0%, 100% { transform: translateY(0); opacity: 0.65; }
+  50%       { transform: translateY(-4px); opacity: 1; }
+}
+.nudge { animation: nudgeUp 1.6s ease-in-out infinite; }
+
+@keyframes popUp {
+  from { transform: translateX(-50%) translateY(8px) scale(0.96); opacity: 0; }
+  to   { transform: translateX(-50%) translateY(0) scale(1); opacity: 1; }
+}
+@keyframes popDown {
+  to { transform: translateX(-50%) translateY(8px) scale(0.96); opacity: 0; }
+}
+@keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.35; } }
+
+/* ============================================================
+   WELCOME SCREEN
+   ============================================================ */
+.welcome-popup {
+  position: absolute;
+  top: 78px; left: 50%;
+  transform: translateX(-50%);
+  background: rgba(20,20,20,0.92);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--line-2);
+  padding: 10px 14px;
+  border-radius: 999px;
+  font-size: 12.5px;
+  color: var(--fg);
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  animation: popUp 400ms ease-out 200ms both;
+  white-space: nowrap;
+  pointer-events: auto;
+}
+.welcome-popup .pulse-dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--green);
+  box-shadow: 0 0 8px var(--green);
+  animation: blink 1.6s ease-in-out infinite;
+  flex-shrink: 0;
+}
+.welcome-popup.dismissed { animation: popDown 240ms ease-in forwards; }
+
+/* ============================================================
+   WELCOME — HINT CHIPS
+   ============================================================ */
+@keyframes nudgeRight {
+  0%, 100% { transform: translateX(0); opacity: 0.65; }
+  50%       { transform: translateX(4px); opacity: 1; }
+}
+.nudge-right { animation: nudgeRight 1.6s ease-in-out infinite; display: inline-flex; }
+
+.hint-chip {
+  position: absolute;
+  z-index: 12;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  background: rgba(20,20,20,0.78);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--line-2);
+  border-radius: 999px;
+  color: var(--fg);
+  font-size: 11px;
+  font-weight: 500;
+  white-space: nowrap;
+  cursor: pointer;
+}
+.hint-chip-arrow {
+  width: 18px; height: 18px;
+  border-radius: 999px;
+  background: var(--green-dim);
+  color: var(--green);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.hint-chip-up {
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%);
+  border-color: rgba(29,185,84,0.45);
+  box-shadow: 0 6px 18px rgba(0,0,0,0.45), 0 0 18px rgba(29,185,84,0.14);
+}
+.hint-chip-right {
+  top: 50%;
+  right: 12px;
+  transform: translateY(-50%);
+  font-size: 10.5px;
+  padding: 6px 8px 6px 10px;
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+}
+.hint-chip-right .hint-chip-arrow { writing-mode: horizontal-tb; }
+
+/* ============================================================
+   WELCOME — NOW-PLAYING CHIP
+   ============================================================ */
+.nowplaying {
+  width: 100%; max-width: 340px;
+  display: flex; align-items: center; gap: 10px;
+  padding: 8px 10px 8px 12px;
+  background: rgba(20,20,20,0.78);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+}
+.nowplaying-dot {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: var(--green);
+  box-shadow: 0 0 8px rgba(29,185,84,0.7);
+  flex-shrink: 0;
+  animation: blink 1.6s ease-in-out infinite;
+}
+.nowplaying-meta {
+  flex: 1; min-width: 0;
+  display: flex; flex-direction: column; gap: 2px;
+}
+.nowplaying-label {
+  font-size: 10px; letter-spacing: 0.04em;
+  text-transform: uppercase; line-height: 1;
+}
+.nowplaying-title {
+  font-size: 12px; line-height: 1.25;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  color: var(--fg);
+}
+.nowplaying-yt {
+  flex-shrink: 0; display: inline-flex;
+  align-items: center; justify-content: center;
+  width: 32px; height: 32px; border-radius: 8px;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid var(--line);
+  color: var(--fg); text-decoration: none;
+  transition: background 200ms ease;
+}
+.nowplaying-yt:hover { background: rgba(255,255,255,0.12); }
+
+/* ============================================================
+   REEL SCREEN
+   ============================================================ */
+.reel-feed {
+  position: absolute;
+  inset: 0;
+  overflow-y: scroll;
+  scroll-snap-type: y mandatory;
+  scrollbar-width: none;
+}
+.reel-feed::-webkit-scrollbar { display: none; }
+.reel-card {
+  scroll-snap-align: start;
+  width: 100%; height: 100%;
+  position: relative;
+  overflow: hidden;
+}
+.thumb-bg   { background: linear-gradient(135deg, rgba(29,185,84,0.18), rgba(29,185,84,0.04) 60%, rgba(255,255,255,0.04)), #1a1a1a; }
+.thumb-bg-2 { background: linear-gradient(135deg, rgba(255,255,255,0.18), rgba(255,255,255,0.04) 60%, rgba(29,185,84,0.08)), #1a1a1a; }
+.thumb-bg-3 { background: linear-gradient(135deg, rgba(255,200,100,0.12), rgba(29,185,84,0.06) 60%, rgba(255,255,255,0.04)), #1a1a1a; }
+.thumb-bg-4 { background: linear-gradient(135deg, rgba(150,100,255,0.18), rgba(29,185,84,0.06) 60%, rgba(255,255,255,0.04)), #1a1a1a; }
+
+/* ============================================================
+   LIBRARY SCREEN
+   ============================================================ */
+.search-input {
+  width: 100%;
+  background: var(--bg-card);
+  border: 1px solid var(--line);
+  color: var(--fg);
+  font-family: var(--body);
+  font-size: 15px;
+  padding: 12px 14px 12px 42px;
+  border-radius: 14px;
+  outline: none;
+  transition: border-color 200ms;
+}
+.search-input::placeholder { color: var(--fg-dim); }
+.search-input:focus { border-color: var(--green); }
+
+/* ============================================================
+   WIKI SCREEN
+   ============================================================ */
+.bw-fade {
+  filter: grayscale(1) contrast(1.05) brightness(0.85);
+  mask-image: linear-gradient(180deg, #000 35%, rgba(0,0,0,0.85) 60%, transparent 100%);
+  -webkit-mask-image: linear-gradient(180deg, #000 35%, rgba(0,0,0,0.85) 60%, transparent 100%);
+}
 </style>
 </head>
 <body>
-  <p class="eyebrow">The Internet Generation</p>
-  <h1>TigPods</h1>
-  <p>Chennai's podcast for creative professionals. 2 seasons, 30+ episodes. Coming to the web soon.</p>
-  <a href="/">← Back to TIG</a>
+<div class="stage">
+  <div class="phone" id="phone">
+    <div class="phone-notch"></div>
+    <div class="phone-screen" id="screen-root"></div>
+  </div>
+</div>
+
+<script>
+'use strict';
+
+/* ============================================================
+   SUPABASE
+   ============================================================ */
+const SB_URL = 'https://gdhpohaopwcsvqyxjvfw.supabase.co';
+const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdkaHBvaGFvcHdjc3ZxeXhqdmZ3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk4NzQ3MDksImV4cCI6MjA5NTQ1MDcwOX0.tRf1FrjM7BCZO-x_qjsWZQjBBVdl_nSKNqoIOC-TGZc';
+const SB_HEADERS = { apikey: SB_KEY, Authorization: `Bearer ${SB_KEY}` };
+
+/* Live data — populated by loadData() before first render */
+let EPISODES   = [];
+let WIKI_DATA  = {};
+let SHORTS_SEED = [];
+
+async function loadData() {
+  const [eps, shorts] = await Promise.all([
+    fetch(`${SB_URL}/rest/v1/tigpods_episodes?select=*&order=no`, { headers: SB_HEADERS }).then(r => r.json()),
+    fetch(`${SB_URL}/rest/v1/tigpods_shorts?select=*&order=episode_no,sort_order`, { headers: SB_HEADERS }).then(r => r.json()),
+  ]);
+
+  EPISODES = eps;
+
+  eps.forEach(ep => {
+    const epShorts = shorts.filter(s => s.episode_no === ep.no);
+    if (ep.topics?.length || ep.quote || epShorts.length) {
+      WIKI_DATA[ep.no] = {
+        topics: ep.topics || [],
+        quote:  ep.quote  || '',
+        shorts: epShorts.map(s => ({ title: s.title, dur: s.duration || '', youtube_url: s.youtube_url || null })),
+      };
+    }
+  });
+
+  /* Build reel shorts pool from DB shorts (with title as clip title) */
+  if (shorts.length > 0) {
+    SHORTS_SEED = shorts.map(s => ({ ep: s.episode_no, clipTitle: s.title, youtube_url: s.youtube_url || null }));
+  } else {
+    /* Fallback if DB has no shorts yet */
+    SHORTS_SEED = [
+      { ep: 10, clipTitle: "Ungomma, engomma, ungakka..." },
+      { ep: 10, clipTitle: "Dating 101 in Chennai" },
+      { ep: 16, clipTitle: "Imposter syndrome after Bigg Boss" },
+      { ep: 16, clipTitle: "Why most lyricists burn out" },
+      { ep: 14, clipTitle: "Spot editing in Petta" },
+      { ep: 14, clipTitle: "Editor paribandangal" },
+      { ep: 14, clipTitle: "The clapboard is useless?!" },
+      { ep: 14, clipTitle: "Working with Thalaivar" },
+      { ep: 12, clipTitle: "RJ-ka epovume pesite irrupanga" },
+      { ep: 12, clipTitle: "Reading the silence on radio" },
+      { ep: 17, clipTitle: "How I got viral by accident" },
+      { ep: 17, clipTitle: "The reel-to-stage transition" },
+      { ep: 4,  clipTitle: "Attention spans, gone" },
+      { ep: 6,  clipTitle: "Inside the songwriter's process" },
+      { ep: 15, clipTitle: "What makes an ad land" },
+      { ep: 19, clipTitle: "Deconstructing a punchline" },
+    ];
+  }
+}
+
+/* ============================================================
+   UTILITIES
+   ============================================================ */
+function initials(name) {
+  return name.trim().split(/\s+/).slice(0, 2).map(s => s[0]).join('').toUpperCase();
+}
+
+function thumbBg(no) {
+  return ['thumb-bg','thumb-bg-2','thumb-bg-3','thumb-bg-4'][no % 4];
+}
+
+function defaultWiki(ep) {
+  const art = /^[aeiou]/i.test(ep.cat) ? 'n' : '';
+  return {
+    topics: [
+      `Origins · how ${ep.guest.split(' ')[0]} got started`,
+      `The craft of being a${art} ${ep.cat.toLowerCase()}`,
+      "Working in Chennai's creative scene",
+      "What's next",
+    ],
+    quote: "This conversation hasn't been transcribed yet — drop us the highlight reel and we'll pull the pull-quote.",
+    shorts: [
+      { title: "Highlight clip 1", dur: "0:55" },
+      { title: "Highlight clip 2", dur: "1:04" },
+      { title: "Highlight clip 3", dur: "0:48" },
+    ],
+  };
+}
+
+function shuffleArray(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function buildShortsPool() {
+  return SHORTS_SEED.map((s, i) => ({
+    id: i,
+    ep: EPISODES.find(e => e.no === s.ep),
+    clipTitle: s.clipTitle,
+  }));
+}
+
+/* Tags for library filtering */
+function tagsFor(ep) {
+  const t = [];
+  const c = (ep.cat || '').toLowerCase();
+  const g = (ep.guest || '').toLowerCase();
+  const ti = (ep.title || '').toLowerCase();
+  if (c.includes('editor'))                            t.push('Editing', 'Tamil cinema');
+  if (c.includes('art director') || c.includes('costume')) t.push('Tamil cinema', 'Filmmaking');
+  if (c.includes('actor') || c.includes('lyricist'))  t.push('Acting', 'Tamil cinema');
+  if (c.includes('singer') || c.includes('musician')) t.push('Music');
+  if (c.includes('rj'))                               t.push('Radio', 'Storytelling');
+  if (c.includes('comedian'))                         t.push('Comedy', 'Content creation');
+  if (c.includes('content'))                          t.push('Content creation');
+  if (c.includes('creative director'))                t.push('Advertising');
+  if (c.includes('engineer') || c.includes('google')) t.push('Tech');
+  if (c.includes('metaverse'))                        t.push('Tech');
+  if (c.includes('tattoo'))                           t.push('Art');
+  if (c.includes('agency'))                           t.push('Business', 'Chennai');
+  if (c.includes('entrepreneur'))                     t.push('Business');
+  if (c.includes('distiller'))                        t.push('Business');
+  if (c.includes('screenwriter') || c.includes('writer')) t.push('Tamil cinema', 'Writing');
+  if (ti.includes('bigg boss'))                       t.push('Bigg Boss');
+  if (g.includes('vikkals') || ti.includes('viral'))  t.push('Comedy');
+  return [...new Set(t)];
+}
+
+const SUGGESTED_TAGS = ['Tamil cinema','Comedy','Content creation','Bigg Boss','Editing','Music','Tech','Business','Acting','Radio'];
+
+/* ============================================================
+   SVG ICONS
+   ============================================================ */
+const Icons = {
+  speakerOn: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 9v6h3l5 4V5L8 9H5z"/><path d="M16 8a5 5 0 0 1 0 8" opacity="0.9"/><path d="M18.5 5.5a8.5 8.5 0 0 1 0 13" opacity="0.55"/></svg>`,
+  speakerOff: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 9v6h3l5 4V5L8 9H5z"/><path d="M16 9l5 6M21 9l-5 6"/></svg>`,
+  arrowUp: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg>`,
+  arrowRight: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>`,
+  arrowLeft: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>`,
+  search: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>`,
+  close: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg>`,
+  closeL: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg>`,
+  spotify: `<svg width="20" height="20" viewBox="0 0 24 24" fill="#1DB954"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm4.6 14.4a.62.62 0 0 1-.86.21c-2.36-1.44-5.32-1.76-8.82-.96a.63.63 0 0 1-.28-1.22c3.82-.87 7.1-.5 9.74 1.12.3.18.4.56.22.85zm1.23-2.74a.78.78 0 0 1-1.07.26c-2.7-1.66-6.82-2.14-10.02-1.17a.78.78 0 1 1-.45-1.5c3.66-1.1 8.2-.57 11.3 1.33.37.23.49.71.24 1.08zm.1-2.85c-3.24-1.92-8.58-2.1-11.68-1.16a.94.94 0 1 1-.55-1.8c3.56-1.07 9.45-.86 13.16 1.34a.94.94 0 0 1-.96 1.62z"/></svg>`,
+  spotifyBlack: `<svg width="20" height="20" viewBox="0 0 24 24" fill="#000"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm4.6 14.4a.62.62 0 0 1-.86.21c-2.36-1.44-5.32-1.76-8.82-.96a.63.63 0 0 1-.28-1.22c3.82-.87 7.1-.5 9.74 1.12.3.18.4.56.22.85zm1.23-2.74a.78.78 0 0 1-1.07.26c-2.7-1.66-6.82-2.14-10.02-1.17a.78.78 0 1 1-.45-1.5c3.66-1.1 8.2-.57 11.3 1.33.37.23.49.71.24 1.08zm.1-2.85c-3.24-1.92-8.58-2.1-11.68-1.16a.94.94 0 1 1-.55-1.8c3.56-1.07 9.45-.86 13.16 1.34a.94.94 0 0 1-.96 1.62z"/></svg>`,
+  youtube: `<svg width="22" height="22" viewBox="0 0 24 24"><path fill="rgba(255,255,255,0.95)" d="M23 7.2c-.3-1.1-1.1-1.9-2.2-2.2C18.7 4.4 12 4.4 12 4.4s-6.7 0-8.8.6C2.1 5.3 1.3 6.1 1 7.2.4 9.3.4 12 .4 12s0 2.7.6 4.8c.3 1.1 1.1 1.9 2.2 2.2 2.1.6 8.8.6 8.8.6s6.7 0 8.8-.6c1.1-.3 1.9-1.1 2.2-2.2.6-2.1.6-4.8.6-4.8s0-2.7-.6-4.8zM9.8 15.6V8.4l5.9 3.6-5.9 3.6z"/></svg>`,
+  share: `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v7a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-7M16 6l-4-4-4 4M12 2v14"/></svg>`,
+  play: `<svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5l12 7-12 7V5z"/></svg>`,
+};
+
+/* ============================================================
+   SHARED DOM HELPERS
+   ============================================================ */
+function statusBarEl() {
+  const el = document.createElement('div');
+  el.className = 'status-bar';
+  el.innerHTML = `
+    <span>9:41</span>
+    <span style="display:inline-flex;align-items:center;gap:6px;font-size:13px">
+      <svg width="16" height="11" viewBox="0 0 16 11"><path d="M1 8h2v2H1zm4-2h2v4H5zm4-3h2v7H9zm4-3h2v10h-2z" fill="currentColor"/></svg>
+      <svg width="22" height="11" viewBox="0 0 22 11" fill="none" stroke="currentColor" stroke-width="1"><rect x="1" y="1" width="17" height="9" rx="2.5"/><rect x="19" y="3.5" width="1.5" height="4" rx="0.5" fill="currentColor"/><rect x="2.5" y="2.5" width="13" height="6" rx="1.2" fill="currentColor"/></svg>
+    </span>
+  `;
+  return el;
+}
+
+function backBtnEl(onClick) {
+  const btn = document.createElement('button');
+  btn.className = 'back-btn';
+  btn.innerHTML = Icons.arrowLeft;
+  btn.setAttribute('aria-label', 'Back');
+  btn.addEventListener('click', onClick);
+  return btn;
+}
+
+function logoEl(size = 26, withWordmark = true) {
+  const wrap = document.createElement('div');
+  wrap.style.cssText = 'display:inline-flex;align-items:center;gap:8px;';
+  const iconSize = size;
+  wrap.innerHTML = `
+    <svg width="${iconSize}" height="${iconSize}" viewBox="0 0 32 32" style="flex-shrink:0">
+      <circle cx="16" cy="16" r="14.5" fill="none" stroke="currentColor" stroke-width="1.2" opacity="0.4"/>
+      <circle cx="16" cy="16" r="10"   fill="none" stroke="currentColor" stroke-width="1.2" opacity="0.55"/>
+      <circle cx="16" cy="16" r="5.5"  fill="none" stroke="currentColor" stroke-width="1.4" opacity="0.8"/>
+      <circle cx="16" cy="16" r="2.4"  fill="#1DB954"/>
+    </svg>
+    ${withWordmark ? `<span style="font-family:var(--display);font-size:${Math.round(iconSize*0.62)}px;font-weight:800;letter-spacing:-0.02em;color:var(--fg)">tigpods</span>` : ''}
+  `;
+  return wrap;
+}
+
+/* ============================================================
+   ROUTER
+   ============================================================ */
+let currentCleanup = null;
+const root = document.getElementById('screen-root');
+
+function navigate(screenFn, params = {}) {
+  if (currentCleanup) { currentCleanup(); currentCleanup = null; }
+  root.innerHTML = '';
+  const { el, cleanup } = screenFn(params);
+  root.appendChild(el);
+  currentCleanup = cleanup || null;
+}
+
+/* ============================================================
+   SCREEN: WELCOME
+   ============================================================ */
+function Welcome() {
+  let muted = false;
+  let showPopup = true;
+  let progress = 0;
+  let rafId = null;
+  let startTime = null;
+  let popupDismissTimer = null;
+
+  // Pick a random episode for the now-playing chip
+  const eps = (EPISODES || []).filter(e => e.no > 0);
+  const currentEp = eps.length ? eps[Math.floor(Math.random() * eps.length)] : null;
+  const ytUrl = currentEp
+    ? (currentEp.youtube_url || 'https://www.youtube.com/results?search_query=' + encodeURIComponent(`tigpods ${currentEp.guest} ${currentEp.title}`))
+    : 'https://www.youtube.com/@TigPods';
+
+  /* ----- Root element ----- */
+  const el = document.createElement('div');
+  el.className = 'screen screen-enter';
+
+  /* Status bar */
+  el.appendChild(statusBarEl());
+
+  /* Audio (hookpoint) */
+  const audio = document.createElement('audio');
+  audio.loop = true; audio.preload = 'none'; audio.style.display = 'none';
+  el.appendChild(audio);
+
+  /* Ambient glow behind the player */
+  const glow = document.createElement('div');
+  glow.style.cssText = 'position:absolute;top:38%;left:50%;transform:translate(-50%,-50%);width:460px;height:460px;border-radius:50%;background:radial-gradient(circle,rgba(29,185,84,0.10) 0%,rgba(29,185,84,0.04) 35%,transparent 70%);filter:blur(10px);pointer-events:none;opacity:1;transition:opacity 500ms ease;';
+  el.appendChild(glow);
+
+  /* Header: logo → Spotify + speaker */
+  const header = document.createElement('div');
+  header.style.cssText = 'position:absolute;top:56px;left:0;right:0;padding:0 20px;display:flex;align-items:center;justify-content:space-between;z-index:10;';
+
+  const logoLink = document.createElement('a');
+  logoLink.href = 'https://open.spotify.com/show/24ft92ZKYHNniM2onRhckB';
+  logoLink.target = '_blank'; logoLink.rel = 'noopener noreferrer';
+  logoLink.style.cssText = 'text-decoration:none;display:inline-flex;align-items:center;';
+  logoLink.setAttribute('aria-label', 'Open TigPods on Spotify');
+  logoLink.appendChild(logoEl(26, true));
+
+  const speakerBtn = document.createElement('button');
+  speakerBtn.className = 'icon-btn';
+  speakerBtn.style.cssText = 'width:36px;height:36px;background:rgba(255,255,255,0.06);border:1px solid var(--line);';
+  speakerBtn.setAttribute('aria-label', 'Mute');
+  speakerBtn.innerHTML = Icons.speakerOn;
+
+  header.appendChild(logoLink);
+  header.appendChild(speakerBtn);
+  el.appendChild(header);
+
+  /* Popup */
+  const popup = document.createElement('div');
+  popup.className = 'welcome-popup';
+  popup.innerHTML = `<span class="pulse-dot"></span><span>Audio playing — tap ${Icons.speakerOff} to mute</span>`;
+  const dismissBtn = document.createElement('button');
+  dismissBtn.innerHTML = Icons.close;
+  dismissBtn.style.cssText = 'color:var(--fg-dim);display:inline-flex;padding:2px;';
+  dismissBtn.setAttribute('aria-label', 'Dismiss');
+  popup.appendChild(dismissBtn);
+  el.appendChild(popup);
+
+  function hidePopup() {
+    if (!showPopup) return;
+    showPopup = false;
+    popup.classList.add('dismissed');
+    setTimeout(() => { if (popup.parentNode) popup.remove(); }, 250);
+  }
+  dismissBtn.addEventListener('click', hidePopup);
+  popupDismissTimer = setTimeout(hidePopup, 6500);
+
+  /* Hero block — space-between: wordmark / turntable / nowplaying */
+  const hero = document.createElement('div');
+  hero.style.cssText = 'position:absolute;top:110px;bottom:150px;left:0;right:0;display:flex;flex-direction:column;align-items:center;justify-content:space-between;z-index:2;';
+
+  /* Eyebrow + wordmark */
+  const headBlock = document.createElement('div');
+  headBlock.style.cssText = 'text-align:center;';
+  headBlock.innerHTML = `
+    <div style="font-family:var(--body);font-size:11px;color:var(--fg-dim);letter-spacing:0.22em;text-transform:uppercase;">welcome to</div>
+    <div style="font-family:var(--display);font-size:40px;font-weight:800;letter-spacing:-0.035em;line-height:1;margin-top:8px;">tigpods</div>
+  `;
+  hero.appendChild(headBlock);
+
+  /* Turntable area */
+  const turntable = document.createElement('div');
+  turntable.style.cssText = 'position:relative;width:260px;height:260px;display:flex;align-items:center;justify-content:center;cursor:pointer;';
+  turntable.addEventListener('click', hidePopup);
+
+  /* Vinyl disc */
+  const disc = document.createElement('div');
+  disc.style.cssText = `width:220px;height:220px;border-radius:50%;position:relative;
+    background:radial-gradient(circle at 50% 50%,#0a0a0a 0%,#0a0a0a 18%,#1f1f1f 19%,#0e0e0e 40%,#1a1a1a 60%,#0e0e0e 78%,#1a1a1a 92%,#0a0a0a 100%);
+    animation:spin 9s linear infinite;animation-play-state:running;
+    box-shadow:inset 0 0 0 1px rgba(255,255,255,0.04),inset 0 0 30px rgba(0,0,0,0.6),0 18px 50px rgba(0,0,0,0.65),0 4px 12px rgba(0,0,0,0.5);`;
+  const grooveRows = Array.from({length: 18}).map((_,i) => {
+    const r = (110 * (0.96 - i * 0.025)).toFixed(1);
+    if (parseFloat(r) < 50) return '';
+    const op = (0.025 + (i % 3 === 0 ? 0.015 : 0)).toFixed(3);
+    return `<circle cx="110" cy="110" r="${r}" fill="none" stroke="rgba(255,255,255,${op})" stroke-width="0.6"/>`;
+  }).join('');
+  disc.innerHTML = `
+    <svg width="220" height="220" viewBox="0 0 220 220" style="position:absolute;inset:0;pointer-events:none;">
+      <defs>
+        <linearGradient id="vinylShine" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="rgba(255,255,255,0.12)"/>
+          <stop offset="40%" stop-color="rgba(255,255,255,0)"/>
+          <stop offset="65%" stop-color="rgba(255,255,255,0)"/>
+          <stop offset="100%" stop-color="rgba(29,185,84,0.08)"/>
+        </linearGradient>
+        <mask id="discMask">
+          <circle cx="110" cy="110" r="109" fill="#fff"/>
+          <circle cx="110" cy="110" r="46" fill="#000"/>
+        </mask>
+      </defs>
+      ${grooveRows}
+      <circle cx="110" cy="110" r="109" fill="url(#vinylShine)" mask="url(#discMask)"/>
+    </svg>
+    <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:92px;height:92px;border-radius:50%;overflow:hidden;box-shadow:0 0 0 1px rgba(0,0,0,0.4),inset 0 0 0 2px rgba(255,255,255,0.06);">
+      <div style="width:100%;height:100%;background:linear-gradient(140deg,#1DB954 0%,#0f6e30 100%);display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:var(--display);font-weight:900;font-size:12px;color:#000;letter-spacing:0.05em;line-height:1.2;">
+        <span>TIG</span><span style="opacity:0.7;font-size:8px;">·</span><span>PODS</span>
+      </div>
+      <div style="position:absolute;inset:0;border-radius:50%;background:radial-gradient(circle at 30% 25%,rgba(255,255,255,0.15) 0%,transparent 35%);pointer-events:none;"></div>
+    </div>
+    <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:5px;height:5px;border-radius:50%;background:#000;box-shadow:inset 0 0 2px rgba(255,255,255,0.4),0 0 0 1px rgba(255,255,255,0.06);"></div>
+  `;
+  turntable.appendChild(disc);
+
+  /* Playhead arc SVG */
+  const arcSvg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+  arcSvg.setAttribute('width', '260'); arcSvg.setAttribute('height', '260');
+  arcSvg.setAttribute('viewBox', '0 0 260 260');
+  arcSvg.style.cssText = 'position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);transition:opacity 360ms ease;pointer-events:none;overflow:visible;';
+
+  const arcTrack = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+  arcTrack.setAttribute('cx','130'); arcTrack.setAttribute('cy','130'); arcTrack.setAttribute('r','122');
+  arcTrack.setAttribute('fill','none'); arcTrack.setAttribute('stroke','rgba(255,255,255,0.06)'); arcTrack.setAttribute('stroke-width','2');
+  arcSvg.appendChild(arcTrack);
+
+  const arcPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+  arcPath.setAttribute('fill','none'); arcPath.setAttribute('stroke','var(--green)');
+  arcPath.setAttribute('stroke-width','3'); arcPath.setAttribute('stroke-linecap','round');
+  arcPath.style.filter = 'drop-shadow(0 0 6px rgba(29,185,84,0.55))';
+  arcSvg.appendChild(arcPath);
+
+  const arcDot = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+  arcDot.setAttribute('r','5'); arcDot.setAttribute('fill','var(--green)');
+  arcDot.style.filter = 'drop-shadow(0 0 8px rgba(29,185,84,0.9))';
+  arcSvg.appendChild(arcDot);
+  turntable.appendChild(arcSvg);
+
+  /* Tonearm */
+  const SC = 220 / 280;
+  const armLen = 200 * SC, headLen = 36 * SC;
+  const pivX = 158 * SC, pivY = -88 * SC;
+
+  const tonearmWrap = document.createElement('div');
+  tonearmWrap.style.cssText = `position:absolute;top:50%;left:50%;transform:translate(${pivX}px,${pivY}px);width:0;height:0;pointer-events:none;z-index:5;`;
+
+  const arm = document.createElement('div');
+  arm.style.cssText = `position:absolute;top:0;left:0;width:${armLen}px;height:8px;transform-origin:0% 50%;transform:translateY(-50%) rotate(110deg);transition:transform 900ms cubic-bezier(0.65,0,0.35,1);`;
+
+  const cw = document.createElement('div');
+  cw.style.cssText = 'position:absolute;left:-16px;top:-7px;width:22px;height:22px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#4a443a 0%,#1f1c17 100%);box-shadow:inset 0 -2px 3px rgba(0,0,0,0.6),inset 0 1px 1px rgba(255,255,255,0.15),0 2px 4px rgba(0,0,0,0.5);z-index:3;';
+  arm.appendChild(cw);
+
+  const tube = document.createElement('div');
+  tube.style.cssText = `position:absolute;left:6px;right:${headLen-4}px;top:1px;height:6px;background:linear-gradient(180deg,#b8b0a0 0%,#6d6557 40%,#2a2620 80%,#1a1814 100%);border-radius:3px;box-shadow:0 1px 2px rgba(0,0,0,0.5),inset 0 1px 0 rgba(255,255,255,0.15);`;
+  arm.appendChild(tube);
+
+  const headshell = document.createElement('div');
+  headshell.style.cssText = `position:absolute;left:${armLen-headLen-2}px;top:-2px;width:${headLen}px;height:12px;transform-origin:0% 50%;transform:rotate(18deg);`;
+  headshell.innerHTML = `
+    <div style="width:100%;height:100%;background:linear-gradient(180deg,#2a2620 0%,#0e0c0a 100%);border-radius:3px 8px 8px 3px;box-shadow:inset 0 1px 0 rgba(255,255,255,0.1),0 2px 4px rgba(0,0,0,0.6);position:relative;">
+      <div style="position:absolute;right:4px;top:2px;bottom:2px;width:10px;background:linear-gradient(180deg,#1DB954 0%,#0f6e30 100%);border-radius:2px;box-shadow:inset 0 -1px 1px rgba(0,0,0,0.4),0 0 4px rgba(29,185,84,0.3);"></div>
+      <div style="position:absolute;right:-3px;top:50%;width:4px;height:2px;background:#d9d2c0;transform:translateY(-50%);border-radius:1px;"></div>
+    </div>`;
+  arm.appendChild(headshell);
+  tonearmWrap.appendChild(arm);
+
+  const pivot = document.createElement('div');
+  pivot.style.cssText = 'position:absolute;width:28px;height:28px;border-radius:50%;top:-14px;left:-14px;background:radial-gradient(circle at 35% 30%,#d9d2c0 0%,#8a8474 45%,#2a2620 100%);box-shadow:inset 0 -2px 4px rgba(0,0,0,0.5),inset 0 1px 1px rgba(255,255,255,0.3),0 2px 6px rgba(0,0,0,0.6);z-index:4;';
+  pivot.innerHTML = `<div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:8px;height:8px;border-radius:50%;background:#1a1816;box-shadow:inset 0 1px 1px rgba(0,0,0,0.8);"><div style="position:absolute;top:50%;left:10%;right:10%;height:1px;background:rgba(255,255,255,0.25);transform:translateY(-50%);"></div></div>`;
+  tonearmWrap.appendChild(pivot);
+  turntable.appendChild(tonearmWrap);
+  hero.appendChild(turntable);
+
+  /* Now-playing chip + brand tagline */
+  const bottomGroup = document.createElement('div');
+  bottomGroup.style.cssText = 'display:flex;flex-direction:column;align-items:center;gap:10px;width:100%;padding:0 20px;';
+
+  if (currentEp) {
+    const chip = document.createElement('div');
+    chip.className = 'nowplaying';
+    chip.innerHTML = `
+      <span class="nowplaying-dot"></span>
+      <div class="nowplaying-meta">
+        <div class="nowplaying-label">
+          <span style="color:var(--green);font-weight:600;">Now playing</span>
+          <span style="color:var(--fg-dim);"> · Ep ${currentEp.no}</span>
+        </div>
+        <div class="nowplaying-title">
+          <span style="font-weight:600;">${currentEp.guest}</span>
+          <span style="color:var(--fg-muted);"> — ${currentEp.title}</span>
+        </div>
+      </div>
+      <a href="${ytUrl}" target="_blank" rel="noopener noreferrer" class="nowplaying-yt" aria-label="Watch on YouTube">${Icons.youtube}</a>
+    `;
+    bottomGroup.appendChild(chip);
+  }
+
+  const tagline = document.createElement('div');
+  tagline.textContent = 'a podcast from chennai · by jaytesh calpakkam';
+  tagline.style.cssText = 'text-align:center;color:var(--fg-dim);font-size:11px;letter-spacing:0.05em;';
+  bottomGroup.appendChild(tagline);
+  hero.appendChild(bottomGroup);
+  el.appendChild(hero);
+
+  /* Hint chip — right edge (library) */
+  const hintRight = document.createElement('button');
+  hintRight.className = 'hint-chip hint-chip-right';
+  hintRight.setAttribute('aria-label', 'Flick right for full library');
+  hintRight.innerHTML = `<span class="hint-chip-arrow nudge-right">${Icons.arrowRight}</span><span>flick right · library</span>`;
+  el.appendChild(hintRight);
+
+  /* Hint chip — bottom center (reel) */
+  const hintUp = document.createElement('button');
+  hintUp.className = 'hint-chip hint-chip-up';
+  hintUp.setAttribute('aria-label', 'Flick up for a random episode');
+  hintUp.innerHTML = `<span class="hint-chip-arrow nudge">${Icons.arrowUp}</span><span>flick up · random episode</span>`;
+  el.appendChild(hintUp);
+
+  /* ----- State + interactivity ----- */
+  function computeArcPath(p) {
+    const r = 122, cx = 130, cy = 130;
+    const angle = p * Math.PI * 2 - Math.PI / 2;
+    const endX = cx + r * Math.cos(angle);
+    const endY = cy + r * Math.sin(angle);
+    if (p >= 0.999) return `M ${cx} ${cy - r} A ${r} ${r} 0 1 1 ${cx - 0.01} ${cy - r}`;
+    return `M ${cx} ${cy - r} A ${r} ${r} 0 ${p > 0.5 ? 1 : 0} 1 ${endX} ${endY}`;
+  }
+
+  function updateArc(p) {
+    const r = 122, cx = 130, cy = 130;
+    const angle = p * Math.PI * 2 - Math.PI / 2;
+    arcPath.setAttribute('d', computeArcPath(p));
+    arcDot.setAttribute('cx', String(cx + r * Math.cos(angle)));
+    arcDot.setAttribute('cy', String(cy + r * Math.sin(angle)));
+  }
+
+  function setMuted(val) {
+    muted = val;
+    speakerBtn.innerHTML = muted ? Icons.speakerOff : Icons.speakerOn;
+    speakerBtn.setAttribute('aria-label', muted ? 'Unmute' : 'Mute');
+    disc.style.animationPlayState = muted ? 'paused' : 'running';
+    arm.style.transform = `translateY(-50%) rotate(${muted ? 75 : 110}deg)`;
+    arcSvg.style.opacity = muted ? '0' : '1';
+    glow.style.opacity = muted ? '0.55' : '1';
+    if (muted) startTime = null;
+  }
+
+  /* RAF loop for progress */
+  function loop(t) {
+    if (!muted) {
+      if (!startTime) startTime = t - 22000; // 22s headstart so arc is already visible on load
+      progress = ((t - startTime) / 1000 % 90) / 90;
+      updateArc(progress);
+    }
+    rafId = requestAnimationFrame(loop);
+  }
+  rafId = requestAnimationFrame(loop);
+
+  /* Speaker button */
+  speakerBtn.addEventListener('click', () => {
+    setMuted(!muted);
+    hidePopup();
+    if (audio) audio.muted = muted;
+  });
+
+  /* Gesture handling */
+  let touchStart = { x: 0, y: 0 };
+  el.addEventListener('touchstart', e => {
+    touchStart = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+  }, { passive: true });
+  el.addEventListener('touchend', e => {
+    const dx = e.changedTouches[0].clientX - touchStart.x;
+    const dy = e.changedTouches[0].clientY - touchStart.y;
+    if (Math.abs(dy) > 50 && dy < 0 && Math.abs(dy) > Math.abs(dx)) navigate(Reel);
+    else if (Math.abs(dx) > 50 && dx > 0 && Math.abs(dx) > Math.abs(dy)) navigate(Library);
+  }, { passive: true });
+  el.addEventListener('wheel', e => {
+    if (e.deltaY > 20) navigate(Reel);
+  }, { passive: true });
+
+  hintUp.addEventListener('click', () => navigate(Reel));
+  hintRight.addEventListener('click', () => navigate(Library));
+
+  /* Cleanup */
+  function cleanup() {
+    cancelAnimationFrame(rafId);
+    clearTimeout(popupDismissTimer);
+  }
+
+  return { el, cleanup };
+}
+
+/* ============================================================
+   SCREEN: REEL
+   ============================================================ */
+function Reel() {
+  const pool = buildShortsPool();
+  let items = shuffleArray(pool).slice(0, 20).map((p, i) => ({ ...p, id: i }));
+  let activeIdx = 0;
+  let idCounter = items.length;
+
+  const el = document.createElement('div');
+  el.className = 'screen screen-enter';
+  el.style.padding = '0';
+
+  el.appendChild(statusBarEl());
+  el.appendChild(backBtnEl(() => navigate(Welcome)));
+
+  /* Snap-scroll feed */
+  const feed = document.createElement('div');
+  feed.className = 'reel-feed';
+  el.appendChild(feed);
+
+  /* Card registry for progress bar control */
+  const cardRegistry = new Map(); // id -> { setActive }
+
+  function createCard(item) {
+    const { ep, clipTitle, id } = item;
+    let paused = false;
+
+    const card = document.createElement('div');
+    card.className = `reel-card ${ep.thumbnail_url ? '' : thumbBg(ep.no)}`;
+
+    /* Background: real thumbnail or gradient placeholder + watermarks */
+    card.innerHTML = `
+      ${ep.thumbnail_url
+        ? `<img src="${ep.thumbnail_url}" alt="${ep.guest}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;">`
+        : `<div style="position:absolute;inset:0;background-image:radial-gradient(ellipse at 30% 25%, rgba(29,185,84,0.18) 0%, transparent 50%),radial-gradient(ellipse at 80% 75%, rgba(255,255,255,0.05) 0%, transparent 60%);">
+             <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;opacity:0.18;pointer-events:none;">
+               <div style="font-family:var(--display);font-weight:900;font-size:220px;line-height:0.85;letter-spacing:-0.05em;color:#fff;">${String(ep.no).padStart(2,'0')}</div>
+             </div>
+             <div style="position:absolute;top:120px;left:50%;transform:translateX(-50%);width:140px;height:140px;border-radius:50%;background:rgba(0,0,0,0.35);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);display:flex;align-items:center;justify-content:center;color:#fff;font-family:var(--display);font-weight:800;font-size:44px;letter-spacing:-0.02em;border:1px solid rgba(255,255,255,0.18);">${initials(ep.guest)}</div>
+           </div>`
+      }
+      <div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,0.55) 0%,rgba(0,0,0,0) 22%,rgba(0,0,0,0) 55%,rgba(0,0,0,0.85) 100%);pointer-events:none;"></div>
+    `;
+
+    /* Progress bar */
+    const progressWrap = document.createElement('div');
+    progressWrap.style.cssText = 'position:absolute;top:50px;left:14px;right:14px;height:3px;background:rgba(255,255,255,0.16);border-radius:2px;z-index:10;';
+    const progressFill = document.createElement('div');
+    progressFill.style.cssText = 'height:100%;width:0%;background:var(--green);border-radius:2px;box-shadow:0 0 6px rgba(29,185,84,0.5);';
+    progressWrap.appendChild(progressFill);
+    card.appendChild(progressWrap);
+
+    /* Brand mini-mark */
+    const brandMark = document.createElement('div');
+    brandMark.style.cssText = 'position:absolute;top:64px;left:14px;z-index:10;';
+    brandMark.appendChild(logoEl(22, false));
+    card.appendChild(brandMark);
+
+    /* Shuffle pill */
+    const shufflePill = document.createElement('div');
+    shufflePill.style.cssText = 'position:absolute;top:60px;right:14px;z-index:10;font-size:12px;font-weight:600;color:var(--fg);padding:6px 10px;background:rgba(255,255,255,0.08);border-radius:999px;border:1px solid var(--line);';
+    shufflePill.textContent = 'shuffle';
+    card.appendChild(shufflePill);
+
+    /* Pause overlay */
+    const pauseOverlay = document.createElement('button');
+    pauseOverlay.style.cssText = 'position:absolute;inset:0;z-index:5;background:transparent;cursor:pointer;';
+    pauseOverlay.setAttribute('aria-label', 'Pause');
+    const pauseIcon = document.createElement('div');
+    pauseIcon.style.cssText = 'position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:72px;height:72px;border-radius:50%;background:rgba(0,0,0,0.55);backdrop-filter:blur(12px);display:none;align-items:center;justify-content:center;border:1px solid var(--line-2);color:#fff;';
+    pauseIcon.innerHTML = Icons.play;
+    pauseOverlay.appendChild(pauseIcon);
+    pauseOverlay.addEventListener('click', () => {
+      paused = !paused;
+      pauseOverlay.setAttribute('aria-label', paused ? 'Resume' : 'Pause');
+      pauseIcon.style.display = paused ? 'flex' : 'none';
+      if (!paused) restartProgress();
+      else stopProgress();
+    });
+    card.appendChild(pauseOverlay);
+
+    /* Bottom info */
+    const info = document.createElement('div');
+    info.style.cssText = 'position:absolute;bottom:36px;left:16px;right:80px;z-index:10;color:#fff;';
+    info.innerHTML = `
+      <div style="display:flex;gap:6px;margin-bottom:10px;align-items:center;">
+        <span class="pill green">${ep.cat}</span>
+        <span style="font-size:11px;color:var(--fg-dim);">Ep ${ep.no}</span>
+      </div>
+      <div style="font-family:var(--display);font-weight:800;font-size:26px;letter-spacing:-0.02em;line-height:1.05;">${ep.guest}</div>
+      <div class="clamp-2" style="font-size:14px;color:rgba(255,255,255,0.85);margin-top:6px;line-height:1.35;">"${clipTitle}"</div>
+    `;
+    const fullEpBtn = document.createElement('button');
+    fullEpBtn.style.cssText = 'margin-top:12px;font-size:12.5px;font-weight:600;color:var(--fg);display:inline-flex;align-items:center;gap:6px;padding:6px 10px;border-radius:999px;background:rgba(255,255,255,0.1);border:1px solid var(--line);';
+    fullEpBtn.innerHTML = 'full episode ' + Icons.arrowRight;
+    fullEpBtn.addEventListener('click', (e) => { e.stopPropagation(); navigate(Wiki, { epNo: ep.no }); });
+    info.appendChild(fullEpBtn);
+    card.appendChild(info);
+
+    /* Right rail CTAs */
+    const rail = document.createElement('div');
+    rail.style.cssText = 'position:absolute;right:12px;bottom:44px;z-index:10;display:flex;flex-direction:column;gap:18px;align-items:center;';
+    rail.innerHTML = `
+      <a href="${ep.spotify_url || '#'}" ${ep.spotify_url ? 'target="_blank" rel="noopener"' : 'onclick="return false"'} style="width:48px;height:48px;border-radius:50%;background:rgba(0,0,0,0.4);backdrop-filter:blur(12px);border:1px solid var(--line-2);display:flex;align-items:center;justify-content:center;" aria-label="Listen on Spotify">${Icons.spotify}</a>
+      <a href="${ep.youtube_url || '#'}" ${ep.youtube_url ? 'target="_blank" rel="noopener"' : 'onclick="return false"'} style="width:48px;height:48px;border-radius:50%;background:rgba(0,0,0,0.4);backdrop-filter:blur(12px);border:1px solid var(--line-2);display:flex;align-items:center;justify-content:center;" aria-label="Watch on YouTube">${Icons.youtube}</a>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:2px;color:var(--fg-dim);font-size:10px;">
+        ${Icons.share}<span>share</span>
+      </div>
+    `;
+    card.appendChild(rail);
+
+    /* Progress bar control */
+    let progressTimer = null;
+    function restartProgress() {
+      progressFill.style.transition = 'none';
+      progressFill.style.width = '0%';
+      void progressFill.offsetWidth;
+      progressFill.style.transition = 'width 24s linear';
+      progressFill.style.width = '100%';
+    }
+    function stopProgress() {
+      progressFill.style.transition = 'none';
+    }
+
+    cardRegistry.set(id, {
+      setActive(active) {
+        if (active && !paused) restartProgress();
+        else stopProgress();
+      },
+    });
+
+    return card;
+  }
+
+  /* Render initial cards */
+  items.forEach(item => feed.appendChild(createCard(item)));
+
+  /* Activate first card */
+  if (cardRegistry.has(items[0].id)) cardRegistry.get(items[0].id).setActive(true);
+
+  /* Scroll handler */
+  feed.addEventListener('scroll', () => {
+    const newIdx = Math.round(feed.scrollTop / feed.clientHeight);
+    if (newIdx !== activeIdx) {
+      if (cardRegistry.has(items[activeIdx]?.id)) cardRegistry.get(items[activeIdx].id).setActive(false);
+      activeIdx = newIdx;
+      if (cardRegistry.has(items[activeIdx]?.id)) cardRegistry.get(items[activeIdx].id).setActive(true);
+    }
+    /* Infinite append */
+    if (feed.scrollTop + feed.clientHeight * 3 > feed.scrollHeight) {
+      const more = shuffleArray(pool).slice(0, 10).map((p) => ({ ...p, id: idCounter++ }));
+      more.forEach(item => {
+        items.push(item);
+        const card = createCard(item);
+        feed.appendChild(card);
+      });
+    }
+  }, { passive: true });
+
+  /* Keyboard */
+  function onKey(e) { if (e.key === 'Escape') navigate(Welcome); }
+  document.addEventListener('keydown', onKey);
+
+  return { el, cleanup: () => document.removeEventListener('keydown', onKey) };
+}
+
+/* ============================================================
+   SCREEN: LIBRARY
+   ============================================================ */
+function Library() {
+  let query = '';
+  let activeTag = null;
+
+  const epsTagged = EPISODES.map(e => ({ ...e, tags: tagsFor(e) }));
+
+  const el = document.createElement('div');
+  el.className = 'screen screen-enter';
+
+  el.appendChild(statusBarEl());
+  el.appendChild(backBtnEl(() => navigate(Welcome)));
+
+  /* Header */
+  const header = document.createElement('div');
+  header.style.cssText = 'padding:56px 20px 12px;display:flex;flex-direction:column;gap:10px;flex-shrink:0;';
+  header.innerHTML = `
+    <div style="display:flex;justify-content:space-between;align-items:flex-end;">
+      <div>
+        <div style="font-size:12px;color:var(--fg-dim);letter-spacing:0.18em;text-transform:uppercase;">library</div>
+        <h1 style="margin:4px 0 0;font-family:var(--display);font-size:32px;font-weight:800;letter-spacing:-0.03em;line-height:1;">all episodes</h1>
+      </div>
+      <div style="font-size:12px;color:var(--fg-dim);text-align:right;">
+        <div style="color:var(--green);font-weight:600;font-size:14px;">${epsTagged.length}</div>
+        <div>episodes</div>
+      </div>
+    </div>
+  `;
+
+  /* Search */
+  const searchWrap = document.createElement('div');
+  searchWrap.style.cssText = 'position:relative;margin-top:6px;';
+  const searchIcon = document.createElement('span');
+  searchIcon.style.cssText = 'position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--fg-dim);pointer-events:none;display:flex;';
+  searchIcon.innerHTML = Icons.search;
+  const searchInput = document.createElement('input');
+  searchInput.className = 'search-input';
+  searchInput.type = 'text';
+  searchInput.placeholder = 'Search guests or topics...';
+  searchInput.value = query;
+  const clearBtn = document.createElement('button');
+  clearBtn.style.cssText = 'position:absolute;right:12px;top:50%;transform:translateY(-50%);color:var(--fg-dim);padding:6px;display:none;';
+  clearBtn.setAttribute('aria-label', 'Clear');
+  clearBtn.innerHTML = Icons.closeL;
+  searchWrap.appendChild(searchIcon);
+  searchWrap.appendChild(searchInput);
+  searchWrap.appendChild(clearBtn);
+  header.appendChild(searchWrap);
+  el.appendChild(header);
+
+  /* Topic chips */
+  const chipsRow = document.createElement('div');
+  chipsRow.className = 'hrow no-scrollbar';
+  chipsRow.style.cssText = 'padding-top:4px;padding-bottom:14px;flex-shrink:0;';
+  el.appendChild(chipsRow);
+
+  /* Grid container */
+  const gridWrap = document.createElement('div');
+  gridWrap.className = 'no-scrollbar';
+  gridWrap.style.cssText = 'flex:1;overflow-y:auto;padding:4px 20px 40px;';
+  const grid = document.createElement('div');
+  grid.style.cssText = 'display:grid;grid-template-columns:1fr 1fr;gap:16px;';
+  gridWrap.appendChild(grid);
+  el.appendChild(gridWrap);
+
+  /* Render chips */
+  function renderChips() {
+    chipsRow.innerHTML = '';
+    SUGGESTED_TAGS.forEach(tag => {
+      const isActive = activeTag === tag;
+      const btn = document.createElement('button');
+      btn.style.cssText = 'cursor:pointer;font-size:12px;padding:6px 12px;';
+      btn.className = `pill ${isActive ? 'solid-green' : ''}`;
+      btn.innerHTML = tag + (isActive ? (' ' + Icons.closeL) : '');
+      btn.addEventListener('click', () => {
+        activeTag = isActive ? null : tag;
+        renderChips();
+        renderGrid();
+      });
+      chipsRow.appendChild(btn);
+    });
+  }
+
+  /* Render grid */
+  function renderGrid() {
+    const q = query.toLowerCase();
+    let filtered = epsTagged;
+    if (activeTag) filtered = filtered.filter(e => e.tags.includes(activeTag));
+    if (q) filtered = filtered.filter(e =>
+      e.guest.toLowerCase().includes(q) ||
+      e.title.toLowerCase().includes(q) ||
+      e.cat.toLowerCase().includes(q) ||
+      e.tags.some(t => t.toLowerCase().includes(q))
+    );
+
+    grid.innerHTML = '';
+    if (filtered.length === 0) {
+      gridWrap.innerHTML = '';
+      const empty = document.createElement('div');
+      empty.style.cssText = 'text-align:center;padding:40px 20px;color:var(--fg-muted);font-size:14px;';
+      empty.textContent = 'No episodes match that.';
+      gridWrap.appendChild(empty);
+      return;
+    }
+    if (!gridWrap.contains(grid)) {
+      gridWrap.innerHTML = '';
+      gridWrap.appendChild(grid);
+    }
+
+    filtered.forEach(ep => {
+      const card = document.createElement('button');
+      card.style.cssText = 'text-align:left;display:flex;flex-direction:column;gap:8px;';
+
+      const thumb = document.createElement('div');
+      thumb.className = ep.thumbnail_url ? '' : thumbBg(ep.no);
+      thumb.style.cssText = 'position:relative;aspect-ratio:3/4;border-radius:14px;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,0.4),inset 0 0 0 1px rgba(255,255,255,0.05);';
+      thumb.innerHTML = `
+        ${ep.thumbnail_url
+          ? `<img src="${ep.thumbnail_url}" alt="${ep.guest}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;">`
+          : `<div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:var(--display);font-weight:900;font-size:60px;color:rgba(255,255,255,0.18);letter-spacing:-0.04em;">${initials(ep.guest)}</div>`
+        }
+        <div style="position:absolute;left:0;right:0;bottom:0;height:60%;background:linear-gradient(180deg,transparent,rgba(0,0,0,0.85));"></div>
+        <div style="position:absolute;top:10px;left:10px;font-family:var(--display);font-weight:800;font-size:13px;color:var(--green);letter-spacing:0.05em;">EP ${String(ep.no).padStart(2,'0')}</div>
+        <div style="position:absolute;left:12px;right:12px;bottom:10px;">
+          <div style="font-family:var(--display);font-weight:700;font-size:16px;letter-spacing:-0.02em;line-height:1.05;color:#fff;">${ep.guest}</div>
+          <div style="font-size:10.5px;color:rgba(255,255,255,0.7);margin-top:2px;">${ep.cat}</div>
+        </div>
+      `;
+      const titleEl = document.createElement('div');
+      titleEl.className = 'clamp-2';
+      titleEl.style.cssText = 'font-size:12px;color:var(--fg-muted);line-height:1.35;padding:0 2px;';
+      titleEl.textContent = ep.title;
+
+      card.appendChild(thumb);
+      card.appendChild(titleEl);
+      card.addEventListener('click', () => navigate(Wiki, { epNo: ep.no }));
+      grid.appendChild(card);
+    });
+  }
+
+  /* Search input */
+  searchInput.addEventListener('input', () => {
+    query = searchInput.value;
+    clearBtn.style.display = query ? 'block' : 'none';
+    renderGrid();
+  });
+  clearBtn.addEventListener('click', () => {
+    query = '';
+    searchInput.value = '';
+    clearBtn.style.display = 'none';
+    renderGrid();
+  });
+
+  /* Keyboard */
+  function onKey(e) { if (e.key === 'Escape') navigate(Welcome); }
+  document.addEventListener('keydown', onKey);
+
+  renderChips();
+  renderGrid();
+
+  return { el, cleanup: () => document.removeEventListener('keydown', onKey) };
+}
+
+/* ============================================================
+   SCREEN: WIKI
+   ============================================================ */
+function Wiki({ epNo }) {
+  const ep = EPISODES.find(e => e.no === epNo) || EPISODES[14];
+  const w = WIKI_DATA[epNo] || defaultWiki(ep);
+  const season = epNo > 11 ? 'S2' : 'S1';
+
+  const el = document.createElement('div');
+  el.className = 'screen screen-enter';
+  el.style.padding = '0';
+
+  el.appendChild(statusBarEl());
+  el.appendChild(backBtnEl(() => navigate(Library)));
+
+  /* Scrollable content */
+  const scroll = document.createElement('div');
+  scroll.className = 'no-scrollbar';
+  scroll.style.cssText = 'position:absolute;inset:0;overflow-y:auto;';
+
+  /* Hero */
+  const hero = document.createElement('div');
+  hero.style.cssText = 'position:relative;height:460px;background:#0a0a0a;';
+
+  /* Portrait — real image (BW fade on img) or gradient placeholder */
+  const portrait = document.createElement('div');
+  portrait.style.cssText = 'position:absolute;inset:0;';
+
+  if (ep.portrait_url) {
+    const img = document.createElement('img');
+    img.src = ep.portrait_url;
+    img.alt = ep.guest;
+    img.className = 'bw-fade';
+    img.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:top center;';
+    portrait.appendChild(img);
+  } else {
+    /* Gradient placeholder */
+    const placeholder = document.createElement('div');
+    placeholder.className = 'bw-fade';
+    placeholder.style.cssText = `
+      position:absolute;inset:0;
+      background:radial-gradient(ellipse 80% 60% at 50% 35%, rgba(255,255,255,0.18) 0%, rgba(255,255,255,0.04) 40%, transparent 70%),
+      linear-gradient(180deg, #2a2a2a 0%, #161616 100%);
+    `;
+    const heroInitials = document.createElement('div');
+    heroInitials.style.cssText = 'position:absolute;top:110px;left:0;right:0;text-align:center;font-family:var(--display);font-weight:900;font-size:220px;color:rgba(255,255,255,0.22);letter-spacing:-0.05em;line-height:1;';
+    heroInitials.textContent = initials(ep.guest);
+    placeholder.appendChild(heroInitials);
+    portrait.appendChild(placeholder);
+  }
+
+  /* Film grain overlay */
+  const grain = document.createElement('div');
+  grain.style.cssText = 'position:absolute;inset:0;background-image:radial-gradient(rgba(255,255,255,0.04) 1px, transparent 1.2px);background-size:3px 3px;mix-blend-mode:overlay;pointer-events:none;';
+  portrait.appendChild(grain);
+  hero.appendChild(portrait);
+
+  /* Hero label */
+  const heroLabel = document.createElement('div');
+  heroLabel.style.cssText = 'position:absolute;bottom:16px;left:20px;right:20px;z-index:5;';
+  heroLabel.innerHTML = `
+    <div style="font-size:12px;color:var(--fg-dim);letter-spacing:0.18em;text-transform:uppercase;">Ep ${String(ep.no).padStart(2,'0')} · ${season}</div>
+    <h1 style="margin:6px 0 8px;font-family:var(--display);font-weight:900;font-size:44px;letter-spacing:-0.035em;line-height:0.95;">${ep.guest}</h1>
+    <span class="pill green">${ep.cat}</span>
+  `;
+  hero.appendChild(heroLabel);
+  scroll.appendChild(hero);
+
+  /* Two-col info block */
+  const info = document.createElement('div');
+  info.style.cssText = 'padding:28px 20px 0;display:grid;grid-template-columns:1.05fr 1fr;gap:22px;';
+
+  /* Topics */
+  const topicsCol = document.createElement('div');
+  topicsCol.innerHTML = `<div style="font-size:11px;color:var(--fg-dim);letter-spacing:0.18em;text-transform:uppercase;margin-bottom:10px;">what we talked about</div>`;
+  const topicsList = document.createElement('ul');
+  topicsList.style.cssText = 'list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:9px;';
+  w.topics.forEach(t => {
+    const li = document.createElement('li');
+    li.style.cssText = 'display:flex;gap:8px;font-size:14px;line-height:1.35;color:var(--fg);';
+    li.innerHTML = `<span style="color:var(--green);flex-shrink:0;font-weight:700;">·</span><span>${t}</span>`;
+    topicsList.appendChild(li);
+  });
+  topicsCol.appendChild(topicsList);
+
+  /* Quote */
+  const quoteCol = document.createElement('div');
+  quoteCol.innerHTML = `
+    <div style="font-size:11px;color:var(--fg-dim);letter-spacing:0.18em;text-transform:uppercase;margin-bottom:10px;">key quote</div>
+    <div style="font-family:var(--display);font-style:italic;font-weight:500;font-size:16px;line-height:1.3;color:var(--fg);border-left:2px solid var(--green);padding-left:12px;letter-spacing:-0.01em;">${w.quote}</div>
+  `;
+
+  info.appendChild(topicsCol);
+  info.appendChild(quoteCol);
+  scroll.appendChild(info);
+
+  /* Listen buttons */
+  const listenRow = document.createElement('div');
+  listenRow.style.cssText = 'padding:28px 20px 0;display:flex;gap:10px;';
+  listenRow.innerHTML = `
+    <a href="${ep.spotify_url || '#'}" ${ep.spotify_url ? 'target="_blank" rel="noopener"' : 'onclick="return false"'} style="flex:1;display:flex;align-items:center;justify-content:center;gap:8px;padding:14px 18px;background:var(--green);color:#000;border-radius:999px;font-weight:700;font-size:14.5px;text-decoration:none;box-shadow:0 4px 14px rgba(29,185,84,0.25);${!ep.spotify_url ? 'opacity:0.5;' : ''}">${Icons.spotifyBlack} Listen on Spotify</a>
+    <a href="${ep.youtube_url || '#'}" ${ep.youtube_url ? 'target="_blank" rel="noopener"' : 'onclick="return false"'} style="flex:1;display:flex;align-items:center;justify-content:center;gap:8px;padding:14px 18px;background:transparent;color:var(--fg);border:1px solid var(--line-2);border-radius:999px;font-weight:700;font-size:14.5px;text-decoration:none;${!ep.youtube_url ? 'opacity:0.5;' : ''}">${Icons.youtube} YouTube</a>
+  `;
+  scroll.appendChild(listenRow);
+
+  /* Shorts strip */
+  if (w.shorts.length > 0) {
+    const shortsSection = document.createElement('div');
+    shortsSection.style.cssText = 'padding:32px 0 0;';
+
+    const shortsHeader = document.createElement('div');
+    shortsHeader.style.cssText = 'padding:0 20px 14px;display:flex;justify-content:space-between;align-items:baseline;';
+    shortsHeader.innerHTML = `
+      <div style="font-family:var(--display);font-weight:700;font-size:18px;letter-spacing:-0.02em;">shorts from this episode</div>
+      <div style="font-size:12px;color:var(--fg-dim);">${w.shorts.length}</div>
+    `;
+    shortsSection.appendChild(shortsHeader);
+
+    const shortsRow = document.createElement('div');
+    shortsRow.className = 'hrow no-scrollbar';
+    shortsRow.style.cssText = 'padding-bottom:40px;';
+
+    w.shorts.forEach(short => {
+      const cardBtn = document.createElement('button');
+      cardBtn.style.cssText = 'width:130px;text-align:left;display:flex;flex-direction:column;gap:8px;';
+
+      const thumb = document.createElement('div');
+      thumb.className = thumbBg(ep.no);
+      thumb.style.cssText = 'position:relative;width:130px;height:200px;border-radius:10px;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,0.5),inset 0 0 0 1px rgba(255,255,255,0.05);';
+      thumb.innerHTML = `
+        <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:var(--display);font-weight:900;font-size:56px;color:rgba(255,255,255,0.16);">${initials(ep.guest)}</div>
+        <div style="position:absolute;bottom:8px;left:8px;background:rgba(0,0,0,0.7);font-size:10px;padding:2px 6px;border-radius:4px;color:#fff;font-weight:600;">▶ ${short.dur}</div>
+        <svg viewBox="0 0 130 30" style="position:absolute;left:0;right:0;top:50%;transform:translateY(-50%);width:100%;height:30px;opacity:0.55;">
+          <path d="M 0 15 Q 8 4 16 15 T 32 15 T 48 15 T 64 15 T 80 15 T 96 15 T 112 15 T 130 15" fill="none" stroke="var(--green)" stroke-width="1.4" stroke-linecap="round"/>
+        </svg>
+      `;
+      const title = document.createElement('div');
+      title.className = 'clamp-2';
+      title.style.cssText = 'font-size:12px;line-height:1.3;color:var(--fg);';
+      title.textContent = short.title;
+
+      cardBtn.appendChild(thumb);
+      cardBtn.appendChild(title);
+      shortsRow.appendChild(cardBtn);
+    });
+
+    shortsSection.appendChild(shortsRow);
+    scroll.appendChild(shortsSection);
+  }
+
+  el.appendChild(scroll);
+
+  /* Keyboard */
+  function onKey(e) { if (e.key === 'Escape') navigate(Library); }
+  document.addEventListener('keydown', onKey);
+
+  return { el, cleanup: () => document.removeEventListener('keydown', onKey) };
+}
+
+/* ============================================================
+   INIT
+   ============================================================ */
+(async () => {
+  /* Loading spinner */
+  root.innerHTML = `
+    <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;background:var(--bg);">
+      <div style="width:36px;height:36px;border-radius:50%;border:2px solid rgba(255,255,255,0.08);border-top-color:var(--green);animation:spin 0.75s linear infinite;"></div>
+      <div style="font-size:12px;color:var(--fg-dim);letter-spacing:0.1em;text-transform:uppercase;">loading</div>
+    </div>
+  `;
+  try {
+    await loadData();
+  } catch (e) {
+    console.warn('Supabase fetch failed, site will be empty:', e);
+  }
+  navigate(Welcome);
+})();
+</script>
 </body>
 </html>
