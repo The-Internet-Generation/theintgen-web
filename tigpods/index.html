@@ -446,14 +446,14 @@ async function loadData() {
       WIKI_DATA[ep.no] = {
         topics: ep.topics || [],
         quote:  ep.quote  || '',
-        shorts: epShorts.map(s => ({ title: s.title, dur: s.duration || '', youtube_url: s.youtube_url || null })),
+        shorts: epShorts.map(s => ({ title: s.title, dur: s.duration || '', youtube_url: s.youtube_url || null, instagram_url: s.instagram_url || null })),
       };
     }
   });
 
   /* Build reel shorts pool from DB shorts (with title as clip title) */
   if (shorts.length > 0) {
-    SHORTS_SEED = shorts.map(s => ({ ep: s.episode_no, clipTitle: s.title, youtube_url: s.youtube_url || null }));
+    SHORTS_SEED = shorts.map(s => ({ ep: s.episode_no, clipTitle: s.title, youtube_url: s.youtube_url || null, instagram_url: s.instagram_url || null }));
   } else {
     /* Fallback if DB has no shorts yet */
     SHORTS_SEED = [
@@ -1391,8 +1391,12 @@ function Wiki({ epNo }) {
     shortsRow.style.cssText = 'padding-bottom:40px;';
 
     w.shorts.forEach(short => {
+      const clipUrl = short.youtube_url || short.instagram_url || null;
+      const isIG = !short.youtube_url && !!short.instagram_url;
+
       const cardBtn = document.createElement('button');
-      cardBtn.style.cssText = 'width:130px;text-align:left;display:flex;flex-direction:column;gap:8px;';
+      cardBtn.style.cssText = 'width:130px;text-align:left;display:flex;flex-direction:column;gap:8px;' + (clipUrl ? 'cursor:pointer;' : 'opacity:0.5;cursor:default;');
+      if (clipUrl) cardBtn.addEventListener('click', () => window.open(clipUrl, '_blank', 'noopener'));
 
       const thumb = document.createElement('div');
       thumb.className = thumbBg(ep.no);
@@ -1400,6 +1404,7 @@ function Wiki({ epNo }) {
       thumb.innerHTML = `
         <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:var(--display);font-weight:900;font-size:56px;color:rgba(255,255,255,0.16);">${initials(ep.guest)}</div>
         <div style="position:absolute;bottom:8px;left:8px;background:rgba(0,0,0,0.7);font-size:10px;padding:2px 6px;border-radius:4px;color:#fff;font-weight:600;">▶ ${short.dur}</div>
+        ${isIG ? `<div style="position:absolute;top:8px;right:8px;background:rgba(0,0,0,0.65);border-radius:6px;padding:3px 5px;font-size:9px;font-weight:700;color:#E1306C;letter-spacing:0.03em;">IG</div>` : ''}
         <svg viewBox="0 0 130 30" style="position:absolute;left:0;right:0;top:50%;transform:translateY(-50%);width:100%;height:30px;opacity:0.55;">
           <path d="M 0 15 Q 8 4 16 15 T 32 15 T 48 15 T 64 15 T 80 15 T 96 15 T 112 15 T 130 15" fill="none" stroke="var(--green)" stroke-width="1.4" stroke-linecap="round"/>
         </svg>
