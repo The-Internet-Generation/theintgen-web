@@ -241,6 +241,20 @@ button, a {
 }
 .nudge-right { animation: nudgeRight 1.6s ease-in-out infinite; display: inline-flex; }
 
+@keyframes discRipple {
+  0%   { transform: translate(-50%,-50%) scale(1);   opacity: 0.7; }
+  100% { transform: translate(-50%,-50%) scale(1.9); opacity: 0; }
+}
+.disc-ripple {
+  position: absolute; top: 50%; left: 50%;
+  width: 92px; height: 92px;
+  border-radius: 50%;
+  border: 2px solid var(--green);
+  pointer-events: none;
+  animation: discRipple 1.6s ease-out infinite;
+  z-index: 9;
+}
+
 .hint-chip {
   position: absolute;
   z-index: 12;
@@ -857,20 +871,24 @@ function Welcome() {
   tonearmWrap.appendChild(pivot);
   turntable.appendChild(tonearmWrap);
 
+  /* Pulsing ripple ring — visible before first tap to prompt interaction */
+  const discRipple = document.createElement('div');
+  discRipple.className = 'disc-ripple';
+  turntable.appendChild(discRipple);
+
   /* Disc-center play/pause button — sits above the tonearm, at disc center */
   const centerBtn = document.createElement('button');
-  centerBtn.style.cssText = 'position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:92px;height:92px;border-radius:50%;background:transparent;cursor:pointer;z-index:8;display:flex;align-items:center;justify-content:center;color:#fff;transition:background 200ms;border:none;';
-  centerBtn.setAttribute('aria-label', 'Pause');
+  centerBtn.style.cssText = 'position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:92px;height:92px;border-radius:50%;background:transparent;cursor:pointer;z-index:10;display:flex;align-items:center;justify-content:center;color:#fff;transition:background 200ms;border:none;';
+  centerBtn.setAttribute('aria-label', 'Play');
   const pauseIcon = `<svg width="26" height="26" viewBox="0 0 24 24" fill="currentColor"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>`;
   const playIcon  = `<svg width="30" height="30" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>`;
-  // Pause icon is hidden when playing (sticker shows through transparent btn)
   const centerOverlay = document.createElement('div');
-  centerOverlay.style.cssText = 'position:absolute;inset:0;border-radius:50%;background:rgba(0,0,0,0.5);display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity 250ms;';
-  centerOverlay.innerHTML = pauseIcon;
+  /* Starts fully visible showing play icon — invites first tap */
+  centerOverlay.style.cssText = 'position:absolute;inset:0;border-radius:50%;background:rgba(0,0,0,0.55);display:flex;align-items:center;justify-content:center;opacity:1;transition:opacity 250ms;';
+  centerOverlay.innerHTML = playIcon;
   centerBtn.appendChild(centerOverlay);
-  // Show overlay on hover/focus
   centerBtn.addEventListener('mouseenter', () => { if (playing) centerOverlay.style.opacity = '1'; });
-  centerBtn.addEventListener('mouseleave', () => { centerOverlay.style.opacity = '0'; });
+  centerBtn.addEventListener('mouseleave', () => { if (playing) centerOverlay.style.opacity = '0'; });
   turntable.appendChild(centerBtn);
 
   hero.appendChild(turntable);
@@ -910,7 +928,7 @@ function Welcome() {
   const hintRight = document.createElement('button');
   hintRight.className = 'hint-chip hint-chip-right';
   hintRight.setAttribute('aria-label', 'Flick right for full library');
-  hintRight.innerHTML = `<span class="hint-chip-arrow nudge-right">${Icons.arrowRight}</span><span>flick right · library</span>`;
+  hintRight.innerHTML = `<span class="hint-chip-arrow nudge-right">${Icons.arrowRight}</span><span>flick · library</span>`;
   el.appendChild(hintRight);
 
   /* Hint chip — bottom center (reel) */
@@ -981,14 +999,19 @@ function Welcome() {
        cross-origin audio autoplay in hidden iframes — this is a hard browser policy)
      - Subsequent taps: pause/resume both the disc and Spotify via postMessage */
   centerBtn.addEventListener('click', () => {
-    if (!audioUnlocked && epSpId) {
+    if (!audioUnlocked) {
+      /* Kill the prompt ripple — user found the button */
+      discRipple.style.animation = 'none';
+      discRipple.style.opacity = '0';
       audioUnlocked = true;
-      spIframe = document.createElement('iframe');
-      spIframe.src = `https://open.spotify.com/embed/episode/${epSpId}?utm_source=generator&theme=0&autoplay=1`;
-      spIframe.style.cssText = 'width:100%;height:152px;border:none;display:block;';
-      spIframe.setAttribute('allow', 'autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture');
-      spPlayer.appendChild(spIframe);
-      spPlayer.classList.add('visible');
+      if (epSpId) {
+        spIframe = document.createElement('iframe');
+        spIframe.src = `https://open.spotify.com/embed/episode/${epSpId}?utm_source=generator&theme=0&autoplay=1`;
+        spIframe.style.cssText = 'width:100%;height:152px;border:none;display:block;';
+        spIframe.setAttribute('allow', 'autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture');
+        spPlayer.appendChild(spIframe);
+        spPlayer.classList.add('visible');
+      }
       setPlaying(true);
     } else {
       setPlaying(!playing);
@@ -1005,7 +1028,7 @@ function Welcome() {
     const dy = e.changedTouches[0].clientY - touchStart.y;
     const adx = Math.abs(dx), ady = Math.abs(dy);
     if (ady > 45 && dy < 0 && ady > adx * 1.1) navigate(Reel, {}, 'up');
-    else if (adx > 45 && dx > 0 && adx > ady * 1.1) navigate(Library, {}, 'right');
+    else if (adx > 45 && adx > ady * 1.1) navigate(Library, {}, 'right'); // left OR right swipe
   }
   document.addEventListener('touchstart', onTouchStart, { passive: true });
   document.addEventListener('touchend', onTouchEnd, { passive: true });
@@ -1081,48 +1104,49 @@ function Reel() {
     card.appendChild(brandMark);
 
 
-    /* Pause overlay */
-    const pauseOverlay = document.createElement('button');
-    pauseOverlay.style.cssText = 'position:absolute;inset:0;z-index:5;background:transparent;cursor:pointer;';
-    pauseOverlay.setAttribute('aria-label', 'Pause');
-    const pauseIcon = document.createElement('div');
-    pauseIcon.style.cssText = 'position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:72px;height:72px;border-radius:50%;background:rgba(0,0,0,0.55);backdrop-filter:blur(12px);display:none;align-items:center;justify-content:center;border:1px solid var(--line-2);color:#fff;';
-    pauseIcon.innerHTML = Icons.play;
-    pauseOverlay.appendChild(pauseIcon);
-    pauseOverlay.addEventListener('click', () => {
+    /* Tap-to-pause overlay — full card, invisible */
+    let muted = true;
+    const tapOverlay = document.createElement('div');
+    tapOverlay.style.cssText = 'position:absolute;inset:0;z-index:5;cursor:pointer;';
+    const pauseIconEl = document.createElement('div');
+    pauseIconEl.style.cssText = 'position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:72px;height:72px;border-radius:50%;background:rgba(0,0,0,0.55);backdrop-filter:blur(12px);display:none;align-items:center;justify-content:center;border:1px solid var(--line-2);color:#fff;';
+    pauseIconEl.innerHTML = Icons.play;
+    tapOverlay.appendChild(pauseIconEl);
+    tapOverlay.addEventListener('click', () => {
       paused = !paused;
-      pauseOverlay.setAttribute('aria-label', paused ? 'Resume' : 'Pause');
-      pauseIcon.style.display = paused ? 'flex' : 'none';
+      pauseIconEl.style.display = paused ? 'flex' : 'none';
       if (!paused) restartProgress();
       else stopProgress();
     });
-    card.appendChild(pauseOverlay);
+    card.appendChild(tapOverlay);
 
-    /* Bottom info */
-    const info = document.createElement('div');
-    info.style.cssText = 'position:absolute;bottom:36px;left:16px;right:80px;z-index:10;color:#fff;';
-    info.innerHTML = `
-      <div style="display:flex;gap:6px;margin-bottom:10px;align-items:center;">
-        <span class="pill green">${ep.cat}</span>
-        <span style="font-size:11px;color:var(--fg-dim);">Ep ${ep.no}</span>
-      </div>
-      <div style="font-family:var(--display);font-weight:800;font-size:26px;letter-spacing:-0.02em;line-height:1.05;">${ep.guest}</div>
-      <div class="clamp-2" style="font-size:14px;color:rgba(255,255,255,0.85);margin-top:6px;line-height:1.35;">"${clipTitle}"</div>
-    `;
-    const fullEpBtn = document.createElement('button');
-    fullEpBtn.style.cssText = 'margin-top:12px;font-size:12.5px;font-weight:600;color:var(--fg);display:inline-flex;align-items:center;gap:6px;padding:6px 10px;border-radius:999px;background:rgba(255,255,255,0.1);border:1px solid var(--line);';
-    fullEpBtn.innerHTML = 'full episode ' + Icons.arrowRight;
-    fullEpBtn.addEventListener('click', (e) => { e.stopPropagation(); navigate(Wiki, { epNo: ep.no }, 'up'); });
-    info.appendChild(fullEpBtn);
-    card.appendChild(info);
+    /* Unmute button — top-right corner */
+    const unmuteBtn = document.createElement('button');
+    unmuteBtn.style.cssText = 'position:absolute;top:64px;right:14px;z-index:15;width:36px;height:36px;border-radius:50%;background:rgba(0,0,0,0.5);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,0.2);display:flex;align-items:center;justify-content:center;color:#fff;cursor:pointer;';
+    unmuteBtn.setAttribute('aria-label', 'Unmute');
+    unmuteBtn.innerHTML = Icons.speakerOff; // starts muted
+    unmuteBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      muted = !muted;
+      unmuteBtn.innerHTML = muted ? Icons.speakerOff : Icons.speakerOn;
+      unmuteBtn.setAttribute('aria-label', muted ? 'Unmute' : 'Mute');
+      if (ytIframe) {
+        /* Reload iframe without mute — browser allows it because this is a user gesture */
+        const muteParam = muted ? '&mute=1' : '&mute=0';
+        ytIframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1${muteParam}&controls=0&rel=0&modestbranding=1&playsinline=1&loop=1&playlist=${videoId}`;
+      }
+    });
+    card.appendChild(unmuteBtn);
 
-    /* Right rail CTAs */
-    const rail = document.createElement('div');
-    rail.style.cssText = 'position:absolute;right:12px;bottom:44px;z-index:10;display:flex;flex-direction:column;gap:18px;align-items:center;';
-    rail.innerHTML = `
-      <a href="${ep.spotify_url || '#'}" ${ep.spotify_url ? 'target="_blank" rel="noopener"' : 'onclick="return false"'} style="width:48px;height:48px;border-radius:50%;background:rgba(0,0,0,0.4);backdrop-filter:blur(12px);border:1px solid var(--line-2);display:flex;align-items:center;justify-content:center;" aria-label="Listen on Spotify">${Icons.spotify}</a>
+    /* Guest name — bottom left, tappable → episode detail */
+    const guestBtn = document.createElement('button');
+    guestBtn.style.cssText = 'position:absolute;bottom:32px;left:16px;right:16px;z-index:10;background:none;border:none;text-align:left;cursor:pointer;padding:0;';
+    guestBtn.innerHTML = `
+      <div style="font-family:var(--display);font-weight:800;font-size:28px;letter-spacing:-0.02em;line-height:1;color:#fff;text-shadow:0 2px 12px rgba(0,0,0,0.6);">${ep.guest}</div>
+      <div style="font-size:11px;color:rgba(255,255,255,0.55);margin-top:4px;letter-spacing:0.05em;display:flex;align-items:center;gap:4px;">Ep ${ep.no} · ${ep.cat} ${Icons.arrowRight}</div>
     `;
-    card.appendChild(rail);
+    guestBtn.addEventListener('click', (e) => { e.stopPropagation(); navigate(Wiki, { epNo: ep.no }, 'right'); });
+    card.appendChild(guestBtn);
 
     /* Progress bar control */
     let progressTimer = null;
