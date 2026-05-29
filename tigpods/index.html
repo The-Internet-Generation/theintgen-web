@@ -51,78 +51,32 @@ button, a {
 }
 
 /* ============================================================
-   STAGE + PHONE FRAME
+   STAGE + PHONE FRAME — always full-viewport, no phone chrome
    ============================================================ */
 .stage {
   width: 100vw;
-  height: 100vh;
+  height: 100dvh;
   display: flex;
-  align-items: center;
-  justify-content: center;
-  background:
-    radial-gradient(ellipse 60% 50% at 50% 40%, rgba(29,185,84,0.06) 0%, transparent 70%),
-    #06060a;
-  padding: 20px;
+  align-items: stretch;
+  justify-content: stretch;
+  padding: 0;
+  background: var(--bg);
 }
 .phone {
-  width: 393px;
-  height: min(852px, calc(100vh - 40px));
-  border-radius: 48px;
-  background: #000;
-  padding: 9px;
+  flex: 1;
   position: relative;
-  box-shadow:
-    0 30px 80px rgba(0,0,0,0.7),
-    inset 0 0 0 1px rgba(255,255,255,0.05),
-    0 0 0 11px #0d0d0d,
-    0 0 0 13px rgba(255,255,255,0.04);
-  flex-shrink: 0;
+  overflow: hidden;
+  background: var(--bg);
 }
 .phone-screen {
   width: 100%;
   height: 100%;
-  border-radius: 40px;
   background: var(--bg);
   overflow: hidden;
   position: relative;
   isolation: isolate;
 }
-.phone-notch {
-  position: absolute;
-  top: 14px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 110px;
-  height: 30px;
-  background: #000;
-  border-radius: 18px;
-  z-index: 100;
-  pointer-events: none;
-}
-@media (max-width: 480px) {
-  .stage { padding: 0; background: #000; }
-  .phone { width: 100vw; height: 100vh; border-radius: 0; padding: 0; box-shadow: none; }
-  .phone-screen { border-radius: 0; }
-  .phone-notch { display: none; }
-}
-
-/* ============================================================
-   DESKTOP — full viewport, no phone chrome
-   ============================================================ */
-@media (min-width: 481px) {
-  .stage { padding: 0; }
-  .phone {
-    width: 100vw !important;
-    max-width: none !important;
-    height: 100vh !important;
-    max-height: none !important;
-    border-radius: 0 !important;
-    padding: 0 !important;
-    box-shadow: none !important;
-  }
-  .phone-screen { border-radius: 0 !important; }
-  .phone-notch { display: none !important; }
-}
+.phone-notch { display: none; }
 
 /* ============================================================
    STATUS BAR
@@ -682,6 +636,9 @@ let currentCleanup = null;
 const root = document.getElementById('screen-root');
 
 function navigate(screenFn, params = {}, dir = 'instant') {
+  /* Kill any leftover screens from interrupted/rapid navigations */
+  while (root.children.length > 1) root.lastElementChild.remove();
+
   const prevEl = root.firstElementChild;
   const prevCleanup = currentCleanup;
   if (prevCleanup) { prevCleanup(); currentCleanup = null; }
@@ -690,10 +647,10 @@ function navigate(screenFn, params = {}, dir = 'instant') {
   currentCleanup = cleanup || null;
 
   const TXS = {
-    up:    { enter: 'translateY(100%)',  exit: 'translateY(-22%) scale(0.97)' },
-    down:  { enter: 'translateY(-100%)', exit: 'translateY(22%) scale(0.97)' },
-    right: { enter: 'translateX(100%)',  exit: 'translateX(-22%) scale(0.97)' },
-    left:  { enter: 'translateX(-100%)', exit: 'translateX(22%) scale(0.97)' },
+    up:    { enter: 'translateY(100%)',   exit: 'translateY(-18%) scale(0.96)' },
+    down:  { enter: 'translateY(-100%)',  exit: 'translateY(18%) scale(0.96)' },
+    right: { enter: 'translateX(100%)',   exit: 'translateX(-18%) scale(0.96)' },
+    left:  { enter: 'translateX(-100%)',  exit: 'translateX(18%) scale(0.96)' },
   };
   const tx = TXS[dir];
 
@@ -703,24 +660,36 @@ function navigate(screenFn, params = {}, dir = 'instant') {
     return;
   }
 
-  /* Prepare new screen off-screen, no transition yet */
-  el.style.cssText += `transform:${tx.enter};transition:none;position:absolute;inset:0;`;
+  /* Suppress the screenIn CSS animation — we handle the enter ourselves */
+  el.classList.remove('screen-enter');
+  el.style.animation = 'none';
+
+  /* Place new screen off-screen with no transition */
+  el.style.transform = tx.enter;
+  el.style.transition = 'none';
   root.appendChild(el);
 
-  /* Double rAF → browser paints initial positions before animating */
+  /* Double rAF → browser commits initial layout before starting transitions */
   requestAnimationFrame(() => requestAnimationFrame(() => {
-    const dur = '400ms cubic-bezier(0.16, 1, 0.3, 1)';
-    el.style.transition  = `transform ${dur}`;
-    el.style.transform   = 'translateY(0) translateX(0) scale(1)';
-    prevEl.style.transition = `transform ${dur}, opacity 400ms ease`;
-    prevEl.style.transform  = tx.exit;
-    prevEl.style.opacity    = '0.15';
+    const dur = '400ms cubic-bezier(0.22, 1, 0.36, 1)';
 
+    /* Slide new screen in */
+    el.style.transition = `transform ${dur}`;
+    el.style.transform  = 'none';
+
+    /* Slide old screen out */
+    prevEl.style.transition = `transform ${dur}, opacity 380ms ease`;
+    prevEl.style.transform  = tx.exit;
+    prevEl.style.opacity    = '0';
+
+    /* Remove old screen after animation — transitionend + timeout fallback */
+    const removeOld = () => { if (prevEl.parentNode) prevEl.remove(); };
     el.addEventListener('transitionend', () => {
       el.style.transition = '';
       el.style.transform  = '';
-      if (prevEl.parentNode) prevEl.remove();
+      removeOld();
     }, { once: true });
+    setTimeout(removeOld, 460); /* fallback if transitionend never fires */
   }));
 }
 
@@ -728,11 +697,12 @@ function navigate(screenFn, params = {}, dir = 'instant') {
    SCREEN: WELCOME
    ============================================================ */
 function Welcome() {
-  let playing = true;   // optimistically playing on mount
+  let playing = false;  // starts paused — first disc tap unlocks audio
+  let audioUnlocked = false; // true after first disc tap
   let progress = 0;
   let rafId = null;
   let startTime = null;
-  let spIframe = null;  // hidden Spotify audio iframe
+  let spIframe = null;  // hidden Spotify audio iframe (created on first tap)
 
   // Pick a random episode for the now-playing chip
   const eps = (EPISODES || []).filter(e => e.no > 0);
@@ -975,7 +945,7 @@ function Welcome() {
     centerBtn.setAttribute('aria-label', playing ? 'Pause' : 'Play');
     centerOverlay.innerHTML = playing ? pauseIcon : playIcon;
     centerOverlay.style.opacity = playing ? '0' : '1';
-    // Control Spotify playback via postMessage
+    // Control Spotify playback via postMessage (only if iframe already exists)
     if (spIframe && spIframe.contentWindow) {
       spIframe.contentWindow.postMessage({ command: playing ? 'play' : 'pause' }, '*');
     }
@@ -992,30 +962,38 @@ function Welcome() {
   }
   rafId = requestAnimationFrame(loop);
 
-  /* Disc center play/pause */
-  centerBtn.addEventListener('click', () => setPlaying(!playing));
+  /* Init: show paused state */
+  setPlaying(false);
 
-  /* Load Spotify player immediately (autoplay on user-engaged browsers) */
-  if (epSpId) {
-    spIframe = document.createElement('iframe');
-    spIframe.src = `https://open.spotify.com/embed/episode/${epSpId}?utm_source=generator&theme=0&autoplay=1`;
-    spIframe.style.cssText = 'position:fixed;left:-9999px;top:-9999px;width:300px;height:152px;border:none;pointer-events:none;';
-    spIframe.setAttribute('allow', 'autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture');
-    spIframe.setAttribute('loading', 'lazy');
-    document.body.appendChild(spIframe);
-  }
+  /* Disc center play/pause — creates Spotify iframe on first tap (user gesture = autoplay allowed) */
+  centerBtn.addEventListener('click', () => {
+    if (!audioUnlocked && epSpId) {
+      audioUnlocked = true;
+      spIframe = document.createElement('iframe');
+      spIframe.src = `https://open.spotify.com/embed/episode/${epSpId}?utm_source=generator&theme=0&autoplay=1`;
+      spIframe.style.cssText = 'position:fixed;left:-9999px;top:-9999px;width:300px;height:152px;border:none;pointer-events:none;';
+      spIframe.setAttribute('allow', 'autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture');
+      document.body.appendChild(spIframe);
+      setPlaying(true);
+    } else {
+      setPlaying(!playing);
+    }
+  });
 
-  /* Gesture handling */
+  /* Gesture handling — on document so child elements can't accidentally block it */
   let touchStart = { x: 0, y: 0 };
-  el.addEventListener('touchstart', e => {
+  function onTouchStart(e) {
     touchStart = { x: e.touches[0].clientX, y: e.touches[0].clientY };
-  }, { passive: true });
-  el.addEventListener('touchend', e => {
+  }
+  function onTouchEnd(e) {
     const dx = e.changedTouches[0].clientX - touchStart.x;
     const dy = e.changedTouches[0].clientY - touchStart.y;
-    if (Math.abs(dy) > 50 && dy < 0 && Math.abs(dy) > Math.abs(dx)) navigate(Reel, {}, 'up');
-    else if (Math.abs(dx) > 50 && dx > 0 && Math.abs(dx) > Math.abs(dy)) navigate(Library, {}, 'right');
-  }, { passive: true });
+    const adx = Math.abs(dx), ady = Math.abs(dy);
+    if (ady > 45 && dy < 0 && ady > adx * 1.1) navigate(Reel, {}, 'up');
+    else if (adx > 45 && dx > 0 && adx > ady * 1.1) navigate(Library, {}, 'right');
+  }
+  document.addEventListener('touchstart', onTouchStart, { passive: true });
+  document.addEventListener('touchend', onTouchEnd, { passive: true });
   el.addEventListener('wheel', e => {
     if (e.deltaY > 20) navigate(Reel, {}, 'up');
   }, { passive: true });
@@ -1027,6 +1005,8 @@ function Welcome() {
   function cleanup() {
     cancelAnimationFrame(rafId);
     if (spIframe && spIframe.parentNode) spIframe.parentNode.removeChild(spIframe);
+    document.removeEventListener('touchstart', onTouchStart);
+    document.removeEventListener('touchend', onTouchEnd);
   }
 
   return { el, cleanup };
@@ -1064,20 +1044,11 @@ function Reel() {
     const videoId = (clipYtUrl && clipYtUrl.includes('/shorts/')) ? ytVideoId(clipYtUrl) : null;
 
     const card = document.createElement('div');
-    const thumb = epThumb(ep);
-    card.className = `reel-card ${thumb ? '' : thumbBg(ep.no)}`;
+    card.className = 'reel-card';
 
-    /* Background: real thumbnail or gradient placeholder + watermarks */
+    /* Background: solid dark — YouTube video covers this when loaded */
     card.innerHTML = `
-      ${thumb
-        ? `<img src="${thumb}" alt="${ep.guest}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;">`
-        : `<div style="position:absolute;inset:0;background-image:radial-gradient(ellipse at 30% 25%, rgba(29,185,84,0.18) 0%, transparent 50%),radial-gradient(ellipse at 80% 75%, rgba(255,255,255,0.05) 0%, transparent 60%);">
-             <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;opacity:0.18;pointer-events:none;">
-               <div style="font-family:var(--display);font-weight:900;font-size:220px;line-height:0.85;letter-spacing:-0.05em;color:#fff;">${String(ep.no).padStart(2,'0')}</div>
-             </div>
-             <div style="position:absolute;top:120px;left:50%;transform:translateX(-50%);width:140px;height:140px;border-radius:50%;background:rgba(0,0,0,0.35);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);display:flex;align-items:center;justify-content:center;color:#fff;font-family:var(--display);font-weight:800;font-size:44px;letter-spacing:-0.02em;border:1px solid rgba(255,255,255,0.18);">${initials(ep.guest)}</div>
-           </div>`
-      }
+      <div style="position:absolute;inset:0;background:#0d0d0d;"></div>
       <div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,0.55) 0%,rgba(0,0,0,0) 22%,rgba(0,0,0,0) 55%,rgba(0,0,0,0.85) 100%);pointer-events:none;"></div>
     `;
 
@@ -1152,28 +1123,44 @@ function Reel() {
       progressFill.style.transition = 'none';
     }
 
+    let preloadIframe = null;
+
     cardRegistry.set(id, {
+      /* Called when this card scrolls into the active slot */
       setActive(active) {
         if (active) {
           if (!paused) restartProgress();
-          /* Inject YouTube iframe (muted autoplay – works in all browsers) */
-          if (videoId && !ytIframe) {
-            ytIframe = document.createElement('iframe');
-            ytIframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&controls=0&rel=0&modestbranding=1&playsinline=1&loop=1&playlist=${videoId}`;
-            ytIframe.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;border:none;pointer-events:none;';
-            ytIframe.setAttribute('allow', 'autoplay; encrypted-media; fullscreen');
-            ytIframe.setAttribute('allowfullscreen', '');
-            /* Insert after bg placeholder, before the gradient scrim (children[1]) */
-            if (card.children.length > 1) {
+          if (videoId) {
+            if (preloadIframe) {
+              /* Preloaded — promote to active iframe, swap to autoplay src */
+              ytIframe = preloadIframe;
+              preloadIframe = null;
+              ytIframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&controls=0&rel=0&modestbranding=1&playsinline=1&loop=1&playlist=${videoId}`;
+            } else if (!ytIframe) {
+              /* No preload — create fresh */
+              ytIframe = document.createElement('iframe');
+              ytIframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&controls=0&rel=0&modestbranding=1&playsinline=1&loop=1&playlist=${videoId}`;
+              ytIframe.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;border:none;pointer-events:none;';
+              ytIframe.setAttribute('allow', 'autoplay; encrypted-media; fullscreen');
+              ytIframe.setAttribute('allowfullscreen', '');
               card.insertBefore(ytIframe, card.children[1]);
-            } else {
-              card.appendChild(ytIframe);
             }
           }
         } else {
           stopProgress();
-          /* Remove iframe to stop buffering when card is off-screen */
+          /* Remove active iframe to stop buffering */
           if (ytIframe) { ytIframe.remove(); ytIframe = null; }
+        }
+      },
+      /* Called for the card right after the active one — silently buffers */
+      preload() {
+        if (videoId && !ytIframe && !preloadIframe) {
+          preloadIframe = document.createElement('iframe');
+          /* autoplay=0 — loads resources without playing audio/video */
+          preloadIframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=0&mute=1&controls=0&rel=0&modestbranding=1&playsinline=1`;
+          preloadIframe.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;border:none;pointer-events:none;opacity:0;';
+          preloadIframe.setAttribute('allow', 'autoplay; encrypted-media; fullscreen');
+          card.insertBefore(preloadIframe, card.children[1]);
         }
       },
     });
@@ -1187,6 +1174,9 @@ function Reel() {
   /* Activate first card */
   if (cardRegistry.has(items[0].id)) cardRegistry.get(items[0].id).setActive(true);
 
+  /* Preload initial next card */
+  if (items[1]) cardRegistry.get(items[1].id)?.preload?.();
+
   /* Scroll handler */
   feed.addEventListener('scroll', () => {
     const newIdx = Math.round(feed.scrollTop / feed.clientHeight);
@@ -1194,6 +1184,9 @@ function Reel() {
       if (cardRegistry.has(items[activeIdx]?.id)) cardRegistry.get(items[activeIdx].id).setActive(false);
       activeIdx = newIdx;
       if (cardRegistry.has(items[activeIdx]?.id)) cardRegistry.get(items[activeIdx].id).setActive(true);
+      /* Preload the card after the one we just activated */
+      const nextItem = items[activeIdx + 1];
+      if (nextItem) cardRegistry.get(nextItem.id)?.preload?.();
     }
     /* Infinite append */
     if (feed.scrollTop + feed.clientHeight * 3 > feed.scrollHeight) {
