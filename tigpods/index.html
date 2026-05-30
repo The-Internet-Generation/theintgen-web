@@ -612,15 +612,10 @@ const Icons = {
    SHARED DOM HELPERS
    ============================================================ */
 function statusBarEl() {
+  /* Invisible top spacer — keeps content clear of the device notch/status bar.
+     The faux time/signal/battery indicators were removed per design. */
   const el = document.createElement('div');
   el.className = 'status-bar';
-  el.innerHTML = `
-    <span>9:41</span>
-    <span style="display:inline-flex;align-items:center;gap:6px;font-size:13px">
-      <svg width="16" height="11" viewBox="0 0 16 11"><path d="M1 8h2v2H1zm4-2h2v4H5zm4-3h2v7H9zm4-3h2v10h-2z" fill="currentColor"/></svg>
-      <svg width="22" height="11" viewBox="0 0 22 11" fill="none" stroke="currentColor" stroke-width="1"><rect x="1" y="1" width="17" height="9" rx="2.5"/><rect x="19" y="3.5" width="1.5" height="4" rx="0.5" fill="currentColor"/><rect x="2.5" y="2.5" width="13" height="6" rx="1.2" fill="currentColor"/></svg>
-    </span>
-  `;
   return el;
 }
 
@@ -1180,6 +1175,10 @@ function Reel() {
   let items = shuffleArray(pool).slice(0, 20).map((p, i) => ({ ...p, id: i }));
   let activeIdx = 0;
   let idCounter = items.length;
+  /* Mobile browsers block UNMUTED autoplay, so every clip autoplays muted
+     (guaranteed to play) and the user taps the speaker to add sound. That
+     choice persists across cards for the rest of the session. */
+  let reelMuted = true;
 
   const el = document.createElement('div');
   el.className = 'screen screen-enter';
@@ -1226,8 +1225,20 @@ function Reel() {
     card.appendChild(brandMark);
 
 
+    /* YouTube iframe JS-API helpers — let us toggle sound without reloading
+       (a reload would restart the clip and re-trigger autoplay blocking). */
+    function postYT(func, args) {
+      try {
+        ytIframe && ytIframe.contentWindow &&
+          ytIframe.contentWindow.postMessage(JSON.stringify({ event: 'command', func, args: args || [] }), '*');
+      } catch (e) {}
+    }
+    function applyMuteState() {
+      if (reelMuted) postYT('mute');
+      else { postYT('unMute'); postYT('setVolume', [100]); }
+    }
+
     /* Tap-to-pause overlay — full card, invisible */
-    let muted = false; // reels play with sound by default
     const tapOverlay = document.createElement('div');
     tapOverlay.style.cssText = 'position:absolute;inset:0;z-index:5;cursor:pointer;';
     const pauseIconEl = document.createElement('div');
@@ -1242,21 +1253,20 @@ function Reel() {
     });
     card.appendChild(tapOverlay);
 
-    /* Unmute button — top-right corner */
+    /* Sound toggle — top-right corner. Starts muted (so autoplay is allowed);
+       tapping it is a user gesture, so unmuting is permitted. */
     const unmuteBtn = document.createElement('button');
     unmuteBtn.style.cssText = 'position:absolute;top:64px;right:14px;z-index:15;width:36px;height:36px;border-radius:50%;background:rgba(0,0,0,0.5);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,0.2);display:flex;align-items:center;justify-content:center;color:#fff;cursor:pointer;';
-    unmuteBtn.setAttribute('aria-label', 'Mute');
-    unmuteBtn.innerHTML = Icons.speakerOn; // starts unmuted
+    function syncMuteBtn() {
+      unmuteBtn.innerHTML = reelMuted ? Icons.speakerOff : Icons.speakerOn;
+      unmuteBtn.setAttribute('aria-label', reelMuted ? 'Unmute' : 'Mute');
+    }
+    syncMuteBtn();
     unmuteBtn.addEventListener('click', (e) => {
       e.stopPropagation();
-      muted = !muted;
-      unmuteBtn.innerHTML = muted ? Icons.speakerOff : Icons.speakerOn;
-      unmuteBtn.setAttribute('aria-label', muted ? 'Unmute' : 'Mute');
-      if (ytIframe) {
-        /* Reload iframe without mute — browser allows it because this is a user gesture */
-        const muteParam = muted ? '&mute=1' : '&mute=0';
-        ytIframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1${muteParam}&controls=0&rel=0&modestbranding=1&playsinline=1&loop=1&playlist=${videoId}`;
-      }
+      reelMuted = !reelMuted;   // persists across cards for the session
+      syncMuteBtn();
+      applyMuteState();          // toggle live via JS API — no reload, no replay
     });
     card.appendChild(unmuteBtn);
 
@@ -1307,21 +1317,27 @@ function Reel() {
       setActive(active) {
         if (active) {
           if (!paused) restartProgress();
+          syncMuteBtn(); // reflect the session-wide sound choice on this card
           if (videoId) {
+            /* Always autoplay MUTED — the only form of autoplay mobile allows.
+               Once the player is ready we re-apply the user's sound choice. */
+            const src = `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&enablejsapi=1&controls=0&rel=0&modestbranding=1&playsinline=1&loop=1&playlist=${videoId}`;
             if (preloadIframe) {
-              /* Preloaded — promote to active iframe, make visible, swap to autoplay src */
               ytIframe = preloadIframe;
               preloadIframe = null;
               ytIframe.style.opacity = '1';
-              ytIframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=${muted ? 1 : 0}&controls=0&rel=0&modestbranding=1&playsinline=1&loop=1&playlist=${videoId}`;
+              ytIframe.onload = () => setTimeout(applyMuteState, 350);
+              ytIframe.src = src;
             } else if (!ytIframe) {
-              /* No preload — create fresh */
               ytIframe = document.createElement('iframe');
-              ytIframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=${muted ? 1 : 0}&controls=0&rel=0&modestbranding=1&playsinline=1&loop=1&playlist=${videoId}`;
+              ytIframe.onload = () => setTimeout(applyMuteState, 350);
+              ytIframe.src = src;
               ytIframe.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;border:none;pointer-events:none;';
               ytIframe.setAttribute('allow', 'autoplay; encrypted-media; fullscreen');
               ytIframe.setAttribute('allowfullscreen', '');
               card.insertBefore(ytIframe, card.children[1]);
+            } else {
+              applyMuteState();
             }
           }
         } else {
