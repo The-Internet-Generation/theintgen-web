@@ -653,11 +653,25 @@ function logoEl(size = 26, withWordmark = true) {
    ROUTER
    ============================================================ */
 let currentCleanup = null;
+let navGen = 0;            // bumped per navigation; stale rAF/timer callbacks bail out
+let pendingNavTimer = null; // single cancellable timer that finalizes the last transition
 const root = document.getElementById('screen-root');
 
 function navigate(screenFn, params = {}, dir = 'instant') {
-  /* Kill any leftover screens from interrupted/rapid navigations */
-  while (root.children.length > 1) root.lastElementChild.remove();
+  const gen = ++navGen;
+
+  /* Finalize any in-flight transition before starting a new one:
+     drop every screen except the most recent and snap it back to a clean,
+     centered state. Removing from the FRONT keeps the current screen (last
+     child) — removing from the back would animate from a stale screen. */
+  if (pendingNavTimer) { clearTimeout(pendingNavTimer); pendingNavTimer = null; }
+  while (root.children.length > 1) root.firstElementChild.remove();
+  const settled = root.firstElementChild;
+  if (settled) {
+    settled.style.transition = 'none';
+    settled.style.transform  = '';
+    settled.style.opacity     = '';
+  }
 
   const prevEl = root.firstElementChild;
   const prevCleanup = currentCleanup;
@@ -691,6 +705,7 @@ function navigate(screenFn, params = {}, dir = 'instant') {
 
   /* Double rAF → browser commits initial layout before starting transitions */
   requestAnimationFrame(() => requestAnimationFrame(() => {
+    if (gen !== navGen) return; /* superseded by a newer navigation — do nothing */
     const dur = '400ms cubic-bezier(0.22, 1, 0.36, 1)';
 
     /* Slide new screen in */
@@ -702,14 +717,15 @@ function navigate(screenFn, params = {}, dir = 'instant') {
     prevEl.style.transform  = tx.exit;
     prevEl.style.opacity    = '0';
 
-    /* Remove old screen after animation — transitionend + timeout fallback */
-    const removeOld = () => { if (prevEl.parentNode) prevEl.remove(); };
-    el.addEventListener('transitionend', () => {
+    /* Single cancellable timer settles the transition — no lingering
+       transitionend listeners that could clear transforms mid-animation. */
+    pendingNavTimer = setTimeout(() => {
+      pendingNavTimer = null;
+      if (gen !== navGen) return;
+      if (prevEl.parentNode) prevEl.remove();
       el.style.transition = '';
       el.style.transform  = '';
-      removeOld();
-    }, { once: true });
-    setTimeout(removeOld, 460); /* fallback if transitionend never fires */
+    }, 440);
   }));
 }
 
@@ -722,11 +738,16 @@ function Welcome() {
   let progress = 0;
   let rafId = null;
   let startTime = null;
-  let spIframe = null;  // hidden Spotify audio iframe (created on first tap)
+  let audioEl = null;   // native <audio> — primary playback path (autoplays on iOS after tap)
+  let spIframe = null;  // Spotify embed — fallback only when audio_url is missing
+  let spVisible = false;
 
-  // Pick a random episode for the now-playing chip
-  const eps = (EPISODES || []).filter(e => e.no > 0);
+  // Pick a random episode for the now-playing chip — only ones that can actually
+  // play (native audio or a Spotify embed), so a disc tap is never silent.
+  const playable = (EPISODES || []).filter(e => e.no > 0 && (e.audio_url || e.spotify_url));
+  const eps = playable.length ? playable : (EPISODES || []).filter(e => e.no > 0);
   const currentEp = eps.length ? eps[Math.floor(Math.random() * eps.length)] : null;
+  const audioUrl = currentEp ? (currentEp.audio_url || null) : null;
   const ytUrl = currentEp
     ? (currentEp.youtube_url || 'https://www.youtube.com/results?search_query=' + encodeURIComponent(`tigpods ${currentEp.guest} ${currentEp.title}`))
     : 'https://www.youtube.com/@TigPods';
@@ -958,43 +979,56 @@ function Welcome() {
     arcDot.setAttribute('cy', String(cy + r * Math.sin(angle)));
   }
 
-  function setPlaying(val) {
+  /* Visual state only — never triggers playback. Playback is driven by the
+     native <audio> events (or the Spotify fallback), which then call this. */
+  function applyVisuals(val) {
     playing = val;
     disc.style.animationPlayState = playing ? 'running' : 'paused';
     arm.style.transform = `translateY(-50%) rotate(${playing ? 110 : 75}deg)`;
     arcSvg.style.opacity = playing ? '1' : '0';
     glow.style.opacity = playing ? '1' : '0.55';
     if (!playing) startTime = null;
-    // Update center button aria + icon
     centerBtn.setAttribute('aria-label', playing ? 'Pause' : 'Play');
     centerOverlay.innerHTML = playing ? pauseIcon : playIcon;
     centerOverlay.style.opacity = playing ? '0' : '1';
-    // Control Spotify playback via postMessage (only if iframe already exists)
-    if (spIframe && spIframe.contentWindow) {
-      spIframe.contentWindow.postMessage({ command: playing ? 'play' : 'pause' }, '*');
-    }
   }
 
-  /* RAF loop for progress arc */
+  /* RAF loop for progress arc — real audio time when available, else synthetic */
   function loop(t) {
     if (playing) {
-      if (!startTime) startTime = t - 22000; // 22s headstart so arc is already visible
-      progress = ((t - startTime) / 1000 % 90) / 90;
+      if (audioEl && audioEl.duration && isFinite(audioEl.duration)) {
+        progress = audioEl.currentTime / audioEl.duration;
+      } else {
+        if (!startTime) startTime = t - 22000; // 22s headstart so arc is already visible
+        progress = ((t - startTime) / 1000 % 90) / 90;
+      }
       updateArc(progress);
     }
     rafId = requestAnimationFrame(loop);
   }
   rafId = requestAnimationFrame(loop);
 
-  /* Spotify mini-player — slides up from bottom on first disc tap */
+  /* Spotify mini-player container — only used as a fallback when audio_url is missing */
   const spPlayer = document.createElement('div');
   spPlayer.className = 'sp-player';
   el.appendChild(spPlayer);
 
-  /* Pre-load the Spotify embed immediately (autoplay=0) so the player SDK is warm.
-     On disc tap we reload src with autoplay=1 inside the user-gesture event —
-     Chrome/Android autoplays; iOS/Brave show the visible embed for one-tap play. */
-  if (epSpId) {
+  if (audioUrl) {
+    /* PRIMARY PATH — native <audio>. A direct MP3 played from inside the disc-tap
+       gesture autoplays reliably on iOS Safari / Brave, unlike a cross-origin iframe. */
+    audioEl = document.createElement('audio');
+    audioEl.src = audioUrl;
+    audioEl.preload = 'none';
+    audioEl.setAttribute('playsinline', '');
+    audioEl.style.display = 'none';
+    el.appendChild(audioEl);
+    /* Visuals follow the element's real state, so a rejected play() never desyncs the UI */
+    audioEl.addEventListener('play',  () => applyVisuals(true));
+    audioEl.addEventListener('pause', () => applyVisuals(false));
+    audioEl.addEventListener('ended', () => { audioEl.currentTime = 0; applyVisuals(false); });
+  } else if (epSpId) {
+    /* FALLBACK — Spotify embed for episodes that have no audio_url yet (newest uploads).
+       Loaded with autoplay=1 inside the tap gesture; iOS/Brave show one-tap play. */
     spIframe = document.createElement('iframe');
     spIframe.style.cssText = 'width:100%;height:152px;border:none;display:block;';
     spIframe.setAttribute('allow', 'autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture');
@@ -1003,26 +1037,33 @@ function Welcome() {
   }
 
   /* Init: show paused state */
-  setPlaying(false);
+  applyVisuals(false);
 
-  /* Disc center tap:
-     - First tap: reloads Spotify src with autoplay=1 (user-gesture context → Chrome autoplays),
-       slides the mini-player up so iOS/Brave users can tap once inside the visible embed.
-     - Subsequent taps: pause/resume both the disc and Spotify via postMessage */
+  /* Disc center tap — play/pause. */
   centerBtn.addEventListener('click', () => {
     if (!audioUnlocked) {
       /* Kill the prompt ripple — user found the button */
       discRipple.style.animation = 'none';
       discRipple.style.opacity = '0';
       audioUnlocked = true;
-      if (epSpId && spIframe) {
-        /* Reload with autoplay=1 inside this user-gesture call stack — browser allows autoplay */
+    }
+    if (audioEl) {
+      /* Called synchronously in the gesture stack → iOS permits autoplay */
+      if (audioEl.paused) audioEl.play().catch(() => {});
+      else audioEl.pause();
+    } else if (epSpId && spIframe) {
+      if (!spVisible) {
         spIframe.src = `https://open.spotify.com/embed/episode/${epSpId}?utm_source=generator&theme=0&autoplay=1`;
         spPlayer.classList.add('visible');
+        spVisible = true;
+        applyVisuals(true);
+      } else {
+        const next = !playing;
+        if (spIframe.contentWindow) spIframe.contentWindow.postMessage({ command: next ? 'play' : 'pause' }, '*');
+        applyVisuals(next);
       }
-      setPlaying(true);
     } else {
-      setPlaying(!playing);
+      applyVisuals(!playing);
     }
   });
 
@@ -1050,6 +1091,7 @@ function Welcome() {
   /* Cleanup */
   function cleanup() {
     cancelAnimationFrame(rafId);
+    if (audioEl) { audioEl.pause(); audioEl.src = ''; } // stop playback + release buffer
     if (spIframe) spIframe.src = ''; // stop playback
     document.removeEventListener('touchstart', onTouchStart);
     document.removeEventListener('touchend', onTouchEnd);
@@ -1113,7 +1155,7 @@ function Reel() {
 
 
     /* Tap-to-pause overlay — full card, invisible */
-    let muted = true;
+    let muted = false; // reels play with sound by default
     const tapOverlay = document.createElement('div');
     tapOverlay.style.cssText = 'position:absolute;inset:0;z-index:5;cursor:pointer;';
     const pauseIconEl = document.createElement('div');
@@ -1131,8 +1173,8 @@ function Reel() {
     /* Unmute button — top-right corner */
     const unmuteBtn = document.createElement('button');
     unmuteBtn.style.cssText = 'position:absolute;top:64px;right:14px;z-index:15;width:36px;height:36px;border-radius:50%;background:rgba(0,0,0,0.5);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,0.2);display:flex;align-items:center;justify-content:center;color:#fff;cursor:pointer;';
-    unmuteBtn.setAttribute('aria-label', 'Unmute');
-    unmuteBtn.innerHTML = Icons.speakerOff; // starts muted
+    unmuteBtn.setAttribute('aria-label', 'Mute');
+    unmuteBtn.innerHTML = Icons.speakerOn; // starts unmuted
     unmuteBtn.addEventListener('click', (e) => {
       e.stopPropagation();
       muted = !muted;
@@ -1182,11 +1224,11 @@ function Reel() {
               ytIframe = preloadIframe;
               preloadIframe = null;
               ytIframe.style.opacity = '1';
-              ytIframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&controls=0&rel=0&modestbranding=1&playsinline=1&loop=1&playlist=${videoId}`;
+              ytIframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=${muted ? 1 : 0}&controls=0&rel=0&modestbranding=1&playsinline=1&loop=1&playlist=${videoId}`;
             } else if (!ytIframe) {
               /* No preload — create fresh */
               ytIframe = document.createElement('iframe');
-              ytIframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&controls=0&rel=0&modestbranding=1&playsinline=1&loop=1&playlist=${videoId}`;
+              ytIframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=${muted ? 1 : 0}&controls=0&rel=0&modestbranding=1&playsinline=1&loop=1&playlist=${videoId}`;
               ytIframe.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;border:none;pointer-events:none;';
               ytIframe.setAttribute('allow', 'autoplay; encrypted-media; fullscreen');
               ytIframe.setAttribute('allowfullscreen', '');
@@ -1224,24 +1266,33 @@ function Reel() {
   /* Preload initial next card */
   if (items[1]) cardRegistry.get(items[1].id)?.preload?.();
 
-  /* Scroll handler */
+  /* Switch the active card, clamping to a valid index */
+  function setActiveIdx(idx) {
+    idx = Math.max(0, Math.min(items.length - 1, idx));
+    if (idx === activeIdx) return;
+    cardRegistry.get(items[activeIdx]?.id)?.setActive(false);
+    activeIdx = idx;
+    cardRegistry.get(items[activeIdx]?.id)?.setActive(true);
+    cardRegistry.get(items[activeIdx + 1]?.id)?.preload?.();
+  }
+
+  /* Scroll handler — switch on the fly, then re-sync once momentum settles so
+     the playing card always matches the one the snap actually landed on. */
+  let settleTimer = null;
   feed.addEventListener('scroll', () => {
-    const newIdx = Math.round(feed.scrollTop / feed.clientHeight);
-    if (newIdx !== activeIdx) {
-      if (cardRegistry.has(items[activeIdx]?.id)) cardRegistry.get(items[activeIdx].id).setActive(false);
-      activeIdx = newIdx;
-      if (cardRegistry.has(items[activeIdx]?.id)) cardRegistry.get(items[activeIdx].id).setActive(true);
-      /* Preload the card after the one we just activated */
-      const nextItem = items[activeIdx + 1];
-      if (nextItem) cardRegistry.get(nextItem.id)?.preload?.();
-    }
+    setActiveIdx(Math.round(feed.scrollTop / feed.clientHeight));
+
+    clearTimeout(settleTimer);
+    settleTimer = setTimeout(() => {
+      setActiveIdx(Math.round(feed.scrollTop / feed.clientHeight));
+    }, 120);
+
     /* Infinite append */
     if (feed.scrollTop + feed.clientHeight * 3 > feed.scrollHeight) {
       const more = shuffleArray(pool).slice(0, 10).map((p) => ({ ...p, id: idCounter++ }));
       more.forEach(item => {
         items.push(item);
-        const card = createCard(item);
-        feed.appendChild(card);
+        feed.appendChild(createCard(item));
       });
     }
   }, { passive: true });
@@ -1250,7 +1301,13 @@ function Reel() {
   function onKey(e) { if (e.key === 'Escape') navigate(Welcome, {}, 'down'); }
   document.addEventListener('keydown', onKey);
 
-  return { el, cleanup: () => document.removeEventListener('keydown', onKey) };
+  return {
+    el,
+    cleanup: () => {
+      clearTimeout(settleTimer);
+      document.removeEventListener('keydown', onKey);
+    },
+  };
 }
 
 /* ============================================================
@@ -1587,16 +1644,23 @@ function Wiki({ epNo }) {
       cardBtn.style.cssText = 'width:130px;text-align:left;display:flex;flex-direction:column;gap:8px;' + (clipUrl ? 'cursor:pointer;' : 'opacity:0.5;cursor:default;');
       if (clipUrl) cardBtn.addEventListener('click', () => window.open(clipUrl, '_blank', 'noopener'));
 
+      /* Random YouTube frame grab (frames 1-3) as the short's thumbnail;
+         falls back to hqdefault, then to the initials placeholder behind it. */
+      const shortVid = short.youtube_url ? ytVideoId(short.youtube_url) : null;
+      const frame = ['1', '2', '3'][Math.floor(Math.random() * 3)];
+
       const thumb = document.createElement('div');
       thumb.className = thumbBg(ep.no);
       thumb.style.cssText = 'position:relative;width:130px;height:200px;border-radius:10px;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,0.5),inset 0 0 0 1px rgba(255,255,255,0.05);';
       thumb.innerHTML = `
         <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:var(--display);font-weight:900;font-size:56px;color:rgba(255,255,255,0.16);">${initials(ep.guest)}</div>
-        <div style="position:absolute;bottom:8px;left:8px;background:rgba(0,0,0,0.7);font-size:10px;padding:2px 6px;border-radius:4px;color:#fff;font-weight:600;">▶ ${short.dur}</div>
+        ${shortVid ? `<img src="https://img.youtube.com/vi/${shortVid}/${frame}.jpg" alt="" loading="lazy" onerror="if(this.dataset.fb){this.style.display='none'}else{this.dataset.fb=1;this.src='https://img.youtube.com/vi/${shortVid}/hqdefault.jpg'}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;">
+        <div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,0) 45%,rgba(0,0,0,0.62));pointer-events:none;"></div>` : ''}
+        ${short.dur ? `<div style="position:absolute;bottom:8px;left:8px;background:rgba(0,0,0,0.7);font-size:10px;padding:2px 6px;border-radius:4px;color:#fff;font-weight:600;">▶ ${short.dur}</div>` : ''}
         ${isIG ? `<div style="position:absolute;top:8px;right:8px;background:rgba(0,0,0,0.65);border-radius:6px;padding:3px 5px;font-size:9px;font-weight:700;color:#E1306C;letter-spacing:0.03em;">IG</div>` : ''}
-        <svg viewBox="0 0 130 30" style="position:absolute;left:0;right:0;top:50%;transform:translateY(-50%);width:100%;height:30px;opacity:0.55;">
+        ${shortVid ? '' : `<svg viewBox="0 0 130 30" style="position:absolute;left:0;right:0;top:50%;transform:translateY(-50%);width:100%;height:30px;opacity:0.55;">
           <path d="M 0 15 Q 8 4 16 15 T 32 15 T 48 15 T 64 15 T 80 15 T 96 15 T 112 15 T 130 15" fill="none" stroke="var(--green)" stroke-width="1.4" stroke-linecap="round"/>
-        </svg>
+        </svg>`}
       `;
       const title = document.createElement('div');
       title.className = 'clamp-2';
