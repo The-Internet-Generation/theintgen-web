@@ -740,6 +740,10 @@ function attachSwipe(target, handlers = {}) {
   let sx = 0, sy = 0, st = 0, tracking = false;
   function onStart(e) {
     if (e.touches.length !== 1) { tracking = false; return; }
+    /* Don't hijack swipes that begin inside a horizontal scroller (chip rows,
+       shorts rows) — those gestures belong to that row's own scrolling. */
+    const hScroll = e.target.closest && e.target.closest('.hrow');
+    if (hScroll && hScroll.scrollWidth > hScroll.clientWidth + 4) { tracking = false; return; }
     sx = e.touches[0].clientX; sy = e.touches[0].clientY; st = Date.now();
     tracking = true;
   }
@@ -763,6 +767,34 @@ function attachSwipe(target, handlers = {}) {
     target.removeEventListener('touchstart', onStart);
     target.removeEventListener('touchend', onEnd);
   };
+}
+
+/* ============================================================
+   SHARE — native share sheet with graceful fallbacks
+   ============================================================ */
+function toast(msg) {
+  const t = document.createElement('div');
+  t.textContent = msg;
+  t.style.cssText = 'position:fixed;left:50%;bottom:80px;transform:translateX(-50%);z-index:9999;background:rgba(0,0,0,0.85);backdrop-filter:blur(12px);color:#fff;padding:10px 18px;border-radius:999px;font-size:13px;border:1px solid rgba(255,255,255,0.18);opacity:0;transition:opacity 180ms ease;pointer-events:none;';
+  document.body.appendChild(t);
+  requestAnimationFrame(() => { t.style.opacity = '1'; });
+  setTimeout(() => { t.style.opacity = '0'; setTimeout(() => t.remove(), 220); }, 1600);
+}
+
+async function shareContent({ title, text, url }) {
+  if (!url) { toast('Nothing to share'); return; }
+  /* Native share sheet (mobile) — exposes WhatsApp, Instagram, X, etc. */
+  if (navigator.share) {
+    try { await navigator.share({ title, text, url }); return; }
+    catch (e) { if (e && e.name === 'AbortError') return; } // user dismissed
+  }
+  /* Desktop / unsupported — copy the link */
+  try {
+    await navigator.clipboard.writeText(url);
+    toast('Link copied to clipboard');
+  } catch (e) {
+    window.open(url, '_blank', 'noopener');
+  }
 }
 
 /* ============================================================
@@ -1054,10 +1086,23 @@ function Welcome() {
        gesture autoplays reliably on iOS Safari / Brave, unlike a cross-origin iframe. */
     audioEl = document.createElement('audio');
     audioEl.src = audioUrl;
-    audioEl.preload = 'none';
+    /* 'metadata' lets us learn the duration up front and seek to a random
+       middle slice before the user ever taps, so playback drops them into the
+       conversation rather than the intro. */
+    audioEl.preload = 'metadata';
     audioEl.setAttribute('playsinline', '');
     audioEl.style.display = 'none';
     el.appendChild(audioEl);
+    /* Start at a random point in the middle third-ish (28%–62%) of the episode. */
+    let seekedToMiddle = false;
+    audioEl.addEventListener('loadedmetadata', () => {
+      if (seekedToMiddle) return;
+      const d = audioEl.duration;
+      if (isFinite(d) && d > 0) {
+        audioEl.currentTime = d * (0.28 + Math.random() * 0.34);
+        seekedToMiddle = true;
+      }
+    });
     /* Visuals follow the element's real state, so a rejected play() never desyncs the UI */
     audioEl.addEventListener('play',  () => applyVisuals(true));
     audioEl.addEventListener('pause', () => applyVisuals(false));
@@ -1215,6 +1260,23 @@ function Reel() {
     });
     card.appendChild(unmuteBtn);
 
+    /* Share button — below the mute toggle */
+    const shareBtn = document.createElement('button');
+    shareBtn.style.cssText = 'position:absolute;top:108px;right:14px;z-index:15;width:36px;height:36px;border-radius:50%;background:rgba(0,0,0,0.5);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,0.2);display:flex;align-items:center;justify-content:center;color:#fff;cursor:pointer;';
+    shareBtn.setAttribute('aria-label', 'Share this clip');
+    shareBtn.innerHTML = Icons.share;
+    shareBtn.querySelector('svg')?.setAttribute('width', '18');
+    shareBtn.querySelector('svg')?.setAttribute('height', '18');
+    shareBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      shareContent({
+        title: `TigPods — ${ep.guest}`,
+        text: `${ep.guest} on TigPods${clipTitle ? ' — ' + clipTitle : ''}`,
+        url: clipYtUrl,
+      });
+    });
+    card.appendChild(shareBtn);
+
     /* Guest name — bottom left, tappable → episode detail */
     const guestBtn = document.createElement('button');
     guestBtn.style.cssText = 'position:absolute;bottom:32px;left:16px;right:16px;z-index:10;background:none;border:none;text-align:left;cursor:pointer;padding:0;';
@@ -1332,8 +1394,9 @@ function Reel() {
      Right → home, left → library. (The dominant-axis check in attachSwipe
      keeps vertical scrolling from ever triggering a screen change.) */
   const detachSwipe = attachSwipe(el, {
-    onRight: () => navigate(Welcome, {}, 'left'),
-    onLeft:  () => navigate(Library, {}, 'right'),
+    onRight: () => navigate(Welcome, {}, 'left'),   // back to home
+    onLeft:  () => navigate(Library, {}, 'right'),  // forward to library
+    onDown:  () => { if (feed.scrollTop <= 2) navigate(Welcome, {}, 'down'); }, // pull down past the first reel
   });
 
   return {
@@ -1543,11 +1606,14 @@ function Library() {
   function onKey(e) { if (e.key === 'Escape') navigate(Welcome, {}, 'left'); }
   document.addEventListener('keydown', onKey);
 
+  /* Swipe right = back to home (matches the global back gesture) */
+  const detachSwipe = attachSwipe(el, { onRight: () => navigate(Welcome, {}, 'left') });
+
   renderCatTabs();
   renderChips();
   renderGrid();
 
-  return { el, cleanup: () => document.removeEventListener('keydown', onKey) };
+  return { el, cleanup: () => { document.removeEventListener('keydown', onKey); detachSwipe(); } };
 }
 
 /* ============================================================
@@ -1653,6 +1719,18 @@ function Wiki({ epNo }) {
     <a href="${ep.spotify_url || '#'}" ${ep.spotify_url ? 'target="_blank" rel="noopener"' : 'onclick="return false"'} style="flex:1;display:flex;align-items:center;justify-content:center;gap:8px;padding:14px 18px;background:var(--green);color:#000;border-radius:999px;font-weight:700;font-size:14.5px;text-decoration:none;box-shadow:0 4px 14px rgba(29,185,84,0.25);${!ep.spotify_url ? 'opacity:0.5;' : ''}">${Icons.spotifyBlack} Listen on Spotify</a>
     <a href="${ep.youtube_url || '#'}" ${ep.youtube_url ? 'target="_blank" rel="noopener"' : 'onclick="return false"'} style="flex:1;display:flex;align-items:center;justify-content:center;gap:8px;padding:14px 18px;background:transparent;color:var(--fg);border:1px solid var(--line-2);border-radius:999px;font-weight:700;font-size:14.5px;text-decoration:none;${!ep.youtube_url ? 'opacity:0.5;' : ''}">${Icons.youtube} YouTube</a>
   `;
+  const epShareBtn = document.createElement('button');
+  epShareBtn.setAttribute('aria-label', 'Share this episode');
+  epShareBtn.style.cssText = 'flex:0 0 auto;width:52px;display:flex;align-items:center;justify-content:center;background:transparent;color:var(--fg);border:1px solid var(--line-2);border-radius:999px;cursor:pointer;';
+  epShareBtn.innerHTML = Icons.share;
+  epShareBtn.querySelector('svg')?.setAttribute('width', '20');
+  epShareBtn.querySelector('svg')?.setAttribute('height', '20');
+  epShareBtn.addEventListener('click', () => shareContent({
+    title: `TigPods — ${ep.guest}`,
+    text: `${ep.guest} on TigPods — ${ep.title}`,
+    url: ep.youtube_url || ep.spotify_url || null,
+  }));
+  listenRow.appendChild(epShareBtn);
   scroll.appendChild(listenRow);
 
   /* Shorts strip */
@@ -1718,7 +1796,10 @@ function Wiki({ epNo }) {
   function onKey(e) { if (e.key === 'Escape') navigate(Library, {}, 'left'); }
   document.addEventListener('keydown', onKey);
 
-  return { el, cleanup: () => document.removeEventListener('keydown', onKey) };
+  /* Swipe right = back to the previous page (the library grid) */
+  const detachSwipe = attachSwipe(el, { onRight: () => navigate(Library, {}, 'left') });
+
+  return { el, cleanup: () => { document.removeEventListener('keydown', onKey); detachSwipe(); } };
 }
 
 /* ============================================================
