@@ -1175,10 +1175,6 @@ function Reel() {
   let items = shuffleArray(pool).slice(0, 20).map((p, i) => ({ ...p, id: i }));
   let activeIdx = 0;
   let idCounter = items.length;
-  /* Mobile browsers block UNMUTED autoplay, so every clip autoplays muted
-     (guaranteed to play) and the user taps the speaker to add sound. That
-     choice persists across cards for the rest of the session. */
-  let reelMuted = true;
 
   const el = document.createElement('div');
   el.className = 'screen screen-enter';
@@ -1225,20 +1221,8 @@ function Reel() {
     card.appendChild(brandMark);
 
 
-    /* YouTube iframe JS-API helpers — let us toggle sound without reloading
-       (a reload would restart the clip and re-trigger autoplay blocking). */
-    function postYT(func, args) {
-      try {
-        ytIframe && ytIframe.contentWindow &&
-          ytIframe.contentWindow.postMessage(JSON.stringify({ event: 'command', func, args: args || [] }), '*');
-      } catch (e) {}
-    }
-    function applyMuteState() {
-      if (reelMuted) postYT('mute');
-      else { postYT('unMute'); postYT('setVolume', [100]); }
-    }
-
     /* Tap-to-pause overlay — full card, invisible */
+    let muted = true; // every clip autoplays MUTED (the only autoplay mobile allows)
     const tapOverlay = document.createElement('div');
     tapOverlay.style.cssText = 'position:absolute;inset:0;z-index:5;cursor:pointer;';
     const pauseIconEl = document.createElement('div');
@@ -1254,19 +1238,21 @@ function Reel() {
     card.appendChild(tapOverlay);
 
     /* Sound toggle — top-right corner. Starts muted (so autoplay is allowed);
-       tapping it is a user gesture, so unmuting is permitted. */
+       tapping it is a user gesture, so the unmuted reload is permitted. */
     const unmuteBtn = document.createElement('button');
     unmuteBtn.style.cssText = 'position:absolute;top:64px;right:14px;z-index:15;width:36px;height:36px;border-radius:50%;background:rgba(0,0,0,0.5);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,0.2);display:flex;align-items:center;justify-content:center;color:#fff;cursor:pointer;';
-    function syncMuteBtn() {
-      unmuteBtn.innerHTML = reelMuted ? Icons.speakerOff : Icons.speakerOn;
-      unmuteBtn.setAttribute('aria-label', reelMuted ? 'Unmute' : 'Mute');
-    }
-    syncMuteBtn();
+    unmuteBtn.setAttribute('aria-label', 'Unmute');
+    unmuteBtn.innerHTML = Icons.speakerOff; // starts muted
     unmuteBtn.addEventListener('click', (e) => {
       e.stopPropagation();
-      reelMuted = !reelMuted;   // persists across cards for the session
-      syncMuteBtn();
-      applyMuteState();          // toggle live via JS API — no reload, no replay
+      muted = !muted;
+      unmuteBtn.innerHTML = muted ? Icons.speakerOff : Icons.speakerOn;
+      unmuteBtn.setAttribute('aria-label', muted ? 'Unmute' : 'Mute');
+      if (ytIframe) {
+        /* Reload with the new mute state inside this user-gesture call stack —
+           unmuted playback is allowed because it was user-initiated. */
+        ytIframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=${muted ? 1 : 0}&controls=0&rel=0&modestbranding=1&playsinline=1&loop=1&playlist=${videoId}`;
+      }
     });
     card.appendChild(unmuteBtn);
 
@@ -1317,28 +1303,21 @@ function Reel() {
       setActive(active) {
         if (active) {
           if (!paused) restartProgress();
-          syncMuteBtn(); // reflect the session-wide sound choice on this card
-          if (videoId) {
+          if (videoId && !ytIframe) {
+            /* Always create a FRESH iframe whose first load IS the autoplay URL.
+               Mutating a preloaded iframe's src does NOT autoplay (YouTube blocks
+               autoplay after a navigation), which is why only card 0 played
+               before. A clean iframe with autoplay=1&mute=1 plays every time.
+               The preloaded iframe is discarded — it already warmed the CDN. */
+            if (preloadIframe) { preloadIframe.remove(); preloadIframe = null; }
+            ytIframe = document.createElement('iframe');
             /* Always autoplay MUTED — the only form of autoplay mobile allows.
-               Once the player is ready we re-apply the user's sound choice. */
-            const src = `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&enablejsapi=1&controls=0&rel=0&modestbranding=1&playsinline=1&loop=1&playlist=${videoId}`;
-            if (preloadIframe) {
-              ytIframe = preloadIframe;
-              preloadIframe = null;
-              ytIframe.style.opacity = '1';
-              ytIframe.onload = () => setTimeout(applyMuteState, 350);
-              ytIframe.src = src;
-            } else if (!ytIframe) {
-              ytIframe = document.createElement('iframe');
-              ytIframe.onload = () => setTimeout(applyMuteState, 350);
-              ytIframe.src = src;
-              ytIframe.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;border:none;pointer-events:none;';
-              ytIframe.setAttribute('allow', 'autoplay; encrypted-media; fullscreen');
-              ytIframe.setAttribute('allowfullscreen', '');
-              card.insertBefore(ytIframe, card.children[1]);
-            } else {
-              applyMuteState();
-            }
+               The unmute button reloads with sound inside a user gesture. */
+            ytIframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&controls=0&rel=0&modestbranding=1&playsinline=1&loop=1&playlist=${videoId}`;
+            ytIframe.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;border:none;pointer-events:none;';
+            ytIframe.setAttribute('allow', 'autoplay; encrypted-media; fullscreen');
+            ytIframe.setAttribute('allowfullscreen', '');
+            card.insertBefore(ytIframe, card.children[1]);
           }
         } else {
           stopProgress();
