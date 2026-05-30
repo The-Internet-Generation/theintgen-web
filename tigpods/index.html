@@ -730,6 +730,42 @@ function navigate(screenFn, params = {}, dir = 'instant') {
 }
 
 /* ============================================================
+   SWIPE — shared gesture helper
+   Attaches to a screen element and fires direction callbacks on flick.
+   Returns a teardown fn. Only the dominant axis fires; small drags are
+   ignored so it never competes with taps or vertical scroll-snap.
+   ============================================================ */
+function attachSwipe(target, handlers = {}) {
+  const threshold = 48;
+  let sx = 0, sy = 0, st = 0, tracking = false;
+  function onStart(e) {
+    if (e.touches.length !== 1) { tracking = false; return; }
+    sx = e.touches[0].clientX; sy = e.touches[0].clientY; st = Date.now();
+    tracking = true;
+  }
+  function onEnd(e) {
+    if (!tracking) return;
+    tracking = false;
+    const t = e.changedTouches[0];
+    const dx = t.clientX - sx, dy = t.clientY - sy;
+    const adx = Math.abs(dx), ady = Math.abs(dy);
+    const dt = Date.now() - st;
+    if (dt > 800) return; // too slow to be a flick
+    if (adx > ady * 1.15 && adx > threshold) {
+      (dx < 0 ? handlers.onLeft : handlers.onRight)?.();
+    } else if (ady > adx * 1.15 && ady > threshold) {
+      (dy < 0 ? handlers.onUp : handlers.onDown)?.();
+    }
+  }
+  target.addEventListener('touchstart', onStart, { passive: true });
+  target.addEventListener('touchend', onEnd, { passive: true });
+  return () => {
+    target.removeEventListener('touchstart', onStart);
+    target.removeEventListener('touchend', onEnd);
+  };
+}
+
+/* ============================================================
    SCREEN: WELCOME
    ============================================================ */
 function Welcome() {
@@ -1067,20 +1103,12 @@ function Welcome() {
     }
   });
 
-  /* Gesture handling — on document so child elements can't accidentally block it */
-  let touchStart = { x: 0, y: 0 };
-  function onTouchStart(e) {
-    touchStart = { x: e.touches[0].clientX, y: e.touches[0].clientY };
-  }
-  function onTouchEnd(e) {
-    const dx = e.changedTouches[0].clientX - touchStart.x;
-    const dy = e.changedTouches[0].clientY - touchStart.y;
-    const adx = Math.abs(dx), ady = Math.abs(dy);
-    if (ady > 45 && dy < 0 && ady > adx * 1.1) navigate(Reel, {}, 'up');
-    else if (adx > 45 && adx > ady * 1.1) navigate(Library, {}, 'right'); // left OR right swipe
-  }
-  document.addEventListener('touchstart', onTouchStart, { passive: true });
-  document.addEventListener('touchend', onTouchEnd, { passive: true });
+  /* Gesture handling — flick up for a random episode, flick sideways for library */
+  const detachSwipe = attachSwipe(el, {
+    onUp:    () => navigate(Reel, {}, 'up'),
+    onLeft:  () => navigate(Library, {}, 'right'),
+    onRight: () => navigate(Library, {}, 'right'),
+  });
   el.addEventListener('wheel', e => {
     if (e.deltaY > 20) navigate(Reel, {}, 'up');
   }, { passive: true });
@@ -1093,8 +1121,7 @@ function Welcome() {
     cancelAnimationFrame(rafId);
     if (audioEl) { audioEl.pause(); audioEl.src = ''; } // stop playback + release buffer
     if (spIframe) spIframe.src = ''; // stop playback
-    document.removeEventListener('touchstart', onTouchStart);
-    document.removeEventListener('touchend', onTouchEnd);
+    detachSwipe();
   }
 
   return { el, cleanup };
@@ -1301,11 +1328,20 @@ function Reel() {
   function onKey(e) { if (e.key === 'Escape') navigate(Welcome, {}, 'down'); }
   document.addEventListener('keydown', onKey);
 
+  /* Horizontal swipe navigates; vertical stays with the feed's scroll-snap.
+     Right → home, left → library. (The dominant-axis check in attachSwipe
+     keeps vertical scrolling from ever triggering a screen change.) */
+  const detachSwipe = attachSwipe(el, {
+    onRight: () => navigate(Welcome, {}, 'left'),
+    onLeft:  () => navigate(Library, {}, 'right'),
+  });
+
   return {
     el,
     cleanup: () => {
       clearTimeout(settleTimer);
       document.removeEventListener('keydown', onKey);
+      detachSwipe();
     },
   };
 }
