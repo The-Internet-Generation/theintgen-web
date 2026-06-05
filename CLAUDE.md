@@ -81,8 +81,10 @@ git add -A && git commit -m "your message" && git push
 ```
 
 ### Credentials (never commit)
-- `CLOUDFLARE_API_TOKEN` — set in GitHub Actions secrets
-- `CLOUDFLARE_ACCOUNT_ID` — set in GitHub Actions secrets
+- Stored locally in `.env` at repo root (gitignored — safe)
+- `CLOUDFLARE_API_TOKEN` — also in GitHub Actions secrets
+- `CLOUDFLARE_ACCOUNT_ID` — also in GitHub Actions secrets
+- `CLOUDFLARE_ZONE_ID` — theintgen.com zone
 
 ## Common Tasks
 
