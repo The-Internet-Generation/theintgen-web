@@ -110,7 +110,7 @@
       <span class="hidden sm:inline">My Dashboard</span>
     </a>
     <!-- Team + Tigital — desktop only -->
-    <a href="team-dashboard.html" target="_blank" class="hidden md:flex items-center gap-2 px-3 py-2 rounded-xl bg-[#1a1a1a] text-white/60 text-xs font-bold tracking-tight hover:bg-[#2a2a2a] hover:text-white transition-colors">
+    <a href="team-dashboard" target="_blank" class="hidden md:flex items-center gap-2 px-3 py-2 rounded-xl bg-[#1a1a1a] text-white/60 text-xs font-bold tracking-tight hover:bg-[#2a2a2a] hover:text-white transition-colors">
       <span class="material-symbols-outlined" style="font-size:16px">admin_panel_settings</span>
       Team
     </a>
@@ -504,6 +504,7 @@ const CLIENT_MAP = {
 const CLIENT_LOGOS = {
   'Ramajeyam Rice': 'Ramajeyam%20Rice%20Logo.png',
   'Royal Chef':     'Royal%20Chef%20Logo%20from%20Alia.png',
+  'Green Gears':    'Green%20Gears%20Logo.png',
   'Super Painters': 'Ratna%20Super%20Painters%20Logo.png',
   'Chimp Herbs':    'ChimpX%20Logos.png',
 };
@@ -653,7 +654,7 @@ async function loadJobs(silent = false) {
         assetType,
         shootType,
         jobCategory:    category(assetType, shootType),
-        description:    row.notes || '',
+        description:    row.description || row.notes || '',
         topic:          '',
         visualBrief:    row.visual_brief || '',
         copy:           row.copy || row.caption || '',
@@ -1177,7 +1178,7 @@ document.getElementById('emailInput').addEventListener('keydown', e => {
 // ── DASHBOARD NAV ──────────────────────────────────────────────────────────
 function goToDashboard() {
   if (email) {
-    window.location.href = 'dashboard.html';
+    window.location.href = 'dashboard';
   } else {
     // Not logged in — scroll to the email input and focus it
     document.getElementById('heroSection').scrollIntoView({ behavior: 'smooth', block: 'center' });

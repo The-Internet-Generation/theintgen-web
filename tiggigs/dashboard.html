@@ -412,9 +412,9 @@ body{
 <div class="dashboard" id="dashboard">
   <!-- Nav -->
   <nav class="topnav">
-    <a href="index.html" target="_blank" class="nav-logo" style="text-decoration:none">TIG.</a>
+    <div class="nav-logo">TIG.</div>
     <div class="nav-user">
-      <a href="index.html" target="_blank" class="nav-job-link">Job Board</a>
+      <a href="./" target="_blank" class="nav-job-link">Job Board</a>
       <div class="nav-avatar" id="navAvatar">??</div>
       <div class="nav-name" id="navName">Loading...</div>
       <button class="nav-signout" onclick="signOut()">Sign out</button>
@@ -495,12 +495,8 @@ body{
         <div class="brief-job-id" id="briefJobId"></div>
         <div class="brief-title" id="briefTitle"></div>
         <div class="brief-meta" id="briefMeta"></div>
-        <div class="brief-section" id="briefDescWrap">
-          <div class="brief-section-label">Description</div>
-          <div class="brief-section-body" id="briefDesc"></div>
-        </div>
         <div class="brief-section" id="briefTopicWrap">
-          <div class="brief-section-label">Brief / Topic</div>
+          <div class="brief-section-label">Description</div>
           <div class="brief-section-body" id="briefTopic"></div>
         </div>
         <div class="brief-section" id="briefVisualWrap">
@@ -508,7 +504,7 @@ body{
           <div class="brief-section-body" id="briefVisual"></div>
         </div>
         <div class="brief-section" id="briefCaptionWrap">
-          <div class="brief-section-label">Copy</div>
+          <div class="brief-section-label">Caption</div>
           <div class="brief-section-body" id="briefCaption"></div>
         </div>
         <div class="brief-section" id="briefLinksWrap">
@@ -537,6 +533,7 @@ body{
   <div style="background:var(--card);border:1px solid var(--border);border-radius:20px;padding:32px;width:min(480px,100%);position:relative">
     <div style="font-size:22px;margin-bottom:8px">📁</div>
     <div style="font-family:'Syne',sans-serif;font-size:18px;font-weight:700;color:var(--white);margin-bottom:8px" id="scModalTitle">Hold up — quick checklist!</div>
+    <div id="scSubmitLink" style="display:none;background:var(--off);border:1px solid var(--border);border-radius:8px;padding:10px 14px;margin-bottom:14px;"></div>
     <div style="font-size:13px;color:#aaa;line-height:1.7;margin-bottom:20px">
       Before we mark this as submitted, do a quick vibe check:<br><br>
       <b style="color:var(--white)">✅ Is your file in the submission folder?</b><br>
@@ -555,74 +552,28 @@ body{
 </div>
 
 <script>
-const SB_URL  = 'https://snlcskmszhbipinffwpy.supabase.co/rest/v1';
+// ── SUPABASE CONFIG ───────────────────────────────────────────────────────────
+const SB_URL  = 'https://snlcskmszhbipinffwpy.supabase.co';
 const SB_KEY  = 'sb_publishable_8_Fj46gQBqoA4HgidRKP6g_1uDbhWPM';
-const SB_HDRS = { 'apikey': SB_KEY, 'Authorization': `Bearer ${SB_KEY}`, 'Content-Type': 'application/json' };
-let currentEmail = null;
+const SB_HDRS = {
+  'apikey':        SB_KEY,
+  'Authorization': `Bearer ${SB_KEY}`,
+  'Content-Type':  'application/json',
+  'Range':         '0-999',
+};
+
+let currentEmail   = null;
 let freelancerName = null;
 
-// Supabase GET helper — returns array of rows
 const sbGet = async (table, params = '') => {
   try {
-    const url = `${SB_URL}/${table}?${params ? params + '&' : ''}limit=1000`;
-    const r = await fetch(url, { headers: { ...SB_HDRS, 'Range': '0-999' } });
-    if (!r.ok) { console.warn(`Supabase [${table}]:`, r.status); return []; }
+    const sep = params ? '&' : '';
+    const url = `${SB_URL}/rest/v1/${table}?${params}${sep}limit=1000`;
+    const r = await fetch(url, { headers: SB_HDRS });
+    if (!r.ok) { console.warn(`Supabase [${table}]:`, await r.text()); return []; }
     return await r.json();
   } catch(e) { console.warn(`Supabase [${table}] fetch failed:`, e); return []; }
 };
-
-// Wrap a Supabase v_jobs row into a shape compatible with existing render functions
-const toRecord = row => ({
-  id: row.job_id,
-  fields: {
-    'Job ID':                  row.job_id,
-    'Job Title':               row.job_title,
-    'Board Status':            row.board_status,
-    'Internal Deadline':       row.internal_deadline,
-    'Publish Date':            row.publish_date,
-    'Rate (Auto)':             row.rate_auto,
-    'Rush Rate (Auto)':        row.rate_auto,
-    'Asset Type Auto':         row.asset_type,
-    'Asset Type':              row.asset_type,
-    'Client Name Auto':        row.client_name,
-    'Claimed by Email (Text)': row.claimed_by_email,
-    'Claimed By Email':        row.claimed_by_email,
-    'Claimed At':              row.claimed_at,
-    'Description':             row.notes || '',
-    'Topic':                   '',
-    'Visual Brief':            row.visual_brief,
-    'Copy':                    row.copy,
-    'Caption':                 row.caption,
-    'Reference Image URL':     row.reference_image_url,
-    'Brand Guidelines URL':    row.brand_guidelines_url,
-    'Brand Social Page URL':   '',
-    'Submission Folder URL':   row.submission_folder_url,
-  }
-});
-
-const toSubmission = row => ({
-  id: `${row.job_id}-${row.version || 1}`,
-  fields: {
-    'Job ID':         row.job_id,
-    'Freelancer Email': row.freelancer_email,
-    'Created Time':   row.submitted_at,
-    'Version':        row.version,
-    'File Link':      row.file_link,
-    'QC Status':      row.qc_status,
-    'QC Notes':       row.reviewer_notes,
-  }
-});
-
-const toPayout = row => ({
-  id: `${row.job_id}-payout`,
-  fields: {
-    'Job ID':       row.job_id,
-    'Job Title':    row.job_id,
-    'Freelancer Email': row.freelancer_email,
-    'Amount Owed':  row.amount_owed ?? row.final_amount ?? 0,
-    'Payout Status': row.payout_status || 'Pending',
-  }
-});
 
 // ── AUTH ──────────────────────────────────────────────────────────────────────
 async function doAuth() {
@@ -634,20 +585,17 @@ async function doAuth() {
   if (!code)  { st.className='auth-status err'; st.textContent='Please enter your access code.'; return; }
   btn.disabled = true; btn.textContent = 'Checking...'; st.textContent = '';
   try {
-    // Verify email + access code + Active + trial_passed
+    const enc  = encodeURIComponent(email);
+    const enc2 = encodeURIComponent(code);
     const recs = await sbGet('freelancers',
-      `email=eq.${encodeURIComponent(email)}&status=eq.Active&trial_passed=eq.true&select=email,full_name,access_code`);
+      `email=eq.${enc}&access_code=eq.${enc2}&status=eq.Active&trial_passed=eq.true&select=*`);
     if (recs.length) {
       const fl = recs[0];
-      const storedCode = (fl.access_code || '').trim();
-      if (storedCode.toLowerCase() !== code.toLowerCase()) {
-        st.className = 'auth-status err';
-        st.textContent = 'Access code does not match. Check your welcome email.';
-        btn.disabled = false; btn.textContent = 'Access my dashboard';
-        return;
-      }
-      currentEmail = email;
+      currentEmail   = email;
       freelancerName = fl.full_name || email;
+      localStorage.setItem('tig_email',       email);
+      localStorage.setItem('tig_name',        freelancerName);
+      localStorage.setItem('tig_access_code', code);
       showDashboard();
     } else {
       st.className = 'auth-status err';
@@ -663,26 +611,23 @@ async function doAuth() {
 function showDashboard() {
   document.getElementById('authScreen').style.display = 'none';
   document.getElementById('dashboard').classList.add('visible');
-  const first = freelancerName.split(' ')[0];
+  const first   = freelancerName.split(' ')[0];
   const initials = freelancerName.split(' ').map(n=>n[0]).join('').slice(0,2).toUpperCase();
   document.getElementById('welcomeHeading').textContent = `Hey, ${first} —`;
-  document.getElementById('navName').textContent = first;
-  document.getElementById('navAvatar').textContent = initials;
+  document.getElementById('navName').textContent        = first;
+  document.getElementById('navAvatar').textContent      = initials;
   loadAll();
 }
 
 function signOut() {
   currentEmail = null; freelancerName = null;
-  localStorage.removeItem('tig_email');
-  localStorage.removeItem('tig_name');
-  localStorage.removeItem('tig_freelancer_id');
-  localStorage.removeItem('tig_access_code');
+  ['tig_email','tig_name','tig_access_code'].forEach(k => localStorage.removeItem(k));
   document.getElementById('authScreen').style.display = 'flex';
   document.getElementById('dashboard').classList.remove('visible');
-  document.getElementById('authEmail').value = '';
-  document.getElementById('authCode').value = '';
+  document.getElementById('authEmail').value   = '';
+  document.getElementById('authCode').value    = '';
   document.getElementById('authStatus').textContent = '';
-  document.getElementById('authBtn').disabled = false;
+  document.getElementById('authBtn').disabled  = false;
   document.getElementById('authBtn').textContent = 'Access my dashboard';
 }
 
@@ -693,7 +638,7 @@ document.getElementById('authCode').addEventListener('keydown', e => {
   if (e.key === 'Enter') doAuth();
 });
 
-// Auto-login if session exists in localStorage (works across tabs + page navigations)
+// Auto-login if session persisted
 (function autoLogin() {
   const storedEmail = localStorage.getItem('tig_email');
   const storedName  = localStorage.getItem('tig_name');
@@ -708,39 +653,17 @@ document.getElementById('authCode').addEventListener('keydown', e => {
 async function loadAll() {
   if (!currentEmail) return;
   try {
-    const em = encodeURIComponent(currentEmail);
-
-    // Active jobs (claimed/in-progress)
-    const activeStatuses = 'Claimed,Submitted,In%20Review,Revision%20Needed,Approved,Scheduled';
-    // Completed jobs (for total count stat)
-    const doneStatuses   = 'Posted,Approved,Scheduled';
-
-    const [jobRows, completedRows, subRows, payRows, flRows] = await Promise.all([
-      sbGet('v_jobs',      `claimed_by_email=eq.${em}&board_status=in.(${activeStatuses})`),
-      sbGet('v_jobs',      `claimed_by_email=eq.${em}&board_status=in.(${doneStatuses})`),
-      sbGet('submissions', `freelancer_email=eq.${em}&order=submitted_at.desc`),
-      sbGet('payout_log',  `freelancer_email=eq.${em}`),
-      sbGet('freelancers', `email=eq.${em}&select=full_name,total_jobs_done,avg_quality_score`),
+    const enc = encodeURIComponent(currentEmail);
+    const [jobs, payouts, flRecs, subs] = await Promise.all([
+      sbGet('v_jobs',      `claimed_by_email=eq.${enc}&board_status=in.(Claimed,Submitted,In Review,Revision Needed,Approved)&select=*`),
+      sbGet('payout_log',  `freelancer_email=eq.${enc}&select=*`),
+      sbGet('freelancers', `email=eq.${enc}&status=eq.Active&select=*`),
+      sbGet('submissions', `freelancer_email=eq.${enc}&select=*`),
     ]);
-
-    const jobs       = jobRows.map(toRecord);
-    const completed  = completedRows.map(toRecord);
-    const mySubmissions = subRows.map(toSubmission);
-    const myPayouts  = payRows.map(toPayout);
-    // Wrap freelancer row to match old .fields shape
-    const flRecs = flRows.map(fl => ({
-      id: fl.email,
-      fields: {
-        'Full Name':        fl.full_name,
-        'Total Jobs Done':  fl.total_jobs_done,
-        'Avg Quality Score': fl.avg_quality_score,
-      }
-    }));
-
-    renderStats(jobs, completed, myPayouts, flRecs);
+    renderStats(jobs, payouts, flRecs);
     renderActiveJobs(jobs);
-    renderPayments(myPayouts);
-    renderSubmissions(mySubmissions);
+    renderPayments(payouts);
+    renderSubmissions(subs);
   } catch(e) {
     console.error('loadAll failed:', e);
   }
@@ -791,36 +714,30 @@ function fmt(n) {
 }
 
 // ── STATS ─────────────────────────────────────────────────────────────────────
-function renderStats(jobs, completed, payouts, flRecs) {
-  // Active jobs this month = all currently active jobs
+function renderStats(jobs, payouts, flRecs) {
   const now = new Date();
   const thisMonth = jobs.filter(j => {
-    const d = parseDate(j.fields['Internal Deadline'] || j.fields['Publish Date']);
+    const d = parseDate(j.internal_deadline || j.publish_date);
     return d && d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
   });
-  // If no deadline filter matches, just show all active
   const activeCount = thisMonth.length || jobs.length;
 
   const pendingAmt = payouts
-    .filter(p => (p.fields['Payout Status']||'').toLowerCase() !== 'paid')
-    .reduce((s, p) => s + (parseFloat(p.fields['Amount Owed'])||0), 0);
+    .filter(p => (p.payout_status||'').toLowerCase() !== 'paid')
+    .reduce((s, p) => s + (parseFloat(p.amount_owed)||0), 0);
 
   const paidAmt = payouts
-    .filter(p => (p.fields['Payout Status']||'').toLowerCase() === 'paid')
-    .reduce((s, p) => s + (parseFloat(p.fields['Amount Owed'])||0), 0);
+    .filter(p => (p.payout_status||'').toLowerCase() === 'paid')
+    .reduce((s, p) => s + (parseFloat(p.amount_owed)||0), 0);
 
-  const fl = flRecs[0];
-  // Total jobs done: from freelancers table or fallback to completed count
-  const totalDone = fl
-    ? (parseFloat(fl.fields['Total Jobs Done']) || completed.length)
-    : completed.length;
+  const fl        = flRecs[0];
+  const totalDone = fl ? (fl.total_jobs_done || 0) : 0;
+  // avg_quality_score is a plain number in Supabase
+  const avgQ      = fl && fl.avg_quality_score
+    ? parseFloat(fl.avg_quality_score).toFixed(1) : null;
 
-  // Avg Quality Score — plain number from Supabase
-  let avgQ = fl ? fl.fields['Avg Quality Score'] : null;
-  avgQ = avgQ != null ? parseFloat(avgQ).toFixed(1) : null;
-
-  // Potential payout = sum of rate_auto for all active jobs
-  const potentialAmt = jobs.reduce((s, j) => s + (parseFloat(j.fields['Rate (Auto)'] || 0)), 0);
+  const potentialAmt = jobs.reduce((s, j) =>
+    s + (parseFloat(j.rate_auto || j.rush_rate_auto || 0)), 0);
 
   document.getElementById('statJobs').textContent      = activeCount;
   document.getElementById('statPending').textContent   = fmt(pendingAmt);
@@ -828,40 +745,41 @@ function renderStats(jobs, completed, payouts, flRecs) {
   document.getElementById('statTotal').textContent     = totalDone;
   document.getElementById('statPotential').textContent = fmt(potentialAmt);
   document.getElementById('statQuality').textContent   = avgQ
-    ? `avg quality ${avgQ}/10`
-    : 'avg quality —';
+    ? `avg quality ${avgQ}/10` : 'avg quality —';
 }
 
 // ── ACTIVE JOBS ───────────────────────────────────────────────────────────────
+let cachedJobs = [];
+
 function renderActiveJobs(jobs) {
-  cachedJobs = jobs;  // cache for brief modal lookup
+  cachedJobs = jobs;
   const el = document.getElementById('activeJobs');
   document.getElementById('activeCount').textContent = jobs.length;
   if (!jobs.length) {
     el.innerHTML = '<div class="empty-state"><div class="e-icon">📋</div>No active jobs right now.<br>Head to the job board to claim one.</div>';
     return;
   }
-  // Sort by deadline ascending — soonest first
   jobs.sort((a,b) => {
-    const da = parseDate(a.fields['Internal Deadline']);
-    const db = parseDate(b.fields['Internal Deadline']);
+    const da = parseDate(a.internal_deadline);
+    const db = parseDate(b.internal_deadline);
     if (!da) return 1; if (!db) return -1;
     return da - db;
   });
   el.innerHTML = jobs.map(j => {
-    const f = j.fields;
-    const days = daysLeft(f['Internal Deadline']);
-    const assetType = f['Asset Type Auto'] || f['Asset Type'] || '';
-    const cat = categoryOf(assetType);
-    const rate = f['Rate (Auto)'] || f['Standard Rate (INR)'] || '';
-    const status = f['Board Status'] || 'Claimed';
-    const client = f['Client Name Auto'] || (Array.isArray(f['Client']) ? f['Client'][0] : f['Client']) || '';
-    return `<div class="job-item" style="flex-direction:column;gap:10px" onclick="openBrief('${j.id}')">
-      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;">
+    const days   = daysLeft(j.internal_deadline);
+    const cat    = categoryOf(j.asset_type_auto || j.asset_type || '');
+    const rate   = j.rate_auto || j.rush_rate_auto || '';
+    const status = j.board_status || 'Claimed';
+    const client = j.client_name_auto || '';
+    const jid    = (j.job_id||'').replace(/'/g,"\\'");
+    const jtitle = (j.job_title||'').replace(/'/g,"\\'");
+    const jurl   = (j.submission_folder_url||j.drive_link||'').replace(/'/g,"\\'");
+    return `<div class="job-item" style="flex-direction:column;gap:10px">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;cursor:pointer" onclick="openBrief('${j.job_id}')">
         <div class="job-item-left">
-          <div class="job-title">${f['Job Title'] || 'Untitled'}</div>
+          <div class="job-title">${j.job_title || 'Untitled'}</div>
           <div class="job-meta">
-            <span class="job-tag" style="font-family:'DM Mono',monospace;letter-spacing:-0.3px">${f['Job ID']||''}</span>
+            <span class="job-tag" style="font-family:'DM Mono',monospace;letter-spacing:-0.3px">${j.job_id||''}</span>
             ${client ? `<span class="job-tag">${client}</span>` : ''}
             <span class="job-tag ${cat}">${cat === 'edit' ? 'Edit' : 'Design'}</span>
             <span class="job-tag">${status}</span>
@@ -872,50 +790,48 @@ function renderActiveJobs(jobs) {
           ${rate ? `<span class="rate-chip">${fmt(rate)}</span>` : ''}
         </div>
       </div>
-      ${status === 'Claimed' ? `<button onclick="event.stopPropagation();confirmSubmit('${j.id}', '${(f['Job ID']||'').replace(/'/g,"\\'")}', '${(f['Job Title']||'').replace(/'/g,"\\'")}')" style="width:100%;padding:9px 12px;background:var(--yellow);color:var(--black);border:none;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;transition:opacity 0.15s" onmouseover="this.style.opacity='0.85'" onmouseout="this.style.opacity='1'">✓ I've Submitted This Job</button>` : ''}
+      ${['Claimed','Revision Needed'].includes(status)
+        ? `<button onclick="confirmSubmit('${jid}','${jid}','${jtitle}','${jurl}')"
+             style="width:100%;padding:9px 12px;background:${status==='Revision Needed'?'var(--orange)':'var(--yellow)'};color:var(--black);border:none;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;transition:opacity 0.15s"
+             onmouseover="this.style.opacity='0.85'" onmouseout="this.style.opacity='1'">
+             ${status==='Revision Needed'?'↩ Re-submit After Revision':'✓ I\'ve Submitted This Job'}
+           </button>` : ''}
     </div>`;
   }).join('');
 }
 
 // ── BRIEF MODAL ───────────────────────────────────────────────────────────────
-let cachedJobs = [];
-
-function openBrief(id) {
-  const j = cachedJobs.find(r => r.id === id);
+function openBrief(jobId) {
+  const j = cachedJobs.find(r => r.job_id === jobId);
   if (!j) return;
-  const f = j.fields;
 
-  document.getElementById('briefJobId').textContent  = f['Job ID'] || '';
-  document.getElementById('briefTitle').textContent  = f['Job Title'] || 'Untitled';
+  document.getElementById('briefJobId').textContent = j.job_id || '';
+  document.getElementById('briefTitle').textContent = j.job_title || 'Untitled';
 
-  // Meta tags
-  const rate   = f['Rate (Auto)'] || f['Rush Rate (Auto)'] || '';
-  const dl     = f['Internal Deadline'] ? `Due ${fmtDate(f['Internal Deadline'])}` : '';
-  const client = f['Client Name Auto'] || '';
-  const asset  = f['Asset Type Auto'] || '';
+  const rate   = j.rate_auto || j.rush_rate_auto || '';
+  const dl     = j.internal_deadline ? `Due ${fmtDate(j.internal_deadline)}` : '';
+  const client = j.client_name_auto || '';
+  const asset  = j.asset_type_auto  || '';
   document.getElementById('briefMeta').innerHTML = [
     client ? `<span class="job-tag">${client}</span>` : '',
     asset  ? `<span class="job-tag">${asset}</span>`  : '',
-    dl     ? `<span class="deadline-chip ${cdClass(daysLeft(f['Internal Deadline']))}">${dl}</span>` : '',
+    dl     ? `<span class="deadline-chip ${cdClass(daysLeft(j.internal_deadline))}">${dl}</span>` : '',
     rate   ? `<span class="rate-chip" style="font-size:14px">${fmt(rate)}</span>` : '',
   ].join('');
 
-  // Sections — hide if empty
   const setSection = (wrapId, bodyId, val) => {
     const v = val || '';
     document.getElementById(wrapId).style.display = v ? 'block' : 'none';
     document.getElementById(bodyId).textContent = v;
   };
-  setSection('briefDescWrap',    'briefDesc',    f['Description'] || '');
-  setSection('briefTopicWrap',   'briefTopic',   f['Topic'] || '');
-  setSection('briefVisualWrap',  'briefVisual',  f['Visual Brief'] || '');
-  setSection('briefCaptionWrap', 'briefCaption', f['Copy'] || f['Caption'] || '');
+  setSection('briefTopicWrap',   'briefTopic',   j.description  || j.topic || '');
+  setSection('briefVisualWrap',  'briefVisual',  j.visual_brief || '');
+  setSection('briefCaptionWrap', 'briefCaption', j.copy         || j.caption || '');
 
-  // Links
   const links = [
-    f['Reference Image URL'] ? `<a class="brief-link" href="${f['Reference Image URL']}" target="_blank">📌 Reference</a>` : '',
-    f['Brand Social Page URL'] ? `<a class="brief-link" href="${f['Brand Social Page URL']}" target="_blank">📱 Brand Page</a>` : '',
-    f['Submission Folder URL'] ? `<a class="brief-link" href="${f['Submission Folder URL']}" target="_blank">📁 Submit Here</a>` : '',
+    j.reference_image_url   ? `<a class="brief-link" href="${j.reference_image_url}"   target="_blank">📌 Reference</a>`  : '',
+    j.brand_social_page_url ? `<a class="brief-link" href="${j.brand_social_page_url}" target="_blank">📱 Brand Page</a>` : '',
+    j.submission_folder_url ? `<a class="brief-link" href="${j.submission_folder_url}" target="_blank">📁 Submit Here</a>` : '',
   ].filter(Boolean).join('');
   const linksWrap = document.getElementById('briefLinksWrap');
   linksWrap.style.display = links ? 'block' : 'none';
@@ -931,35 +847,52 @@ function closeBrief() {
 }
 
 // ── SUBMIT JOB ────────────────────────────────────────────────────────────────
-let pendingSubmitId = null;
+let pendingSubmitId  = null;
+let pendingSubmitUrl = null;
 
-function confirmSubmit(recordId, jobId, jobTitle) {
-  pendingSubmitId = recordId;
-  document.getElementById('scModalTitle').textContent = `Quick checklist — ${jobTitle || jobId}`;
-  const overlay = document.getElementById('submitConfirmOverlay');
-  overlay.style.display = 'flex';
+function confirmSubmit(jobId, displayId, jobTitle, submitUrl) {
+  pendingSubmitId  = jobId;
+  pendingSubmitUrl = submitUrl || '';
+  document.getElementById('scModalTitle').textContent = `Quick checklist — ${jobTitle || displayId}`;
+  const linkEl = document.getElementById('scSubmitLink');
+  if (linkEl) {
+    if (pendingSubmitUrl) {
+      linkEl.innerHTML = `<a href="${pendingSubmitUrl}" target="_blank" rel="noopener"
+        style="color:var(--yellow);text-decoration:underline;font-weight:600;font-family:'DM Mono',monospace;font-size:11px;word-break:break-all">
+        📁 Open submission folder →</a>`;
+      linkEl.style.display = 'block';
+    } else {
+      linkEl.style.display = 'none';
+    }
+  }
+  document.getElementById('submitConfirmOverlay').style.display = 'flex';
 }
 
 function closeSubmitConfirm() {
   document.getElementById('submitConfirmOverlay').style.display = 'none';
-  pendingSubmitId = null;
+  pendingSubmitId  = null;
+  pendingSubmitUrl = null;
+  const btn = document.getElementById('scConfirmBtn');
+  btn.textContent = 'Yes, all good — submit!';
+  btn.disabled    = false;
 }
 
 async function doSubmit() {
   const btn = document.getElementById('scConfirmBtn');
   btn.textContent = 'Submitting…'; btn.disabled = true;
   try {
-    const resp = await fetch(`${SB_URL}/jobs?job_id=eq.${encodeURIComponent(pendingSubmitId)}`, {
-      method: 'PATCH',
+    const resp = await fetch(
+      `${SB_URL}/rest/v1/jobs?job_id=eq.${encodeURIComponent(pendingSubmitId)}`, {
+      method:  'PATCH',
       headers: { ...SB_HDRS, 'Prefer': 'return=representation' },
-      body: JSON.stringify({ board_status: 'Submitted', submitted_at: new Date().toISOString() }),
+      body:    JSON.stringify({ board_status: 'Submitted', submitted_at: new Date().toISOString() }),
     });
-    if (!resp.ok) throw new Error(`Server error (${resp.status})`);
+    if (!resp.ok) throw new Error('Supabase PATCH error');
     closeSubmitConfirm();
-    await loadAll();  // refresh dashboard
+    await loadAll();
   } catch(e) {
     btn.textContent = 'Error — try again';
-    btn.disabled = false;
+    btn.disabled    = false;
     console.error('Submit failed:', e);
   }
 }
@@ -972,25 +905,22 @@ function renderPayments(payouts) {
     el.innerHTML = '<div class="empty-state"><div class="e-icon">💳</div>No payment records yet.</div>';
     return;
   }
-  // Sort: pending first
   payouts.sort((a,b) => {
-    const ap = (a.fields['Payout Status']||'').toLowerCase() === 'paid' ? 1 : 0;
-    const bp = (b.fields['Payout Status']||'').toLowerCase() === 'paid' ? 1 : 0;
+    const ap = (a.payout_status||'').toLowerCase() === 'paid' ? 1 : 0;
+    const bp = (b.payout_status||'').toLowerCase() === 'paid' ? 1 : 0;
     return ap - bp;
   });
   el.innerHTML = payouts.map(p => {
-    const f = p.fields;
-    const statusRaw = (f['Payout Status']||'pending').toLowerCase();
-    const isPaid = statusRaw === 'paid';
-    const amt = parseFloat(f['Amount Owed']||0);
+    const isPaid = (p.payout_status||'').toLowerCase() === 'paid';
+    const amt    = parseFloat(p.amount_owed||0);
     return `<div class="payment-item">
       <div>
-        <div class="payment-job">${f['Job ID']||'—'}</div>
-        <div class="payment-title">${f['Job Title']||f['Job ID']||'Job'}</div>
+        <div class="payment-job">${p.job_id||'—'}</div>
+        <div class="payment-title">${p.job_title||p.job_id||'Job'}</div>
       </div>
       <div style="text-align:right">
         <div class="payment-amount">${fmt(amt)}</div>
-        <div class="payment-status ${isPaid?'paid':'pending'}">${isPaid ? 'Paid' : 'Pending'}</div>
+        <div class="payment-status ${isPaid?'paid':'pending'}">${isPaid?'Paid':'Pending'}</div>
       </div>
     </div>`;
   }).join('');
@@ -1004,33 +934,30 @@ function renderSubmissions(subs) {
     el.innerHTML = '<div class="empty-state"><div class="e-icon">📁</div>No submissions yet. Submit your first job to see history here.</div>';
     return;
   }
-  // Sort: most recent first
   subs.sort((a,b) => {
-    const ta = new Date(a.fields['Created Time'] || 0);
-    const tb = new Date(b.fields['Created Time'] || 0);
+    const ta = new Date(a.submitted_at || a.created_at || 0);
+    const tb = new Date(b.submitted_at || b.created_at || 0);
     return tb - ta;
   });
   const qcMap = {
-    'approved':  'approved',
+    'approved':        'approved',
     'revision needed': 'revision',
-    'in review': 'pending',
-    'rejected':  'rejected',
+    'in review':       'pending',
+    'rejected':        'rejected',
   };
   el.innerHTML = subs.map(s => {
-    const f = s.fields;
-    const qcRaw   = (f['QC Status']||'In Review').toLowerCase();
+    const qcRaw   = (s.qc_status||'In Review').toLowerCase();
     const qcClass = qcMap[qcRaw] || 'pending';
-    const qcLabel = f['QC Status'] || 'In Review';
-    const ver     = f['Version'] || 'V1';
-    const score   = '';
+    const ver     = s.version || 'V1';
+    const score   = s.qc_score ? ` · ${s.qc_score}/10` : '';
     return `<div class="sub-item">
       <div class="sub-left">
-        <div class="sub-job">${f['Job ID']||'—'}  ·  ${ver}</div>
-        <div class="sub-title">${f['Job Title']||f['Job ID']||'Submission'}</div>
+        <div class="sub-job">${s.job_id||'—'}  ·  ${ver}</div>
+        <div class="sub-title">${s.job_title||s.job_id||'Submission'}</div>
       </div>
       <div class="sub-right">
         <span class="ver-tag">${score}</span>
-        <span class="qc-badge ${qcClass}">${qcLabel}</span>
+        <span class="qc-badge ${qcClass}">${s.qc_status||'In Review'}</span>
       </div>
     </div>`;
   }).join('');
