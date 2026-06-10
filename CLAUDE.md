@@ -11,7 +11,7 @@ The ONE repo for all TIG web properties. All subsites live as subfolders here.
 ## Repo Structure
 ```
 theintgen-web/
-├── index.html                    ← TIG ecosystem root / landing portal
+├── index.html                    ← TIG OS landing (responsive PC + mobile) — synced from local tig-os.html
 ├── _redirects                    ← Cloudflare Pages routing rules
 ├── .github/workflows/deploy.yml  ← GitHub Actions → CF Pages auto-deploy
 ├── public/assets/                ← logos
@@ -35,7 +35,7 @@ Run the sync command below before making changes to ensure you're on the newest 
 |---|---|
 | `tiggigs/index.html` | Local may be newer — check before editing |
 | `tiggigs/dashboard.html` | Local may be newer — check before editing |
-| `tig-os.html` | Lives locally, not yet in repo |
+| `tig-os.html` | IS the root landing page — synced to repo `index.html` |
 | `tigpods.html` (full version) | Lives locally as `tigpods.html` |
 | `tigpods-admin.html` | Lives locally, not yet in repo |
 
@@ -45,7 +45,7 @@ cd /Users/jaytesh/Downloads/theintgen-web
 cp "/Users/jaytesh/TIGLancers Website/index.html" tiggigs/index.html
 cp "/Users/jaytesh/TIGLancers Website/dashboard.html" tiggigs/dashboard.html
 cp "/Users/jaytesh/TIGLancers Website/team-dashboard.html" tiggigs/team-dashboard.html
-cp "/Users/jaytesh/TIGLancers Website/tig-os.html" tiggigs/tig-os.html
+cp "/Users/jaytesh/TIGLancers Website/tig-os.html" index.html   # TIG OS = root landing page
 cp "/Users/jaytesh/TIGLancers Website/tigpods.html" tigpods/tigpods-full.html
 cp "/Users/jaytesh/TIGLancers Website/tigpods-admin.html" tigpods/admin.html
 git add -A && git commit -m "sync: update from local source" && git push

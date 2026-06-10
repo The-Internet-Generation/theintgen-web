@@ -1,337 +1,1059 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>The Internet Generation — TIG Ecosystem</title>
-<meta name="description" content="The Internet Generation (TIG) — Digital Marketing, Content, Podcasts, Open Mic & Freelance Gigs. Chennai's creative ecosystem."/>
-<link rel="icon" type="image/png" href="/public/assets/logo-theintgen.png"/>
-<link rel="preconnect" href="https://fonts.googleapis.com"/>
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet"/>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TIG OS — The Internet Generation</title>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;700;800&family=JetBrains+Mono:wght@400;700&family=Press+Start+2P&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet">
 <style>
-  :root {
-    --navy:   #1A0A3C;
-    --yellow: #FFD600;
-    --crimson:#9B1C3A;
-    --white:  #FFFFFF;
-    --offwhite: #F7F5F2;
-    --card-bg: #FFFFFF;
-  }
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --gray:#c0c0c0;--white:#fff;--black:#000;
+  --navy:#000080;--teal:#008080;
+  --dark-gray:#808080;--light-gray:#dfdfdf;
+  --surface:#efeded;--on-surface:#1b1c1c;--on-sv:#3e4949;
+  --primary:#006565;--primary-container:#008080;
+  --secondary:#5d5e5f;--tertiary:#474eb7;
+  --font-ui:'Hanken Grotesk',sans-serif;
+  --font-mono:'JetBrains Mono',monospace;
+  --font-px:'Press Start 2P',monospace;
+}
+html,body{width:100%;height:100%;font-family:var(--font-ui);font-size:12px;
+  background:var(--teal);overflow:hidden;user-select:none;-webkit-user-select:none;cursor:default}
+.ms{font-family:'Material Symbols Outlined';font-weight:400;font-style:normal;
+  font-size:14px;line-height:1;letter-spacing:normal;text-transform:none;display:inline-block;
+  white-space:nowrap;word-wrap:normal;direction:ltr;font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24}
 
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+/* === BORDER SYSTEM === */
+.out{border-top:1px solid #fff;border-left:1px solid #fff;border-right:1px solid #000;
+  border-bottom:1px solid #000;box-shadow:inset -1px -1px 0 #808080,inset 1px 1px 0 #dfdfdf}
+.in{border-top:1px solid #808080;border-left:1px solid #808080;border-right:1px solid #fff;
+  border-bottom:1px solid #fff;box-shadow:inset 1px 1px 0 #000}
+.out:active,.btn-press:active{border-top:1px solid #808080!important;border-left:1px solid #808080!important;
+  border-right:1px solid #fff!important;border-bottom:1px solid #fff!important;
+  box-shadow:inset 1px 1px 0 #000!important}
 
-  html { scroll-behavior: smooth; }
+/* === DITHER DESKTOP === */
+#desktop{position:fixed;top:22px;left:0;right:0;bottom:28px;
+  background-color:#008080;background-image:radial-gradient(#007070 1px,transparent 0);
+  background-size:2px 2px;overflow:hidden}
 
-  body {
-    font-family: 'DM Sans', sans-serif;
-    background: var(--navy);
-    color: var(--white);
-    min-height: 100vh;
-    overflow-x: hidden;
-  }
+/* === TITLE BAR === */
+#titlebar{position:fixed;top:0;left:0;right:0;height:22px;
+  background:linear-gradient(to right,#000080,#1084d0);color:#fff;
+  display:flex;align-items:center;justify-content:space-between;padding:0 4px;z-index:100;
+  box-shadow:inset 1px 1px 0 #fff,0 1px 0 #000}
+#titlebar .tb-left{display:flex;align-items:center;gap:6px;
+  font-family:var(--font-ui);font-size:11px;font-weight:700;letter-spacing:.5px}
+.tb-btn{width:16px;height:14px;background:var(--gray);font-size:9px;color:#000;
+  cursor:default;display:flex;align-items:center;justify-content:center;margin-left:2px}
+.tb-btn,.tb-btn{border-top:1px solid #fff;border-left:1px solid #fff;
+  border-right:1px solid #000;border-bottom:1px solid #000;
+  box-shadow:inset -1px -1px 0 #808080,inset 1px 1px 0 #dfdfdf}
 
-  /* ── NOISE TEXTURE OVERLAY ── */
-  body::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
-    pointer-events: none;
-    z-index: 0;
-    opacity: 0.4;
-  }
+/* === TASKBAR === */
+#taskbar{position:fixed;bottom:0;left:0;right:0;height:28px;
+  background:var(--gray);display:flex;align-items:center;padding:2px 4px;gap:4px;z-index:200;
+  border-top:1px solid #fff;box-shadow:inset 0 1px 0 #fff}
+#start-btn{height:22px;padding:0 6px;background:var(--gray);
+  font-family:var(--font-ui);font-size:11px;font-weight:800;color:#000;
+  cursor:pointer;display:flex;align-items:center;gap:5px;
+  -webkit-tap-highlight-color:transparent;touch-action:manipulation}
+.taskbar-sep{width:1px;height:20px;background:#808080;box-shadow:1px 0 0 #fff;flex-shrink:0}
+#clock{font-family:var(--font-ui);font-size:11px;font-weight:700;padding:2px 8px;
+  white-space:nowrap}
+#taskbar-label{font-family:var(--font-ui);font-size:11px;
+  padding:0 8px;height:22px;display:flex;align-items:center;gap:4px;
+  flex:1;overflow:hidden}
 
-  /* ── NAV ── */
-  nav {
-    position: fixed;
-    top: 0; left: 0; right: 0;
-    z-index: 100;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0 2rem;
-    height: 60px;
-    background: rgba(26, 10, 60, 0.85);
-    backdrop-filter: blur(16px);
-    border-bottom: 1px solid rgba(255,255,255,0.07);
-  }
+/* === START MENU === */
+#start-menu{position:fixed;bottom:28px;left:0;width:min(230px,90vw);
+  background:var(--gray);z-index:300;display:none;
+  box-shadow:inset -1px -1px 0 #808080,inset 1px 1px 0 #dfdfdf,2px 0 0 #000,0 -1px 0 #000}
+#start-menu.open{display:flex}
+.sm-sidebar{width:24px;background:#006565;display:flex;align-items:flex-end;
+  justify-content:center;padding-bottom:8px;flex-shrink:0}
+.sm-sidebar span{writing-mode:vertical-rl;transform:rotate(180deg);
+  font-family:var(--font-ui);font-size:10px;font-weight:800;color:rgba(255,255,255,.5);letter-spacing:2px}
+.sm-items{flex:1;padding:2px 0}
+.sm-item{display:flex;align-items:center;gap:8px;padding:7px 10px;cursor:pointer;
+  font-family:var(--font-ui);font-size:11px;color:#000;border-bottom:1px solid #bdc9c8}
+.sm-item:last-child{border-bottom:none}
+.sm-item:hover,.sm-item:active{background:#000080;color:#fff}
+.sm-item:hover .ms,.sm-item:active .ms{color:#fff}
+.sm-item .ms{font-size:16px;color:#5d5e5f}
 
-  nav img { height: 32px; width: auto; object-fit: contain; }
+/* === DESKTOP ICONS === */
+.icon-grid{display:grid;grid-template-columns:repeat(3,80px);gap:4px 0;padding:12px 8px}
+@media(min-width:480px){.icon-grid{grid-template-columns:repeat(4,80px)}}
+@media(min-width:768px){.icon-grid{grid-template-columns:repeat(7,80px)}}
+.dicon{display:flex;flex-direction:column;align-items:center;gap:3px;
+  cursor:pointer;padding:6px 4px;width:76px;
+  -webkit-tap-highlight-color:transparent;touch-action:manipulation;border:1px solid transparent}
+.dicon:focus{outline:none;border:1px dotted #fff}
+.dicon .di-img{width:32px;height:32px;image-rendering:pixelated}
+.dicon .di-lbl{font-family:var(--font-ui);font-size:11px;color:#fff;
+  text-align:center;text-shadow:1px 1px 0 #000;line-height:1.3;padding:1px 2px;max-width:72px;word-break:break-word}
+.dicon.sel .di-img{filter:sepia(100%) hue-rotate(190deg) saturate(500%)}
+.dicon.sel .di-lbl{background:#000080;color:#fff;text-shadow:none}
 
-  nav a {
-    font-family: 'Syne', sans-serif;
-    font-size: 0.75rem;
-    font-weight: 600;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: rgba(255,255,255,0.5);
-    text-decoration: none;
-    transition: color 0.2s;
-  }
-  nav a:hover { color: var(--yellow); }
+/* === WINDOWS === */
+.woverlay{position:fixed;inset:22px 0 28px;z-index:400;display:none;
+  align-items:flex-start;justify-content:center;padding:4px;overflow:auto;
+  background:transparent}
+.woverlay.open{display:flex}
+.wframe{background:var(--gray);width:min(580px,100%);display:flex;flex-direction:column;
+  overflow:hidden;max-height:100%;box-shadow:inset -1px -1px 0 #808080,inset 1px 1px 0 #dfdfdf,2px 2px 0 #000;
+  border-top:1px solid #fff;border-left:1px solid #fff;border-right:1px solid #000;border-bottom:1px solid #000}
+.wtbar{background:linear-gradient(to right,#000080,#1084d0);color:#fff;
+  font-family:var(--font-ui);font-size:11px;font-weight:700;letter-spacing:.5px;
+  padding:2px 3px;display:flex;align-items:center;gap:4px;flex-shrink:0;height:20px}
+.wtbar .wt{flex:1}
+.wbtn{width:14px;height:12px;background:var(--gray);font-size:9px;color:#000;
+  cursor:pointer;display:flex;align-items:center;justify-content:center;margin-left:1px;
+  border-top:1px solid #fff;border-left:1px solid #fff;border-right:1px solid #000;
+  border-bottom:1px solid #000;box-shadow:inset -1px -1px 0 #808080}
+.wbtn:active{border-top:1px solid #808080;border-left:1px solid #808080;
+  border-right:1px solid #fff;border-bottom:1px solid #fff;box-shadow:none}
+.wmenu{font-family:var(--font-ui);font-size:11px;padding:1px 4px;
+  display:flex;gap:8px;border-bottom:1px solid #808080;flex-shrink:0;background:var(--gray)}
+.wmenu span{padding:1px 4px;cursor:default}
+.wmenu span:hover{background:#000080;color:#fff}
+.wtoolbar{display:flex;align-items:center;gap:1px;padding:2px 4px;
+  border-bottom:1px solid #808080;flex-shrink:0;background:var(--gray)}
+.tbtn{display:flex;flex-direction:column;align-items:center;padding:2px 4px;
+  font-family:var(--font-ui);font-size:10px;cursor:default;gap:1px}
+.tbtn:hover{border-top:1px solid #fff;border-left:1px solid #fff;
+  border-right:1px solid #808080;border-bottom:1px solid #808080}
+.tbtn .ms{font-size:18px;color:#5d5e5f}
+.tool-sep{width:1px;height:24px;background:#808080;box-shadow:1px 0 0 #fff;margin:0 3px;flex-shrink:0}
+.waddr{display:flex;align-items:center;gap:4px;padding:2px 4px;
+  border-bottom:1px solid #808080;font-family:var(--font-ui);font-size:11px;
+  flex-shrink:0;background:var(--gray)}
+.waddr .al{color:#5d5e5f;padding:0 4px;flex-shrink:0}
+.waddr .af{flex:1;background:#fff;padding:1px 4px;height:18px;
+  display:flex;align-items:center;overflow:hidden;
+  border-top:1px solid #808080;border-left:1px solid #808080;
+  border-right:1px solid #fff;border-bottom:1px solid #fff;box-shadow:inset 1px 1px 0 #000}
+.ago{height:18px;padding:0 8px;background:var(--gray);font-family:var(--font-ui);font-size:11px;cursor:default}
+.wcontent{flex:1;overflow-y:auto;background:#fff;margin:2px;
+  border-top:1px solid #808080;border-left:1px solid #808080;
+  border-right:1px solid #fff;border-bottom:1px solid #fff;box-shadow:inset 1px 1px 0 #000}
+.wstatus{font-family:var(--font-ui);font-size:11px;padding:1px 4px;
+  display:flex;gap:2px;border-top:1px solid #808080;flex-shrink:0;background:var(--gray)}
+.wsf{padding:0 4px;background:var(--gray);
+  border-top:1px solid #808080;border-left:1px solid #808080;
+  border-right:1px solid #fff;border-bottom:1px solid #fff;box-shadow:inset 1px 1px 0 #000}
+.wsf:first-child{flex:1}
 
-  /* ── HERO ── */
-  .hero {
-    position: relative;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    padding: 6rem 1.5rem 4rem;
-    z-index: 1;
-  }
+/* === WINDOW CONTENT INNER === */
+.wc{padding:12px 14px;border-bottom:1px solid #e3e2e2}
+.wc-hero{display:flex;gap:10px;align-items:flex-start}
+.wc-iconbox{width:48px;height:48px;background:#efeded;flex-shrink:0;display:flex;align-items:center;justify-content:center;
+  border-top:1px solid #808080;border-left:1px solid #808080;border-right:1px solid #fff;border-bottom:1px solid #fff;
+  box-shadow:inset 1px 1px 0 #000}
+.wc-h1{font-family:var(--font-ui);font-size:14px;font-weight:800;color:#006565;
+  text-transform:uppercase;letter-spacing:-.3px;line-height:1.2;margin-bottom:3px}
+.wc-body{font-family:var(--font-ui);font-size:12px;color:#3e4949;line-height:1.6}
+.wc-btn{display:inline-block;margin-top:8px;padding:4px 14px;
+  background:var(--gray);font-family:var(--font-ui);font-size:11px;font-weight:700;
+  color:#000;cursor:pointer;text-decoration:none;
+  border-top:1px solid #fff;border-left:1px solid #fff;border-right:1px solid #000;border-bottom:1px solid #000;
+  box-shadow:inset -1px -1px 0 #808080,inset 1px 1px 0 #dfdfdf}
+.wc-btn:active{border-top:1px solid #808080;border-left:1px solid #808080;
+  border-right:1px solid #fff;border-bottom:1px solid #fff;
+  box-shadow:inset 1px 1px 0 #000;padding-top:5px;padding-left:15px}
+.wc-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;padding:8px 14px}
+.wc-card{background:#efeded;padding:7px;
+  border-top:1px solid #808080;border-left:1px solid #808080;
+  border-right:1px solid #fff;border-bottom:1px solid #fff;box-shadow:inset 1px 1px 0 #000}
+.wc-card-name{font-family:var(--font-mono);font-size:10px;font-weight:700;
+  color:#1b1c1c;margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.wc-card-desc{font-family:var(--font-ui);font-size:11px;color:#3e4949;line-height:1.4}
+.wc-card-meta{font-family:var(--font-mono);font-size:9px;color:#5d5e5f;margin-top:3px}
+.wc-sep{height:1px;background:#bdc9c8;margin:0 14px}
+.wc-row{display:flex;gap:8px;padding:5px 14px;border-bottom:1px solid #e9e8e8;align-items:center}
+.wc-row:hover{background:#efeded}
+.wc-row .ms{font-size:18px;color:#006565;flex-shrink:0}
+.wc-row-name{font-family:var(--font-mono);font-size:10px;font-weight:700;flex:1;color:#1b1c1c}
+.wc-row-type{font-family:var(--font-mono);font-size:9px;color:#5d5e5f;width:50px;text-align:right}
+.wc-row-size{font-family:var(--font-mono);font-size:9px;color:#5d5e5f;width:44px;text-align:right}
+.wc-irc{background:#fff;margin:0;font-family:var(--font-mono);font-size:10px;color:#1b1c1c;
+  padding:6px;line-height:1.8;border-bottom:1px solid #e3e2e2;max-height:180px;overflow-y:auto}
+.wc-irc .irc-sys{color:#000080;font-weight:700}
+.wc-irc .irc-admin{color:#006565}
+.wc-irc .irc-user{color:#474eb7}
+.wc-irc .irc-me{color:#5d5e5f}
+.wc-performers{display:grid;grid-template-columns:1fr 1fr;gap:3px;padding:8px 14px}
+.wc-perf{font-family:var(--font-mono);font-size:10px;padding:3px 6px;background:#efeded;
+  border-top:1px solid #808080;border-left:1px solid #808080;
+  border-right:1px solid #fff;border-bottom:1px solid #fff}
+.wc-perf.op{background:#000080;color:#fff}
+.terminal{background:#000;color:#00cc00;font-family:var(--font-mono);font-size:10px;
+  padding:8px;line-height:1.8;margin:6px 0}
+.kv-list{font-family:var(--font-mono);font-size:10px;line-height:2;padding:6px 0}
+.kv-list .kv-key{color:#5d5e5f}
+.kv-list .kv-val{color:#006565;font-weight:700}
+.podcast-ep{display:flex;align-items:center;gap:8px;padding:6px 14px;border-bottom:1px solid #e9e8e8}
+.podcast-ep:hover{background:#efeded}
+.ep-num{font-family:var(--font-mono);font-size:9px;color:#5d5e5f;width:28px;flex-shrink:0}
+.ep-title{font-family:var(--font-ui);font-size:11px;font-weight:700;flex:1;color:#1b1c1c}
+.ep-dur{font-family:var(--font-mono);font-size:9px;color:#5d5e5f;width:36px;text-align:right}
+.ep-play{width:18px;height:18px;background:var(--gray);display:flex;align-items:center;justify-content:center;flex-shrink:0;
+  border-top:1px solid #fff;border-left:1px solid #fff;border-right:1px solid #000;border-bottom:1px solid #000;
+  box-shadow:inset -1px -1px 0 #808080;cursor:pointer}
+.ep-play .ms{font-size:12px;color:#006565}
+.waveform{height:32px;margin:0 14px;background:#000;display:flex;align-items:center;
+  gap:1px;padding:4px;overflow:hidden}
+.waveform-bar{background:#00cc00;width:3px;border-radius:0}
+.ppt-preview{display:flex;gap:8px;padding:8px 14px;overflow-x:auto}
+.ppt-slide{width:100px;height:70px;background:#fff;flex-shrink:0;
+  border:1px solid #bdc9c8;box-shadow:2px 2px 0 #bdc9c8;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;
+  font-family:var(--font-ui);font-size:8px;color:#3e4949;text-align:center;padding:4px}
+.ppt-slide .ppt-bar{width:60%;height:6px;background:#006565;margin:2px 0}
+.ppt-slide .ppt-bar.s{width:40%;background:#474eb7}
+.ppt-slide .ppt-bar.xs{width:25%;background:#bdc9c8}
 
-  .hero-eyebrow {
-    font-family: 'Syne', sans-serif;
-    font-size: 0.7rem;
-    font-weight: 700;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    color: var(--yellow);
-    margin-bottom: 1.5rem;
-    opacity: 0;
-    animation: fadeUp 0.6s 0.2s forwards;
-  }
+/* === BOOT DIALOG === */
+#boot-overlay{position:fixed;inset:0;z-index:999;display:flex;align-items:center;
+  justify-content:center;background:#000;padding:8px}
+#boot-dialog{background:var(--gray);width:min(340px,96vw);
+  border-top:1px solid #fff;border-left:1px solid #fff;border-right:1px solid #000;border-bottom:1px solid #000;
+  box-shadow:inset -1px -1px 0 #808080,inset 1px 1px 0 #dfdfdf,3px 3px 0 #000}
+.boot-tb{background:linear-gradient(to right,#000080,#1084d0);color:#fff;
+  font-family:var(--font-ui);font-size:11px;font-weight:700;
+  padding:4px 6px;display:flex;align-items:center;gap:6px;letter-spacing:.5px}
+.boot-body{padding:16px;display:flex;gap:14px;align-items:flex-start}
+.boot-icon{width:48px;height:48px;flex-shrink:0;background:#000080;
+  display:flex;align-items:center;justify-content:center;color:#fff;font-size:28px;font-weight:800;font-style:italic;
+  font-family:var(--font-ui)}
+.boot-text{font-family:var(--font-px);font-size:7px;line-height:2.2;color:#000}
+.boot-foot{display:flex;justify-content:center;padding:0 16px 16px}
+.boot-btn{padding:5px 28px;background:var(--gray);font-family:var(--font-ui);font-size:11px;
+  font-weight:700;color:#000;cursor:pointer;outline:1px solid #000;outline-offset:-3px;
+  border-top:1px solid #fff;border-left:1px solid #fff;border-right:1px solid #000;border-bottom:1px solid #000;
+  box-shadow:inset -1px -1px 0 #808080,inset 1px 1px 0 #dfdfdf}
+.boot-btn:active{border-top:1px solid #808080;border-left:1px solid #808080;
+  border-right:1px solid #fff;border-bottom:1px solid #fff;
+  box-shadow:inset 1px 1px 0 #000;padding-top:6px;padding-left:29px}
 
-  .hero h1 {
-    font-family: 'Syne', sans-serif;
-    font-size: clamp(3rem, 10vw, 8rem);
-    font-weight: 800;
-    line-height: 0.92;
-    letter-spacing: -0.03em;
-    color: var(--white);
-    opacity: 0;
-    animation: fadeUp 0.7s 0.35s forwards;
-  }
+/* === BANE CLIPPY === */
+#bane{position:fixed;bottom:34px;right:8px;z-index:350;
+  display:flex;flex-direction:column;align-items:center;cursor:pointer;
+  -webkit-tap-highlight-color:transparent;gap:0}
+#bane-bubble{background:#fff;padding:7px 9px;font-family:var(--font-ui);font-size:10px;
+  line-height:1.7;color:#000;max-width:160px;position:relative;margin-bottom:6px;
+  border-top:1px solid #808080;border-left:1px solid #808080;
+  border-right:1px solid #fff;border-bottom:1px solid #fff;
+  box-shadow:inset 1px 1px 0 #000,1px 1px 0 #000}
+#bane-bubble::after{content:'';position:absolute;bottom:-7px;left:50%;transform:translateX(-50%);
+  width:0;height:0;border-left:6px solid transparent;border-right:6px solid transparent;
+  border-top:7px solid #808080}
+#bane-canvas{width:60px;height:60px;image-rendering:pixelated;display:block;
+  animation:bane-idle 3s ease-in-out infinite}
 
-  .hero h1 span { color: var(--yellow); }
+@keyframes bane-idle{0%,90%,100%{transform:translateY(0)}95%{transform:translateY(-2px)}}
+@keyframes bane-react{0%{transform:scale(1)}30%{transform:scale(1.14) translateY(-3px)}
+  60%{transform:scale(.96)}100%{transform:scale(1)}}
+#bane.react #bane-canvas{animation:bane-react .45s ease-in-out;transform-origin:center bottom}
 
-  .hero-sub {
-    margin-top: 2rem;
-    font-size: clamp(0.9rem, 2vw, 1.1rem);
-    font-weight: 300;
-    color: rgba(255,255,255,0.55);
-    max-width: 480px;
-    line-height: 1.7;
-    opacity: 0;
-    animation: fadeUp 0.7s 0.5s forwards;
-  }
+/* === SCANLINES === */
+#scanlines{position:fixed;inset:0;pointer-events:none;z-index:9999;
+  background:repeating-linear-gradient(to bottom,transparent 0,transparent 2px,rgba(0,0,0,.05) 2px,rgba(0,0,0,.05) 4px)}
 
-  /* ── GLOW BLOB ── */
-  .blob {
-    position: absolute;
-    border-radius: 50%;
-    filter: blur(80px);
-    pointer-events: none;
-    z-index: 0;
-  }
-  .blob-yellow {
-    width: 400px; height: 400px;
-    background: rgba(255, 214, 0, 0.12);
-    top: 10%; left: 50%;
-    transform: translateX(-50%);
-  }
-  .blob-crimson {
-    width: 300px; height: 300px;
-    background: rgba(155, 28, 58, 0.15);
-    bottom: 20%; right: 5%;
-  }
-
-  /* ── BRANDS GRID ── */
-  .brands-section {
-    position: relative;
-    z-index: 1;
-    padding: 2rem 1.5rem 6rem;
-    max-width: 960px;
-    margin: 0 auto;
-  }
-
-  .brands-label {
-    font-family: 'Syne', sans-serif;
-    font-size: 0.65rem;
-    font-weight: 700;
-    letter-spacing: 0.25em;
-    text-transform: uppercase;
-    color: rgba(255,255,255,0.3);
-    text-align: center;
-    margin-bottom: 2.5rem;
-  }
-
-  .brands-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 1rem;
-  }
-
-  @media (min-width: 640px) {
-    .brands-grid { grid-template-columns: repeat(4, 1fr); }
-  }
-
-  .brand-card {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    justify-content: space-between;
-    padding: 1.5rem 1.25rem;
-    background: rgba(255,255,255,0.04);
-    border: 1px solid rgba(255,255,255,0.08);
-    border-radius: 16px;
-    text-decoration: none;
-    color: var(--white);
-    transition: background 0.25s, border-color 0.25s, transform 0.25s;
-    min-height: 160px;
-    cursor: pointer;
-    opacity: 0;
-    animation: fadeUp 0.6s forwards;
-  }
-
-  .brand-card:nth-child(1) { animation-delay: 0.6s; }
-  .brand-card:nth-child(2) { animation-delay: 0.7s; }
-  .brand-card:nth-child(3) { animation-delay: 0.8s; }
-  .brand-card:nth-child(4) { animation-delay: 0.9s; }
-
-  .brand-card:hover {
-    background: rgba(255,255,255,0.08);
-    border-color: rgba(255, 214, 0, 0.3);
-    transform: translateY(-4px);
-  }
-
-  .brand-card.coming-soon {
-    opacity: 0.5 !important;
-    cursor: default;
-    pointer-events: none;
-    animation-delay: 0.75s;
-  }
-  .brand-card.coming-soon:nth-child(3) { animation-delay: 0.8s; }
-  .brand-card.coming-soon:nth-child(4) { animation-delay: 0.85s; }
-
-  .brand-pill {
-    font-family: 'Syne', sans-serif;
-    font-size: 0.6rem;
-    font-weight: 700;
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-    padding: 3px 8px;
-    border-radius: 20px;
-    margin-bottom: 1rem;
-  }
-
-  .pill-live { background: rgba(255,214,0,0.15); color: var(--yellow); }
-  .pill-soon { background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.4); }
-
-  .brand-name {
-    font-family: 'Syne', sans-serif;
-    font-size: 1.4rem;
-    font-weight: 800;
-    letter-spacing: -0.02em;
-    margin-bottom: 0.4rem;
-  }
-
-  .brand-desc {
-    font-size: 0.75rem;
-    font-weight: 300;
-    color: rgba(255,255,255,0.45);
-    line-height: 1.5;
-    flex: 1;
-  }
-
-  .brand-arrow {
-    margin-top: 1.25rem;
-    font-size: 0.8rem;
-    color: var(--yellow);
-    opacity: 0;
-    transition: opacity 0.2s, transform 0.2s;
-  }
-  .brand-card:hover .brand-arrow { opacity: 1; transform: translateX(4px); }
-
-  /* ── FOOTER ── */
-  footer {
-    position: relative;
-    z-index: 1;
-    border-top: 1px solid rgba(255,255,255,0.07);
-    padding: 2rem 1.5rem;
-    text-align: center;
-  }
-
-  footer p {
-    font-size: 0.7rem;
-    color: rgba(255,255,255,0.25);
-    letter-spacing: 0.05em;
-  }
-
-  footer a { color: rgba(255,255,255,0.4); text-decoration: none; }
-  footer a:hover { color: var(--yellow); }
-
-  /* ── ANIMATIONS ── */
-  @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(20px); }
-    to   { opacity: 1; transform: translateY(0); }
-  }
+/* scrollbars */
+.wcontent::-webkit-scrollbar{width:16px}
+.wcontent::-webkit-scrollbar-track{background:#d1d1d1;background-image:radial-gradient(#bdc9c8 1px,transparent 0);background-size:2px 2px}
+.wcontent::-webkit-scrollbar-thumb{background:#efeded;border-top:1px solid #fff;border-left:1px solid #fff;border-right:1px solid #000;border-bottom:1px solid #000;box-shadow:inset -1px -1px 0 #808080}
 </style>
 </head>
 <body>
 
-<nav>
-  <img src="/public/assets/logo-theintgen.png" alt="The Internet Generation"/>
-  <a href="mailto:hi@theintgen.com">hi@theintgen.com</a>
-</nav>
+<!-- Boot dialog removed — desktop loads straight to the OS -->
 
-<section class="hero">
-  <div class="blob blob-yellow"></div>
-  <div class="blob blob-crimson"></div>
+<!-- ═══════════════ TITLE BAR ═══════════════ -->
+<div id="titlebar">
+  <div class="tb-left">
+    <!-- TIG LOGO SVG inline -->
+    <svg width="36" height="18" viewBox="0 0 36 18" xmlns="http://www.w3.org/2000/svg">
+      <text y="8" font-family="Hanken Grotesk,sans-serif" font-weight="800" font-size="7">
+        <tspan fill="#c0392b">T</tspan><tspan fill="#fff">HE</tspan>
+      </text>
+      <text y="14" font-family="Hanken Grotesk,sans-serif" font-weight="800" font-size="7">
+        <tspan fill="#c0392b">I</tspan><tspan fill="#fff">NT</tspan>
+      </text>
+    </svg>
+    The Internet Generation
+  </div>
+  <div style="display:flex">
+    <div class="tb-btn">_</div>
+    <div class="tb-btn" style="font-size:7px">□</div>
+    <div class="tb-btn">✕</div>
+  </div>
+</div>
 
-  <p class="hero-eyebrow">The Internet Generation &nbsp;·&nbsp; Chennai</p>
-  <h1>THE<br/><span>INT</span><br/>GEN</h1>
-  <p class="hero-sub">Digital Marketing · Video Production · Influencer Marketing · And a whole lot more.</p>
-</section>
+<!-- ═══════════════ DESKTOP ═══════════════ -->
+<div id="desktop">
+  <div class="icon-grid">
 
-<section class="brands-section">
-  <p class="brands-label">Our Ecosystem</p>
-  <div class="brands-grid">
-
-    <a href="/tigital/" class="brand-card">
-      <span class="brand-pill pill-live">Live</span>
-      <div>
-        <p class="brand-name">Tigital</p>
-        <p class="brand-desc">Digital marketing knowledge hub. Free tools, guides & resources.</p>
-      </div>
-      <span class="brand-arrow">Explore →</span>
-    </a>
-
-    <a href="/tiggigs/" class="brand-card">
-      <span class="brand-pill pill-live">Live</span>
-      <div>
-        <p class="brand-name">TigGigs</p>
-        <p class="brand-desc">Freelance job board for creative professionals in the TIG network.</p>
-      </div>
-      <span class="brand-arrow">Explore →</span>
-    </a>
-
-    <div class="brand-card coming-soon">
-      <span class="brand-pill pill-soon">Coming Soon</span>
-      <div>
-        <p class="brand-name">TigPods</p>
-        <p class="brand-desc">Podcast homepage — conversations with Chennai's creative community.</p>
-      </div>
+    <!-- Tigital -->
+    <div class="dicon" data-win="tigital" tabindex="0" role="button" aria-label="Tigital">
+      <svg class="di-img" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+        <rect x="2" y="8" width="28" height="21" fill="#ffc83d" stroke="#000" stroke-width="1"/>
+        <rect x="2" y="5" width="11" height="5" fill="#ffc83d" stroke="#000" stroke-width="1"/>
+        <rect x="3" y="9" width="26" height="19" fill="#ffe080"/>
+        <rect x="10" y="14" width="12" height="2" fill="#000"/>
+        <rect x="15" y="16" width="3" height="9" fill="#000"/>
+      </svg>
+      <span class="di-lbl">Tigital</span>
     </div>
 
-    <div class="brand-card coming-soon">
-      <span class="brand-pill pill-soon">Coming Soon</span>
-      <div>
-        <p class="brand-name">Tigom</p>
-        <p class="brand-desc">Open mic platform — 42+ editions & counting.</p>
-      </div>
+    <!-- TigGigs -->
+    <div class="dicon" data-win="tiggigs" tabindex="0" role="button" aria-label="TigGigs">
+      <svg class="di-img" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+        <rect x="2" y="8" width="28" height="21" fill="#80c0ff" stroke="#000" stroke-width="1"/>
+        <rect x="2" y="5" width="11" height="5" fill="#80c0ff" stroke="#000" stroke-width="1"/>
+        <rect x="3" y="9" width="26" height="19" fill="#c0e0ff"/>
+        <rect x="10" y="16" width="12" height="9" fill="#000"/>
+        <rect x="13" y="13" width="6" height="4" fill="#404060" stroke="#000" stroke-width="1"/>
+        <rect x="13" y="20" width="6" height="2" fill="#fff"/>
+      </svg>
+      <span class="di-lbl">TigGigs</span>
+    </div>
+
+    <!-- Tigpods -->
+    <div class="dicon" data-win="tigpods" tabindex="0" role="button" aria-label="Tigpods">
+      <svg class="di-img" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+        <rect x="2" y="8" width="28" height="21" fill="#c080ff" stroke="#000" stroke-width="1"/>
+        <rect x="2" y="5" width="11" height="5" fill="#c080ff" stroke="#000" stroke-width="1"/>
+        <rect x="3" y="9" width="26" height="19" fill="#e0c0ff"/>
+        <rect x="13" y="12" width="6" height="9" rx="1" fill="#000"/>
+        <path d="M10 20 Q10 27 16 27 Q22 27 22 20" stroke="#000" stroke-width="1.5" fill="none"/>
+        <line x1="16" y1="27" x2="16" y2="30" stroke="#000" stroke-width="1.5"/>
+        <line x1="13" y1="30" x2="19" y2="30" stroke="#000" stroke-width="1.5"/>
+      </svg>
+      <span class="di-lbl">Tigpods</span>
+    </div>
+
+    <!-- TIGOM -->
+    <div class="dicon" data-win="tigom" tabindex="0" role="button" aria-label="TIGOM">
+      <svg class="di-img" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+        <rect x="2" y="8" width="28" height="21" fill="#ff8080" stroke="#000" stroke-width="1"/>
+        <rect x="2" y="5" width="11" height="5" fill="#ff8080" stroke="#000" stroke-width="1"/>
+        <rect x="3" y="9" width="26" height="19" fill="#ffc0c0"/>
+        <circle cx="16" cy="18" r="5" fill="#000"/>
+        <rect x="15" y="23" width="2" height="5" fill="#000"/>
+        <line x1="12" y1="28" x2="20" y2="28" stroke="#000" stroke-width="1.5"/>
+        <polygon points="16,13 17,16 20,16 18,18 19,21 16,19 13,21 14,18 12,16 15,16" fill="#ff0"/>
+      </svg>
+      <span class="di-lbl">TIGOM</span>
+    </div>
+
+    <!-- Our Work -->
+    <div class="dicon" data-win="ourwork" tabindex="0" role="button" aria-label="Our Work">
+      <svg class="di-img" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+        <rect x="2" y="8" width="28" height="21" fill="#80ff80" stroke="#000" stroke-width="1"/>
+        <rect x="2" y="5" width="11" height="5" fill="#80ff80" stroke="#000" stroke-width="1"/>
+        <rect x="3" y="9" width="26" height="19" fill="#c0ffc0"/>
+        <rect x="8" y="13" width="13" height="16" fill="#fff" stroke="#000" stroke-width="1"/>
+        <rect x="10" y="11" width="13" height="16" fill="#fff" stroke="#000" stroke-width="1"/>
+        <rect x="12" y="9" width="13" height="16" fill="#fff" stroke="#000" stroke-width="1"/>
+        <line x1="14" y1="14" x2="22" y2="14" stroke="#808080" stroke-width="1"/>
+        <line x1="14" y1="17" x2="22" y2="17" stroke="#808080" stroke-width="1"/>
+        <line x1="14" y1="20" x2="19" y2="20" stroke="#808080" stroke-width="1"/>
+      </svg>
+      <span class="di-lbl">Our Work</span>
+    </div>
+
+    <!-- Find Us -->
+    <div class="dicon" data-win="findus" tabindex="0" role="button" aria-label="Find Us">
+      <svg class="di-img" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+        <rect x="2" y="8" width="28" height="21" fill="#ffff80" stroke="#000" stroke-width="1"/>
+        <rect x="2" y="5" width="11" height="5" fill="#ffff80" stroke="#000" stroke-width="1"/>
+        <rect x="3" y="9" width="26" height="19" fill="#ffffc0"/>
+        <circle cx="16" cy="17" r="6" fill="#ff3333" stroke="#000" stroke-width="1"/>
+        <circle cx="16" cy="17" r="2.5" fill="#fff"/>
+        <polygon points="16,23 13,29 19,29" fill="#ff3333" stroke="#000" stroke-width="1"/>
+      </svg>
+      <span class="di-lbl">Find Us</span>
+    </div>
+
+    <!-- Portfolio -->
+    <div class="dicon" data-win="portfolio" tabindex="0" role="button" aria-label="Portfolio">
+      <svg class="di-img" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+        <rect x="4" y="3" width="20" height="26" rx="0" fill="#fff" stroke="#000" stroke-width="1"/>
+        <rect x="4" y="3" width="20" height="5" fill="#c0392b"/>
+        <text x="6" y="8" font-family="Arial" font-weight="800" font-size="4" fill="#fff">PPT</text>
+        <line x1="7" y1="13" x2="21" y2="13" stroke="#e3e2e2" stroke-width="1"/>
+        <line x1="7" y1="16" x2="21" y2="16" stroke="#e3e2e2" stroke-width="1"/>
+        <line x1="7" y1="19" x2="17" y2="19" stroke="#e3e2e2" stroke-width="1"/>
+        <rect x="7" y="22" width="8" height="4" fill="#c0392b" opacity=".4"/>
+        <rect x="16" y="22" width="5" height="4" fill="#006565" opacity=".4"/>
+        <rect x="24" y="18" width="8" height="11" fill="#ffab40" stroke="#000" stroke-width="1"/>
+        <rect x="21" y="20" width="5" height="3" fill="#ffab40" stroke="#000" stroke-width="1"/>
+      </svg>
+      <span class="di-lbl">Portfolio</span>
     </div>
 
   </div>
-</section>
+</div>
 
-<footer>
-  <p>© 2025 The Internet Generation · T. Nagar, Chennai &nbsp;·&nbsp; <a href="mailto:hi@theintgen.com">hi@theintgen.com</a></p>
-</footer>
+<!-- ═══════════════ TASKBAR ═══════════════ -->
+<div id="taskbar">
+  <button id="start-btn" class="out" aria-label="Start">
+    <!-- TIG LOGO for Start -->
+    <svg width="20" height="20" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+      <rect width="20" height="20" fill="#fff"/>
+      <text font-family="Hanken Grotesk,sans-serif" font-weight="800">
+        <tspan x="1" y="8" font-size="7" fill="#c0392b">T</tspan><tspan font-size="7" fill="#000">HE</tspan>
+        <tspan x="1" y="14" font-size="7" fill="#c0392b">I</tspan><tspan font-size="7" fill="#000">NT</tspan>
+        <tspan x="1" y="20" font-size="7" fill="#c0392b">G</tspan><tspan font-size="7" fill="#000">EN</tspan>
+      </text>
+    </svg>
+    TIG
+  </button>
+  <div class="taskbar-sep"></div>
+  <div id="taskbar-label" class="in" style="font-family:var(--font-ui);font-size:11px;background:#dbdad9;flex:1">
+    <span class="ms" style="font-size:12px;color:#5d5e5f">language</span>
+    <span>TIG Home</span>
+  </div>
+  <div class="taskbar-sep"></div>
+  <div id="clock" class="in"></div>
+</div>
 
+<!-- ═══════════════ START MENU ═══════════════ -->
+<div id="start-menu">
+  <div class="sm-sidebar"><span>TIG OS 98</span></div>
+  <div class="sm-items">
+    <div class="sm-item" data-win="tigital"><span class="ms">library_books</span>Tigital</div>
+    <div class="sm-item" data-win="tiggigs"><span class="ms">work</span>TigGigs</div>
+    <div class="sm-item" data-win="tigpods"><span class="ms">podcasts</span>Tigpods</div>
+    <div class="sm-item" data-win="tigom"><span class="ms">forum</span>TIGOM</div>
+    <div class="sm-item" data-win="ourwork"><span class="ms">folder_open</span>Our Work</div>
+    <div class="sm-item" data-win="findus"><span class="ms">location_on</span>Find Us</div>
+    <div class="sm-item" data-win="portfolio"><span class="ms">slideshow</span>Portfolio</div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════
+     WINDOWS
+═══════════════════════════════════════ -->
+
+<!-- TIGITAL -->
+<div class="woverlay" id="win-tigital">
+<div class="wframe">
+  <div class="wtbar">
+    <span class="ms" style="font-size:12px">library_books</span>
+    <span class="wt">Tigital — Microsoft Internet Explorer</span>
+    <div class="wbtn" data-close="tigital">_</div>
+    <div class="wbtn" style="font-size:7px" data-close="tigital">□</div>
+    <div class="wbtn" data-close="tigital">✕</div>
+  </div>
+  <div class="wmenu">
+    <span>File</span><span>Edit</span><span>View</span><span>Favorites</span><span>Tools</span><span>Help</span>
+  </div>
+  <div class="wtoolbar">
+    <div class="tbtn"><span class="ms">arrow_back</span><span>Back</span></div>
+    <div class="tbtn"><span class="ms">arrow_forward</span><span>Fwd</span></div>
+    <div class="tbtn"><span class="ms">close</span><span>Stop</span></div>
+    <div class="tbtn"><span class="ms">refresh</span><span>Refresh</span></div>
+    <div class="tool-sep"></div>
+    <div class="tbtn"><span class="ms">home</span><span>Home</span></div>
+  </div>
+  <div class="waddr">
+    <span class="al">Address</span>
+    <div class="af"><span class="ms" style="font-size:12px;color:#006565;margin-right:4px">language</span>http://www.tigital.io/library</div>
+    <div class="ago out btn-press">Go</div>
+  </div>
+  <div class="wcontent">
+    <div class="wc">
+      <div class="wc-hero">
+        <div class="wc-iconbox"><span class="ms" style="font-size:28px;color:#006565">computer</span></div>
+        <div>
+          <div class="wc-h1">Your Digital Marketing Library</div>
+          <div class="wc-body">Learn the internet. Master the craft.<br>Your complete toolkit for digital-first thinking.</div>
+          <a href="#" class="wc-btn">Explore Assets</a>
+          <a href="#" class="wc-btn" style="margin-left:6px">Documentation</a>
+        </div>
+      </div>
+    </div>
+    <div class="wc-grid">
+      <div class="wc-card">
+        <div class="wc-card-name">Growth_Framework.exe</div>
+        <div class="wc-card-desc">Scale digital footprints. 14 modules on SEO and neural branding.</div>
+        <div class="wc-card-meta">4.2 MB · System Tool</div>
+      </div>
+      <div class="wc-card">
+        <div class="wc-card-name">SEO_Manifesto.txt</div>
+        <div class="wc-card-desc">Attention debt is the new currency. Why content isn't king anymore.</div>
+        <div class="wc-card-meta">892 KB · Document</div>
+      </div>
+      <div class="wc-card">
+        <div class="wc-card-name">AD_GEN_V2.bat</div>
+        <div class="terminal">&gt; INITIALIZING CAMPAIGN...<br>&gt; ANALYZING TRENDS...<br>&gt; GENERATING LIKES...</div>
+        <div class="wc-card-meta">12 KB · Batch Script</div>
+      </div>
+      <div class="wc-card">
+        <div class="wc-card-name">Global_Config.ini</div>
+        <div class="kv-list">
+          <div><span class="kv-key">Retargeting=</span><span class="kv-val">TRUE</span></div>
+          <div><span class="kv-key">Psychographics=</span><span class="kv-val">ENABLED</span></div>
+          <div><span class="kv-key">Conversion_Hook=</span><span class="kv-val">MAX</span></div>
+        </div>
+        <div class="wc-card-meta">1 KB · Config File</div>
+      </div>
+    </div>
+  </div>
+  <div class="wstatus">
+    <div class="wsf">Done</div>
+    <div class="wsf" style="display:flex;align-items:center;gap:3px"><span class="ms" style="font-size:11px">public</span>Internet</div>
+  </div>
+</div>
+</div>
+
+<!-- TIGGIGS -->
+<div class="woverlay" id="win-tiggigs">
+<div class="wframe">
+  <div class="wtbar">
+    <span class="ms" style="font-size:12px">work</span>
+    <span class="wt">TigGigs — C:\WINDOWS\Desktop\TigGigs_Portal</span>
+    <div class="wbtn" data-close="tiggigs">_</div>
+    <div class="wbtn" data-close="tiggigs" style="font-size:7px">□</div>
+    <div class="wbtn" data-close="tiggigs">✕</div>
+  </div>
+  <div class="wmenu"><span>File</span><span>Edit</span><span>View</span><span>Favorites</span><span>Help</span></div>
+  <div class="waddr">
+    <span class="al">Address</span>
+    <div class="af">C:\WINDOWS\Desktop\TigGigs_Portal</div>
+    <div class="ago out btn-press">Go</div>
+  </div>
+  <div class="wcontent">
+    <div class="wc">
+      <div class="wc-hero">
+        <div class="wc-iconbox"><span class="ms" style="font-size:28px;color:#006565">work</span></div>
+        <div>
+          <div class="wc-h1">Chennai's Gig Portal</div>
+          <div class="wc-body">Find work. Get paid. Stay creative.<br>For the Internet Generation's digital talent.</div>
+          <a href="#" class="wc-btn">Post a Gig</a>
+          <a href="#" class="wc-btn" style="margin-left:6px">Member Login</a>
+        </div>
+      </div>
+    </div>
+    <div style="padding:6px 14px;font-family:var(--font-ui);font-size:11px;color:#5d5e5f;border-bottom:1px solid #e3e2e2;display:flex;gap:4px;align-items:center">
+      <span class="ms" style="font-size:14px">folder_open</span>
+      <strong>Available Gigs</strong>
+    </div>
+    <div class="wc-grid" style="grid-template-columns:1fr 1fr 1fr">
+      <div class="wc-card" style="text-align:center">
+        <div style="font-size:22px;margin-bottom:3px">💼</div>
+        <div class="wc-card-name">UX_Designer_01.exe</div>
+        <div class="wc-card-meta">24.5 KB</div>
+        <div class="wc-btn" style="margin-top:4px;width:100%;text-align:center">Apply</div>
+      </div>
+      <div class="wc-card" style="text-align:center">
+        <div style="font-size:22px;margin-bottom:3px">📝</div>
+        <div class="wc-card-name">Copywriter_V2.doc</div>
+        <div class="wc-card-meta">12.0 KB</div>
+        <div class="wc-btn" style="margin-top:4px;width:100%;text-align:center">Apply</div>
+      </div>
+      <div class="wc-card" style="text-align:center">
+        <div style="font-size:22px;margin-bottom:3px">⚙️</div>
+        <div class="wc-card-name">React_Dev_Urgent.zip</div>
+        <div class="wc-card-meta">156 KB</div>
+        <div class="wc-btn" style="margin-top:4px;width:100%;text-align:center">Apply</div>
+      </div>
+      <div class="wc-card" style="text-align:center">
+        <div style="font-size:22px;margin-bottom:3px">🎬</div>
+        <div class="wc-card-name">Logo_Motion_GD.mov</div>
+        <div class="wc-card-meta">2.4 MB</div>
+        <div class="wc-btn" style="margin-top:4px;width:100%;text-align:center">Apply</div>
+      </div>
+      <div class="wc-card" style="text-align:center">
+        <div style="font-size:22px;margin-bottom:3px">📊</div>
+        <div class="wc-card-name">SEO_Analyst_CH.xlsx</div>
+        <div class="wc-card-meta">45 KB</div>
+        <div class="wc-btn" style="margin-top:4px;width:100%;text-align:center">Apply</div>
+      </div>
+      <div class="wc-card" style="text-align:center">
+        <div style="font-size:22px;margin-bottom:3px">🎙️</div>
+        <div class="wc-card-name">Voice_Artist_AD.wav</div>
+        <div class="wc-card-meta">890 KB</div>
+        <div class="wc-btn" style="margin-top:4px;width:100%;text-align:center">Apply</div>
+      </div>
+    </div>
+  </div>
+  <div class="wstatus"><div class="wsf">6 objects found</div><div class="wsf">1.2 MB disk space free</div></div>
+</div>
+</div>
+
+<!-- TIGPODS -->
+<div class="woverlay" id="win-tigpods">
+<div class="wframe">
+  <div class="wtbar">
+    <span class="ms" style="font-size:12px">podcasts</span>
+    <span class="wt">Tigpods — Media Player</span>
+    <div class="wbtn" data-close="tigpods">_</div>
+    <div class="wbtn" data-close="tigpods" style="font-size:7px">□</div>
+    <div class="wbtn" data-close="tigpods">✕</div>
+  </div>
+  <div class="wmenu"><span>File</span><span>Play</span><span>View</span><span>Help</span></div>
+  <div class="waddr">
+    <span class="al">Address</span>
+    <div class="af">C:\Media\Tigpods_Player</div>
+    <div class="ago out btn-press">Go</div>
+  </div>
+  <div class="wcontent">
+    <div class="wc" style="background:#000;padding:10px 14px">
+      <div style="font-family:var(--font-mono);font-size:10px;color:#00cc00;margin-bottom:6px">
+        ▶ NOW PLAYING: EP.44 — "Digital Natives vs Digital Immigrants"
+      </div>
+      <div class="waveform" id="waveform"></div>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-top:6px">
+        <div style="font-family:var(--font-mono);font-size:9px;color:#808080">02:34 / 48:12</div>
+        <div style="display:flex;gap:4px">
+          <div class="out btn-press" style="background:var(--gray);padding:3px 8px;font-size:10px;cursor:pointer">|◀</div>
+          <div class="out btn-press" style="background:var(--gray);padding:3px 10px;font-size:10px;cursor:pointer">▶ ▐▐</div>
+          <div class="out btn-press" style="background:var(--gray);padding:3px 8px;font-size:10px;cursor:pointer">▶|</div>
+        </div>
+        <a href="#" style="font-family:var(--font-ui);font-size:11px;font-weight:700;color:#00cc00;text-decoration:none">Subscribe</a>
+      </div>
+    </div>
+    <div style="padding:6px 14px 4px;font-family:var(--font-ui);font-size:11px;color:#5d5e5f;border-bottom:1px solid #e3e2e2;display:flex;align-items:center;gap:4px">
+      <span class="ms" style="font-size:14px">queue_music</span><strong>All Episodes</strong>
+    </div>
+    <div class="podcast-ep" style="background:#efeded">
+      <div class="ep-play out"><span class="ms">play_arrow</span></div>
+      <div class="ep-num">EP 44</div>
+      <div class="ep-title">Digital Natives vs Digital Immigrants</div>
+      <div class="ep-dur">48:12</div>
+    </div>
+    <div class="podcast-ep">
+      <div class="ep-play out"><span class="ms">play_arrow</span></div>
+      <div class="ep-num">EP 43</div>
+      <div class="ep-title">The Algorithm Doesn't Care About You</div>
+      <div class="ep-dur">41:05</div>
+    </div>
+    <div class="podcast-ep">
+      <div class="ep-play out"><span class="ms">play_arrow</span></div>
+      <div class="ep-num">EP 42</div>
+      <div class="ep-title">Attention Economy: A Survival Guide</div>
+      <div class="ep-dur">55:38</div>
+    </div>
+    <div class="podcast-ep">
+      <div class="ep-play out"><span class="ms">play_arrow</span></div>
+      <div class="ep-num">EP 41</div>
+      <div class="ep-title">Why Chennai is the Next Tech Hotspot</div>
+      <div class="ep-dur">37:20</div>
+    </div>
+    <div class="podcast-ep">
+      <div class="ep-play out"><span class="ms">play_arrow</span></div>
+      <div class="ep-num">EP 40</div>
+      <div class="ep-title">Building in Public: The TIG Story</div>
+      <div class="ep-dur">62:48</div>
+    </div>
+    <div style="text-align:center;padding:10px"><a href="#" class="wc-btn">Enter Tigpods</a></div>
+  </div>
+  <div class="wstatus"><div class="wsf">44 episodes available</div><div class="wsf">TIG Media Network</div></div>
+</div>
+</div>
+
+<!-- TIGOM -->
+<div class="woverlay" id="win-tigom">
+<div class="wframe">
+  <div class="wtbar">
+    <span class="ms" style="font-size:12px">forum</span>
+    <span class="wt">TIGOM — irc://tigom.live/#stage</span>
+    <div class="wbtn" data-close="tigom">_</div>
+    <div class="wbtn" data-close="tigom" style="font-size:7px">□</div>
+    <div class="wbtn" data-close="tigom">✕</div>
+  </div>
+  <div class="wmenu"><span>File</span><span>Edit</span><span>View</span><span>Connections</span><span>Help</span></div>
+  <div class="waddr">
+    <span class="al">Address</span>
+    <div class="af">irc://tigom.live/#TIGOM_STAGING</div>
+    <div class="ago out btn-press">Go</div>
+  </div>
+  <div class="wcontent" style="display:flex;flex-direction:column">
+    <div class="wc-irc">
+      <div class="irc-sys">*** Now talking in #TIGOM_STAGING</div>
+      <div class="irc-sys">*** Topic: '44 editions. One stage. Open mic culture, live and loud.'</div>
+      <div class="irc-sys">*** Set by TIG_Admin on Wed Oct 23 1999</div>
+      <div style="margin-top:6px">
+        <div><span class="irc-admin">&lt;TIG_Admin&gt;</span> Welcome to the 44th Edition of TIGOM.</div>
+        <div><span class="irc-admin">&lt;System&gt;</span> New event: "The Digital Resonance" — Stage is now open for signups.</div>
+        <div><span class="irc-user">&lt;Analog_Soul&gt;</span> Is the mic open for experimental synth sets tonight?</div>
+        <div><span class="irc-admin">&lt;TIG_Admin&gt;</span> @Analog_Soul Yes. All open mic culture. Live and loud.</div>
+        <div><span class="irc-user">&lt;Cyber_Poet&gt;</span> Been waiting for this since #43. Who's headlining?</div>
+        <div><span class="irc-me">&lt;Static_Rain&gt;</span> Rumour is there's a surprise set. No announcements yet.</div>
+        <div><span class="irc-admin">&lt;TIG_Admin&gt;</span> The stage belongs to whoever steps up. That's always been the rule.</div>
+      </div>
+    </div>
+    <div style="padding:6px 14px 4px;font-family:var(--font-ui);font-size:11px;color:#5d5e5f;border-bottom:1px solid #e3e2e2"><strong>Performers Online (12)</strong></div>
+    <div class="wc-performers">
+      <div class="wc-perf op">★ TIG_Admin</div>
+      <div class="wc-perf">Analog_Soul</div>
+      <div class="wc-perf">Cyber_Poet</div>
+      <div class="wc-perf">Glitch_Hop</div>
+      <div class="wc-perf">Static_Rain</div>
+      <div class="wc-perf">User_02</div>
+    </div>
+    <div style="padding:8px 14px;display:flex;gap:6px;align-items:center;border-top:1px solid #e3e2e2">
+      <div class="in" style="flex:1;height:24px;background:#fff;padding:4px 6px;font-family:var(--font-ui);font-size:11px;color:#808080">Type message here...</div>
+      <a href="#" class="wc-btn" style="white-space:nowrap">JOIN THE STAGE</a>
+    </div>
+  </div>
+  <div class="wstatus"><div class="wsf">Connected to tigom.live</div><div class="wsf">12 users in channel</div></div>
+</div>
+</div>
+
+<!-- OUR WORK -->
+<div class="woverlay" id="win-ourwork">
+<div class="wframe">
+  <div class="wtbar">
+    <span class="ms" style="font-size:12px">folder_open</span>
+    <span class="wt">Exploring — C:\WINDOWS\Desktop\Our_Work</span>
+    <div class="wbtn" data-close="ourwork">_</div>
+    <div class="wbtn" data-close="ourwork" style="font-size:7px">□</div>
+    <div class="wbtn" data-close="ourwork">✕</div>
+  </div>
+  <div class="wmenu"><span>File</span><span>Edit</span><span>View</span><span>Go</span><span>Help</span></div>
+  <div class="waddr">
+    <span class="al">Address</span>
+    <div class="af">C:\WINDOWS\Desktop\Our_Work</div>
+    <div class="ago out btn-press">Go</div>
+  </div>
+  <div class="wcontent">
+    <div class="wc" style="padding:8px 14px">
+      <div class="wc-h1" style="font-size:13px">10 Years. Countless Campaigns.</div>
+      <div class="wc-body">This is what we've built — brands, content, culture.</div>
+    </div>
+    <div style="padding:2px 14px 4px;font-family:var(--font-mono);font-size:10px;color:#5d5e5f;border-bottom:1px solid #e3e2e2;display:flex;gap:16px">
+      <span style="flex:1">Name</span><span style="width:80px">Type</span><span style="width:60px;text-align:right">Size</span>
+    </div>
+    <div class="wc-row"><span class="ms">folder</span><span class="wc-row-name">Brand_Campaigns_2023</span><span class="wc-row-type">Folder</span><span class="wc-row-size">—</span></div>
+    <div class="wc-row"><span class="ms">folder</span><span class="wc-row-name">Social_Content_Archive</span><span class="wc-row-type">Folder</span><span class="wc-row-size">—</span></div>
+    <div class="wc-row"><span class="ms">description</span><span class="wc-row-name">TIG_Manifesto_v3.docx</span><span class="wc-row-type">Document</span><span class="wc-row-size">2.4 MB</span></div>
+    <div class="wc-row"><span class="ms">image</span><span class="wc-row-name">Campaign_Kodambakkam.psd</span><span class="wc-row-type">Photoshop</span><span class="wc-row-size">48 MB</span></div>
+    <div class="wc-row"><span class="ms">movie</span><span class="wc-row-name">TIGOM_Reel_2024.mp4</span><span class="wc-row-type">Video</span><span class="wc-row-size">1.2 GB</span></div>
+    <div class="wc-row"><span class="ms">image</span><span class="wc-row-name">Brand_Identity_Final.ai</span><span class="wc-row-type">Illustrator</span><span class="wc-row-size">18 MB</span></div>
+    <div class="wc-row"><span class="ms">bar_chart</span><span class="wc-row-name">Client_Results_2024.xlsx</span><span class="wc-row-type">Spreadsheet</span><span class="wc-row-size">890 KB</span></div>
+    <div class="wc-row"><span class="ms">image</span><span class="wc-row-name">Retro_Launch_Deck.pptx</span><span class="wc-row-type">Presentation</span><span class="wc-row-size">24 MB</span></div>
+    <div style="text-align:center;padding:10px"><a href="#" class="wc-btn">View Archive</a></div>
+  </div>
+  <div class="wstatus"><div class="wsf">47 objects</div><div class="wsf">10 years of work</div></div>
+</div>
+</div>
+
+<!-- FIND US -->
+<div class="woverlay" id="win-findus">
+<div class="wframe">
+  <div class="wtbar">
+    <span class="ms" style="font-size:12px">search</span>
+    <span class="wt">Find: All Files — TIG Locations</span>
+    <div class="wbtn" data-close="findus">_</div>
+    <div class="wbtn" data-close="findus" style="font-size:7px">□</div>
+    <div class="wbtn" data-close="findus">✕</div>
+  </div>
+  <div class="wmenu"><span>File</span><span>Edit</span><span>View</span><span>Options</span><span>Help</span></div>
+  <div class="wcontent">
+    <div class="wc">
+      <div class="wc-hero">
+        <div class="wc-iconbox"><span class="ms" style="font-size:28px;color:#006565">location_on</span></div>
+        <div>
+          <div class="wc-h1">You Know Where to Find Us</div>
+          <div class="wc-body">If this feels like home — you're already one of us.<br>Chennai-born. Internet-raised. Globally connected.</div>
+        </div>
+      </div>
+    </div>
+    <div style="padding:4px 14px 2px;font-family:var(--font-mono);font-size:10px;color:#5d5e5f;border-bottom:1px solid #e3e2e2"><strong>Search Results — 6 items found</strong></div>
+    <div class="wc-row"><span class="ms">language</span><span class="wc-row-name">theintgen.com</span><span class="wc-row-type">Website</span><span class="wc-row-size" style="width:auto"><a href="#" style="color:#006565;font-size:9px">Open</a></span></div>
+    <div class="wc-row"><span class="ms" style="color:#c0392b">camera</span><span class="wc-row-name">@theintgen — Instagram</span><span class="wc-row-type">Social</span><span class="wc-row-size" style="width:auto"><a href="#" style="color:#006565;font-size:9px">Follow</a></span></div>
+    <div class="wc-row"><span class="ms" style="color:#1da1f2">alternate_email</span><span class="wc-row-name">@theintgen — Twitter/X</span><span class="wc-row-type">Social</span><span class="wc-row-size" style="width:auto"><a href="#" style="color:#006565;font-size:9px">Follow</a></span></div>
+    <div class="wc-row"><span class="ms" style="color:#0077b5">work</span><span class="wc-row-name">The Internet Generation — LinkedIn</span><span class="wc-row-type">Social</span><span class="wc-row-size" style="width:auto"><a href="#" style="color:#006565;font-size:9px">Connect</a></span></div>
+    <div class="wc-row"><span class="ms">mail</span><span class="wc-row-name">hello@theintgen.com</span><span class="wc-row-type">Email</span><span class="wc-row-size" style="width:auto"><a href="mailto:hello@theintgen.com" style="color:#006565;font-size:9px">Write</a></span></div>
+    <div class="wc-row"><span class="ms">location_city</span><span class="wc-row-name">Chennai, Tamil Nadu, India</span><span class="wc-row-type">Location</span><span class="wc-row-size" style="width:auto;font-size:9px">🗺</span></div>
+    <div style="text-align:center;padding:10px"><a href="#" class="wc-btn">Get In Touch</a></div>
+  </div>
+  <div class="wstatus"><div class="wsf">6 items found</div><div class="wsf">Find complete</div></div>
+</div>
+</div>
+
+<!-- PORTFOLIO -->
+<div class="woverlay" id="win-portfolio">
+<div class="wframe">
+  <div class="wtbar">
+    <span class="ms" style="font-size:12px">slideshow</span>
+    <span class="wt">TIG_Portfolio_2024.pptx — PowerPoint Viewer</span>
+    <div class="wbtn" data-close="portfolio">_</div>
+    <div class="wbtn" data-close="portfolio" style="font-size:7px">□</div>
+    <div class="wbtn" data-close="portfolio">✕</div>
+  </div>
+  <div class="wmenu"><span>File</span><span>View</span><span>Slide Show</span><span>Help</span></div>
+  <div class="waddr">
+    <span class="al">Address</span>
+    <div class="af"><span class="ms" style="font-size:12px;color:#c0392b;margin-right:4px">slideshow</span>C:\TIG\Portfolio\TIG_Portfolio_2024.pptx</div>
+    <div class="ago out btn-press">Go</div>
+  </div>
+  <div class="wcontent">
+    <div class="wc">
+      <div class="wc-hero">
+        <div class="wc-iconbox" style="background:#c0392b;border:none">
+          <span style="font-family:var(--font-ui);font-weight:800;font-size:13px;color:#fff">PPT</span>
+        </div>
+        <div>
+          <div class="wc-h1">TIG Portfolio 2024</div>
+          <div class="wc-body">10 years of work. 200+ campaigns. Brands built from scratch.<br>
+            <span style="font-family:var(--font-mono);font-size:10px;color:#5d5e5f">File: TIG_Portfolio_2024.pptx · 24.5 MB · 48 slides</span>
+          </div>
+          <a href="portfolio.pptx" class="wc-btn" download>⬇ Download Portfolio.pptx</a>
+        </div>
+      </div>
+    </div>
+    <div style="padding:6px 14px 4px;font-family:var(--font-ui);font-size:11px;color:#5d5e5f;border-bottom:1px solid #e3e2e2"><strong>Slide Preview</strong></div>
+    <div class="ppt-preview">
+      <div class="ppt-slide" style="background:#1b1c1c;color:#fff">
+        <div style="font-weight:800;font-size:9px;color:#fff">THE INTERNET<br>GENERATION</div>
+        <div class="ppt-bar" style="background:#c0392b"></div>
+        <div style="font-size:7px;color:#bdc9c8">Est. 2014 · Chennai</div>
+      </div>
+      <div class="ppt-slide">
+        <div class="ppt-bar"></div>
+        <div class="ppt-bar s"></div>
+        <div style="font-size:7px;color:#5d5e5f">Who We Are</div>
+        <div class="ppt-bar xs"></div>
+      </div>
+      <div class="ppt-slide" style="background:#006565;color:#fff">
+        <div style="font-weight:800;font-size:9px;color:#93f2f2">200+</div>
+        <div style="font-size:7px">Campaigns</div>
+        <div class="ppt-bar" style="background:#93f2f2;width:50%"></div>
+      </div>
+      <div class="ppt-slide">
+        <div class="ppt-bar"></div>
+        <div class="ppt-bar s"></div>
+        <div class="ppt-bar xs"></div>
+        <div style="font-size:7px;color:#5d5e5f">Our Process</div>
+      </div>
+      <div class="ppt-slide" style="background:#000080;color:#fff">
+        <div style="font-weight:800;font-size:9px">TIGITAL<br>TIGGIGS<br>TIGPODS</div>
+      </div>
+    </div>
+    <div style="text-align:center;padding:10px">
+      <a href="portfolio.pptx" class="wc-btn" download>Open in PowerPoint</a>
+    </div>
+  </div>
+  <div class="wstatus"><div class="wsf">48 slides · 24.5 MB</div><div class="wsf">Read-only mode</div></div>
+</div>
+</div>
+
+<!-- ═══════════════ BANE CLIPPY ═══════════════ -->
+<div id="bane" title="Click me">
+  <div id="bane-bubble">
+    You merely adopted<br>the internet.<br>
+    We were born in it,<br>raised by it.<br>
+    <em style="color:#808080">— click me</em>
+  </div>
+  <!-- Imp sprite — 30x30 pixel cel, rendered to canvas; click cycles poses -->
+  <canvas id="bane-canvas" width="60" height="60"></canvas>
+</div>
+
+<!-- scanlines -->
+<div id="scanlines" aria-hidden="true"></div>
+
+<script>
+(function(){
+'use strict';
+
+// ── Clock ──────────────────────────────────────
+const clockEl = document.getElementById('clock');
+function tick(){
+  const now = new Date();
+  clockEl.textContent = String(now.getHours()).padStart(2,'0')+':'+String(now.getMinutes()).padStart(2,'0');
+}
+tick();
+setInterval(tick, 15000);
+
+// ── Waveform gen ───────────────────────────────
+const wf = document.getElementById('waveform');
+if(wf){
+  const heights=[4,10,18,8,24,12,20,6,16,28,10,22,8,18,26,12,20,4,14,22,10,16,28,8,20,12,24,6,18,14];
+  heights.forEach(h=>{
+    const b=document.createElement('div');
+    b.className='waveform-bar';
+    b.style.height=h+'px';
+    wf.appendChild(b);
+  });
+  // animate waveform
+  setInterval(()=>{
+    wf.querySelectorAll('.waveform-bar').forEach(b=>{
+      b.style.height=(4+Math.floor(Math.random()*24))+'px';
+    });
+  }, 200);
+}
+
+// ── Boot dialog removed — desktop loads straight ──
+
+// ── Start menu ─────────────────────────────────
+const startBtn = document.getElementById('start-btn');
+const startMenu = document.getElementById('start-menu');
+function closeStart(){ startMenu.classList.remove('open'); startBtn.classList.remove('pressed'); }
+function toggleStart(e){
+  e.stopPropagation();
+  if(startMenu.classList.contains('open')){ closeStart(); return; }
+  closeAllWins();
+  startMenu.classList.add('open');
+  startBtn.classList.add('pressed');
+}
+startBtn.addEventListener('click', toggleStart);
+document.addEventListener('click', closeStart);
+startMenu.addEventListener('click',e=>e.stopPropagation());
+
+// ── Windows ────────────────────────────────────
+function closeAllWins(){
+  document.querySelectorAll('.woverlay').forEach(w=>w.classList.remove('open'));
+  document.querySelectorAll('.dicon').forEach(i=>i.classList.remove('sel'));
+}
+
+function openWin(id){
+  closeAllWins(); closeStart();
+  const w=document.getElementById('win-'+id);
+  if(w) w.classList.add('open');
+  const icon=document.querySelector('.dicon[data-win="'+id+'"]');
+  if(icon) icon.classList.add('sel');
+}
+
+// desktop icons
+document.querySelectorAll('.dicon').forEach(icon=>{
+  const activate=()=>openWin(icon.dataset.win);
+  icon.addEventListener('click', activate);
+  icon.addEventListener('keydown',e=>{ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); activate(); } });
+});
+
+// start menu items
+document.querySelectorAll('.sm-item').forEach(item=>{
+  item.addEventListener('click',()=>openWin(item.dataset.win));
+});
+
+// close buttons
+document.querySelectorAll('.wbtn[data-close]').forEach(btn=>{
+  btn.addEventListener('click',e=>{
+    e.stopPropagation();
+    const w=document.getElementById('win-'+btn.dataset.close);
+    if(w) w.classList.remove('open');
+    document.querySelectorAll('.dicon').forEach(i=>i.classList.remove('sel'));
+  });
+});
+
+// backdrop click to close
+document.querySelectorAll('.woverlay').forEach(overlay=>{
+  overlay.addEventListener('click',e=>{
+    if(e.target===overlay){
+      overlay.classList.remove('open');
+      document.querySelectorAll('.dicon').forEach(i=>i.classList.remove('sel'));
+    }
+  });
+});
+
+// Escape key
+document.addEventListener('keydown',e=>{ if(e.key==='Escape'){ closeAllWins(); closeStart(); } });
+
+// ── IMP (Bane) sprite engine — 30x30 cel, 10 poses ──
+const IMP_N = 30;
+const IMP_COLORS = { D:'#2c2b2c', O:'#ffb261', W:'#fefcfc', R:'#ff0000', G:'#808080', '.':null };
+const impBlank = () => Array.from({length:IMP_N}, () => Array(IMP_N).fill('.'));
+function impRect(g,x0,y0,x1,y1,ch){ for(let y=y0;y<=y1;y++) for(let x=x0;x<=x1;x++) if(x>=0&&x<IMP_N&&y>=0&&y<IMP_N) g[y][x]=ch; }
+function impPut(g,x,y,ch){ if(x>=0&&x<IMP_N&&y>=0&&y<IMP_N) g[y][x]=ch; }
+function impPaint(g,col,row,rows){ rows.forEach((ln,dy)=>[...ln].forEach((c,dx)=>{ if(c!==' ') impPut(g,col+dx,row+dy,c); })); }
+function impStamp(g,cx,cy,t,ch){ const h=Math.floor((t-1)/2); for(let dy=0;dy<t;dy++) for(let dx=0;dx<t;dx++) impPut(g,cx-h+dx,cy-h+dy,ch); }
+function impLine(g,p0,p1,t,ch){ const [x0,y0]=p0,[x1,y1]=p1; const steps=Math.max(Math.abs(x1-x0),Math.abs(y1-y0));
+  if(steps===0){ impStamp(g,x0,y0,t,ch); return; }
+  for(let i=0;i<=steps;i++){ impStamp(g,Math.round(x0+(x1-x0)*i/steps),Math.round(y0+(y1-y0)*i/steps),t,ch); } }
+function impPoly(g,pts,t,ch){ for(let i=0;i<pts.length-1;i++) impLine(g,pts[i],pts[i+1],t,ch); }
+function impFist(g,x,y,s=3){ impStamp(g,x,y,s,'D'); }
+function impHand(g,x,y){ impRect(g,x-1,y-1,x+1,y+1,'O'); impPut(g,x-1,y-2,'O'); impPut(g,x+1,y-2,'O'); }
+function impCore(){ const g=impBlank();
+  impRect(g,11,6,16,6,'D'); impRect(g,10,7,17,7,'D'); impRect(g,9,8,18,8,'D'); impRect(g,8,9,18,9,'D');
+  impRect(g,8,10,18,16,'D'); impRect(g,9,17,18,21,'D');
+  impRect(g,9,22,18,22,'D'); impRect(g,10,22,17,22,'G'); impPut(g,14,22,'R');
+  impRect(g,9,23,18,23,'D'); impRect(g,8,24,19,24,'D'); impRect(g,7,25,20,25,'D');
+  impRect(g,6,26,12,26,'D'); impRect(g,15,26,21,26,'D');
+  impRect(g,4,27,11,27,'D'); impRect(g,16,27,23,27,'D');
+  impRect(g,3,28,11,28,'D'); impRect(g,16,28,24,28,'D');
+  impRect(g,3,29,11,29,'D'); impRect(g,16,29,24,29,'D');
+  impPaint(g,11,10,['DWDDDDDD','DWRWDDDW','DWRRWDWR','DWRRRWRR','DDWWWWWW','DDDWWWWD','DDDWWWDD']);
+  return g; }
+function impOriginal(){ const rows=[
+  '..............................','..............................','..............................',
+  '..............................','..............................','..............................',
+  '...DD......DDDDDD......DD.....','..DDDD....DDDDDDDD....DDDD....','.DDDDOD..DDDDDDDDDD..DODDDD...',
+  '.DDDODD.DDDDDDDDDDD..DDODDD...','..DODDODDDDDDWDDDDDDDODDOD....','...DDOOODDDDWRWDDDWDOOODD.....',
+  '....DOOODDDDWRRWDWRDOOOD......','.....DOOODDDWRRRWRRDOOD.......','......DOODDDDWWWWWWDOD........',
+  '.......DOODDDDWWWWDOD.........','........DOODDDWWWDOD..........','........DOODODDDDDOD..........',
+  '........DOODOOOOODOD..........','.........DODOOOOODD...........','.........DODDOOODDD...........',
+  '.........DDDDDODDDD...........','.........DGGGGRGGGD...........','.........DDDDDDDDDD...........',
+  '........DDDDDDDDDDDD..........','.......DDDDDDDDDDDDDD.........','......DDDDDDD..DDDDDDD........',
+  '....DDDDDDDD....DDDDDDDD......','...DDDDDDDDD....DDDDDDDDD.....','...DDDDDDDDD....DDDDDDDDD.....'];
+  return rows.map(r => [...r.padEnd(IMP_N,'.')]); }
+const IMP_POSES = [
+  { name:'Arms Up — V', build: impOriginal },
+  { name:'Pointing At You', build: () => { const g=impCore(); impPoly(g,[[19,13],[22,15],[25,18]],2,'O'); impFist(g,25,18,3); impPut(g,26,20,'O'); impPut(g,27,21,'O'); impPut(g,27,22,'O'); impPoly(g,[[8,13],[7,17],[7,20]],2,'O'); impFist(g,7,21,2); return g; } },
+  { name:'One Arm Raised', build: () => { const g=impCore(); impPoly(g,[[9,11],[5,8],[3,6]],2,'O'); impFist(g,3,5,3); impPoly(g,[[19,13],[20,16],[20,19]],2,'O'); impFist(g,20,20,2); return g; } },
+  { name:'Hands On Hips', build: () => { const g=impCore(); impPoly(g,[[8,13],[4,16],[8,19]],2,'O'); impFist(g,8,19,2); impPoly(g,[[19,13],[23,16],[19,19]],2,'O'); impFist(g,19,19,2); return g; } },
+  { name:'Clenched Fists', build: () => { const g=impCore(); impPoly(g,[[8,12],[7,16],[7,20]],2,'O'); impFist(g,7,21,3); impPoly(g,[[19,12],[20,16],[20,20]],2,'O'); impFist(g,20,21,3); return g; } },
+  { name:'Double Biceps', build: () => { const g=impCore(); impPoly(g,[[9,14],[5,14],[6,9]],2,'O'); impFist(g,6,8,3); impPoly(g,[[18,14],[22,14],[21,9]],2,'O'); impFist(g,21,8,3); return g; } },
+  { name:'Waving', build: () => { const g=impCore(); impPoly(g,[[19,14],[22,11],[23,7]],2,'O'); impHand(g,23,5); impPoly(g,[[8,13],[8,17],[8,19]],2,'O'); impFist(g,8,20,2); return g; } },
+  { name:'Arms Crossed', build: () => { const g=impCore(); impLine(g,[9,16],[17,14],2,'O'); impFist(g,18,14,2); impLine(g,[18,17],[10,15],2,'O'); impFist(g,9,16,2); return g; } },
+  { name:'Thumbs Up', build: () => { const g=impCore(); impPoly(g,[[19,14],[20,16]],2,'O'); impFist(g,20,17,3); impPut(g,20,15,'O'); impPut(g,20,14,'O'); impPoly(g,[[8,13],[7,17],[7,20]],2,'O'); impFist(g,7,21,2); return g; } },
+  { name:'Shrug', build: () => { const g=impCore(); impPut(g,8,10,'D'); impPut(g,18,10,'D'); impPoly(g,[[8,11],[5,13],[4,11]],2,'O'); impHand(g,3,10); impPoly(g,[[18,11],[22,13],[23,11]],2,'O'); impHand(g,24,10); return g; } }
+];
+const impBuilt = IMP_POSES.map(p => p.build());
+const baneCanvas = document.getElementById('bane-canvas');
+function impDraw(g){
+  const cell = baneCanvas.width / IMP_N;
+  const ctx = baneCanvas.getContext('2d');
+  ctx.imageSmoothingEnabled = false;
+  ctx.clearRect(0,0,baneCanvas.width,baneCanvas.height);
+  for(let y=0;y<IMP_N;y++) for(let x=0;x<IMP_N;x++){ const col=IMP_COLORS[g[y][x]]; if(col){ ctx.fillStyle=col; ctx.fillRect(x*cell,y*cell,cell,cell); } }
+}
+
+// ── BANE CLIPPY — click cycles through the poses ──
+const bane = document.getElementById('bane');
+const bubble = document.getElementById('bane-bubble');
+const lines = [
+  'You merely adopted<br>the internet.<br>We were born in it,<br>raised by it.<br><em style="color:#808080">— click me</em>',
+  'We would not know<br>what <b>offline</b> is<br>until the day we die.',
+  'TOTAL CONTROL<br>IS WITHIN<br>MY GRASP!!!',
+  'The internet is not<br>your ally, friend.<br>But it is mine.',
+  'ABSOLUTE<br>POWER...'
+];
+let poseIdx = 0;
+let lineIdx = 0;
+let baneTimer = null;
+
+impDraw(impBuilt[0]); // initial pose
+
+bane.addEventListener('click', ()=>{
+  poseIdx = (poseIdx + 1) % impBuilt.length;
+  lineIdx = (lineIdx + 1) % lines.length;
+  impDraw(impBuilt[poseIdx]);
+  bubble.innerHTML = lines[lineIdx];
+
+  // brief active styling on the bubble + a clean pop on the figure (no screen glitch)
+  bubble.style.background = '#000080';
+  bubble.style.color = '#fff';
+  bubble.style.borderColor = '#1084d0';
+  bane.classList.remove('react'); void bane.offsetWidth; bane.classList.add('react');
+
+  clearTimeout(baneTimer);
+  baneTimer = setTimeout(()=>{
+    bubble.style.background = '#fff';
+    bubble.style.color = '#000';
+    bubble.style.borderColor = '';
+  }, 1600);
+});
+
+})();
+</script>
 </body>
 </html>
