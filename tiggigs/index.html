@@ -996,8 +996,8 @@ async function verifyEmail() {
   if (!v) { st.className = 'text-error text-sm font-semibold'; st.textContent = 'Please enter your email.'; return; }
   st.className = 'text-[#464555]/60 text-sm'; st.textContent = 'Checking…';
   try {
-    const url = `${SB_URL}/freelancers?email=eq.${encodeURIComponent(v)}&select=email,full_name,status,trial_passed,nda_signed,agreement_signed`;
-    const resp = await fetch(url, { headers: SB_HDRS });
+    const resp = await fetch(`${SB_URL}/rpc/fl_status`, { method: 'POST', headers: SB_HDRS,
+      body: JSON.stringify({ p_email: v }) });
     const recs = await resp.json();
     if (recs && recs.length) {
       const rec = recs[0];
@@ -1089,12 +1089,10 @@ async function submitClaim() {
     // Validate access code against Supabase freelancers table
     if (!savedCode) {
       btn.textContent = 'Verifying code…';
-      const codeCheck = await fetch(
-        `${SB_URL}/freelancers?email=eq.${encodeURIComponent(email)}&access_code=eq.${encodeURIComponent(code)}&select=email`,
-        { headers: SB_HDRS }
-      );
-      const codeRecs = await codeCheck.json();
-      if (!Array.isArray(codeRecs) || !codeRecs.length) {
+      const codeCheck = await fetch(`${SB_URL}/rpc/fl_auth`, { method: 'POST', headers: SB_HDRS,
+        body: JSON.stringify({ p_email: email, p_code: code }) });
+      const codeOk = await codeCheck.json();
+      if (codeOk !== true) {
         err.textContent = 'Invalid access code. Check your TIG welcome email and try again.';
         err.classList.remove('hidden');
         btn.disabled = false; btn.textContent = 'Confirm Claim';

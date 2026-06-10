@@ -575,6 +575,17 @@ const sbGet = async (table, params = '') => {
   } catch(e) { console.warn(`Supabase [${table}] fetch failed:`, e); return []; }
 };
 
+const sbRpc = async (fn, args = {}) => {
+  try {
+    const r = await fetch(`${SB_URL}/rest/v1/rpc/${fn}`, {
+      method: 'POST', headers: { ...SB_HDRS, 'Content-Type': 'application/json' },
+      body: JSON.stringify(args),
+    });
+    if (!r.ok) { console.warn(`Supabase rpc [${fn}]:`, await r.text()); return []; }
+    return await r.json();
+  } catch(e) { console.warn(`Supabase rpc [${fn}] failed:`, e); return []; }
+};
+
 // ── AUTH ──────────────────────────────────────────────────────────────────────
 async function doAuth() {
   const email = document.getElementById('authEmail').value.trim().toLowerCase();
@@ -585,10 +596,7 @@ async function doAuth() {
   if (!code)  { st.className='auth-status err'; st.textContent='Please enter your access code.'; return; }
   btn.disabled = true; btn.textContent = 'Checking...'; st.textContent = '';
   try {
-    const enc  = encodeURIComponent(email);
-    const enc2 = encodeURIComponent(code);
-    const recs = await sbGet('freelancers',
-      `email=eq.${enc}&access_code=eq.${enc2}&status=eq.Active&trial_passed=eq.true&select=*`);
+    const recs = await sbRpc('fl_login', { p_email: email, p_code: code });
     if (recs.length) {
       const fl = recs[0];
       currentEmail   = email;
@@ -656,8 +664,8 @@ async function loadAll() {
     const enc = encodeURIComponent(currentEmail);
     const [jobs, payouts, flRecs, subs] = await Promise.all([
       sbGet('v_jobs',      `claimed_by_email=eq.${enc}&board_status=in.(Claimed,Submitted,In Review,Revision Needed,Approved)&select=*`),
-      sbGet('payout_log',  `freelancer_email=eq.${enc}&select=*`),
-      sbGet('freelancers', `email=eq.${enc}&status=eq.Active&select=*`),
+      sbRpc('fl_payouts',  { p_email: currentEmail, p_code: localStorage.getItem('tig_access_code') || '' }),
+      sbRpc('fl_login',    { p_email: currentEmail, p_code: localStorage.getItem('tig_access_code') || '' }),
       sbGet('submissions', `freelancer_email=eq.${enc}&select=*`),
     ]);
     renderStats(jobs, payouts, flRecs);

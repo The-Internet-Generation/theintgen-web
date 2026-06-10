@@ -971,8 +971,16 @@ body{
 const SB_URL  = 'https://snlcskmszhbipinffwpy.supabase.co/rest/v1';
 const SB_KEY  = 'sb_publishable_8_Fj46gQBqoA4HgidRKP6g_1uDbhWPM';
 const SB_HDRS = { 'apikey': SB_KEY, 'Authorization': `Bearer ${SB_KEY}`, 'Content-Type': 'application/json' };
-const TEAM_PASSWORD = 'TIG2026ops';
 const AUTH_KEY = 'tig_team_auth';
+const PASS_KEY = 'tig_team_pass';
+const teamPass = () => localStorage.getItem(PASS_KEY) || '';
+const sbRpc = async (fn, args = {}) => {
+  const r = await fetch(`${SB_URL}/rpc/${fn}`, {
+    method: 'POST', headers: SB_HDRS, body: JSON.stringify(args),
+  });
+  if (!r.ok) throw new Error(`rpc ${fn} ${r.status}`);
+  return r.json();
+};
 
 // Wrap a Supabase v_jobs row into the shape the render functions expect
 const toRecord = row => ({
@@ -1003,14 +1011,21 @@ const toRecord = row => ({
 });
 
 // ── AUTH ──
-function doAuth() {
+async function doAuth() {
   const val = document.getElementById('authPwd').value.trim();
   const status = document.getElementById('authStatus');
-  if (val === TEAM_PASSWORD) {
-    localStorage.setItem(AUTH_KEY, '1');
-    showDashboard();
-  } else {
-    status.textContent = 'Incorrect password. Try again.';
+  status.textContent = 'Checking…';
+  try {
+    const ok = await sbRpc('team_auth', { p_pass: val });
+    if (ok === true) {
+      localStorage.setItem(AUTH_KEY, '1');
+      localStorage.setItem(PASS_KEY, val);
+      showDashboard();
+    } else {
+      status.textContent = 'Incorrect password. Try again.';
+    }
+  } catch(e) {
+    status.textContent = 'Auth error. Try again.';
   }
 }
 
@@ -1021,7 +1036,7 @@ function showDashboard() {
 }
 
 function signOut() {
-  localStorage.removeItem(AUTH_KEY);
+  localStorage.removeItem(AUTH_KEY); localStorage.removeItem(PASS_KEY);
   document.getElementById('dashboard').classList.remove('visible');
   document.getElementById('authScreen').style.display = 'flex';
   document.getElementById('authPwd').value = '';
@@ -1044,7 +1059,7 @@ async function loadAll() {
     // Fetch all jobs + freelancer names in parallel
     const [jobResp, flResp] = await Promise.all([
       fetch(`${SB_URL}/v_jobs?order=internal_deadline.asc.nullslast&limit=1000`, { headers: { ...SB_HDRS, 'Range': '0-999' } }),
-      fetch(`${SB_URL}/freelancers?select=email,full_name&limit=1000`, { headers: { ...SB_HDRS, 'Range': '0-999' } }),
+      fetch(`${SB_URL}/rpc/team_fl_list`, { method:'POST', headers: SB_HDRS, body: JSON.stringify({ p_pass: teamPass() }) }),
     ]);
 
     if (!jobResp.ok) throw new Error(`Jobs fetch error ${jobResp.status}`);
@@ -1698,7 +1713,7 @@ function hideError() {
 }
 
 // Auto-login — runs after all declarations to avoid TDZ errors
-if (localStorage.getItem(AUTH_KEY) === '1') {
+if (localStorage.getItem(AUTH_KEY) === '1' && teamPass()) {
   showDashboard();
 }
 
@@ -1851,9 +1866,7 @@ async function opsJobDelete(jobId) {
 async function loadOpsFreelancers() {
   document.getElementById('opsFlBody').innerHTML = opsSpinner();
   try {
-    const r = await fetch(`${SB_URL}/freelancers?select=*&limit=1000`, { headers:{...SB_HDRS,'Range':'0-999'} });
-    if (!r.ok) throw new Error(r.status);
-    opsFlData = await r.json();
+    opsFlData = await sbRpc('team_fl_list', { p_pass: teamPass() });
     document.getElementById('opsCount_freelancers').textContent = opsFlData.length;
     renderOpsFL();
   } catch(e) {
@@ -1898,11 +1911,7 @@ function renderOpsFL() {
 
 async function opsFlStatus(email, val) {
   try {
-    const r = await fetch(`${SB_URL}/freelancers?email=eq.${encodeURIComponent(email)}`, {
-      method:'PATCH', headers:{...SB_HDRS,'Prefer':'return=representation'},
-      body: JSON.stringify({ status: val }),
-    });
-    if (!r.ok) throw new Error(r.status);
+    await sbRpc('team_fl_update', { p_pass: teamPass(), p_email: email, p_patch: { status: val } });
     const fl = opsFlData.find(x => x.email===email); if (fl) fl.status = val;
     showToast('Status saved ✓');
   } catch(e) { showToast('Error: '+e.message, true); }
@@ -1911,11 +1920,7 @@ async function opsFlStatus(email, val) {
 async function opsFlBool(email, field, cur, idx) {
   const newVal = !cur;
   try {
-    const r = await fetch(`${SB_URL}/freelancers?email=eq.${encodeURIComponent(email)}`, {
-      method:'PATCH', headers:{...SB_HDRS,'Prefer':'return=representation'},
-      body: JSON.stringify({ [field]: newVal }),
-    });
-    if (!r.ok) throw new Error(r.status);
+    await sbRpc('team_fl_update', { p_pass: teamPass(), p_email: email, p_patch: { [field]: newVal } });
     const fl = opsFlData.find(x => x.email===email); if (fl) fl[field] = newVal;
     // Update button in-place
     const btnId = { nda_signed:`opsFLnda_${idx}`, agreement_signed:`opsFLagr_${idx}`, trial_passed:`opsFLtrial_${idx}` }[field];
@@ -1931,11 +1936,7 @@ async function opsFlBool(email, field, cur, idx) {
 async function opsFlUPI(email, idx) {
   const val = document.getElementById(`opsFLupi_${idx}`)?.value.trim() || '';
   try {
-    const r = await fetch(`${SB_URL}/freelancers?email=eq.${encodeURIComponent(email)}`, {
-      method:'PATCH', headers:{...SB_HDRS,'Prefer':'return=representation'},
-      body: JSON.stringify({ upi_id: val }),
-    });
-    if (!r.ok) throw new Error(r.status);
+    await sbRpc('team_fl_update', { p_pass: teamPass(), p_email: email, p_patch: { upi_id: val } });
     const fl = opsFlData.find(x => x.email===email); if (fl) fl.upi_id = val;
     showToast('UPI saved ✓');
   } catch(e) { showToast('Error: '+e.message, true); }
@@ -1945,9 +1946,7 @@ async function opsFlUPI(email, idx) {
 async function loadOpsPayouts() {
   document.getElementById('opsPayBody').innerHTML = opsSpinner();
   try {
-    const r = await fetch(`${SB_URL}/payout_log?select=*&limit=1000&order=created_at.desc.nullslast`, { headers:{...SB_HDRS,'Range':'0-999'} });
-    if (!r.ok) throw new Error(r.status);
-    opsPayData = await r.json();
+    opsPayData = await sbRpc('team_payouts', { p_pass: teamPass() });
     document.getElementById('opsCount_payouts').textContent = opsPayData.length;
     renderOpsPay();
   } catch(e) {
@@ -1995,11 +1994,7 @@ function renderOpsPay() {
 
 async function opsPayStatus(id, val, idx) {
   try {
-    const r = await fetch(`${SB_URL}/payout_log?id=eq.${id}`, {
-      method:'PATCH', headers:{...SB_HDRS,'Prefer':'return=representation'},
-      body: JSON.stringify({ payout_status: val }),
-    });
-    if (!r.ok) throw new Error(r.status);
+    await sbRpc('team_payout_update', { p_pass: teamPass(), p_id: id, p_patch: { payout_status: val } });
     if (opsPayData[idx]) opsPayData[idx].payout_status = val;
     showToast('Status saved ✓');
   } catch(e) { showToast('Error: '+e.message, true); }
@@ -2010,11 +2005,7 @@ async function opsPayAmounts(id, idx) {
   const ded  = parseFloat(document.getElementById(`opsPayDed_${idx}`)?.value)  || 0;
   const fin  = owed - ded;
   try {
-    const r = await fetch(`${SB_URL}/payout_log?id=eq.${id}`, {
-      method:'PATCH', headers:{...SB_HDRS,'Prefer':'return=representation'},
-      body: JSON.stringify({ amount_owed:owed, revision_deduction:ded, final_amount:fin }),
-    });
-    if (!r.ok) throw new Error(r.status);
+    await sbRpc('team_payout_update', { p_pass: teamPass(), p_id: id, p_patch: { amount_owed: owed, revision_deduction: ded, final_amount: fin } });
     if (opsPayData[idx]) { opsPayData[idx].amount_owed=owed; opsPayData[idx].revision_deduction=ded; opsPayData[idx].final_amount=fin; }
     showToast(`Amounts saved ✓  Final: ₹${fin.toLocaleString('en-IN')}`);
   } catch(e) { showToast('Error: '+e.message, true); }
