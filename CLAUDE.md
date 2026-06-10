@@ -103,8 +103,6 @@ Edit `_redirects` — CF Pages reads this for path routing rules.
 ## Scattered Old Copies (IGNORE)
 - `/Users/jaytesh/Desktop/TIG/TIGJobBoard-Deploy 13 may/`
 - `/Users/jaytesh/Desktop/tiggigs devmode/`
-- `/Users/jaytesh/TIGLancers Website/TIGJobBoard-Deploy/`
-- Various `.zip` archives
 
 ## Legacy Repos (secondary — do not use as source of truth)
 | Repo | Status |

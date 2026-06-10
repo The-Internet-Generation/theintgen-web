@@ -8,7 +8,7 @@
 
 /tigital/blog     /tigital/blog/    301
 
-# Job board pages moved back under /tiggigs/ (root is the landing portal)
+# Short URLs → tiggigs subpages
 /dashboard             /tiggigs/dashboard.html         301
 /dashboard.html        /tiggigs/dashboard.html         301
 /team-dashboard        /tiggigs/team-dashboard.html    301
