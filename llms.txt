@@ -1,0 +1,21 @@
+# The Internet Generation (TIG)
+
+> Chennai-based creative and digital agency: digital marketing, video production,
+> influencer marketing, podcasts, open mic events, and a curated freelance job board.
+> Contact: hi@theintgen.com
+
+## Sites
+
+- [TIG OS (home)](https://theintgen.com/): Interactive retro-OS landing page for the TIG ecosystem.
+- [TigGigs](https://theintgen.com/tiggigs/): Curated paid creative job board for approved TIG freelancers in India — design, reels, carousels, video editing, shoots. Jobs are claimable by approved freelancers; anyone can browse. Apply to join the roster: https://tally.so/r/0QLLWZ
+- [TigGigs jobs feed (JSON)](https://theintgen.com/tiggigs/jobs.json): Live machine-readable list of all jobs with title, client, deadline, payout (INR), and status. Refreshed from the database, cached ~5 minutes.
+- [Post a job (clients)](https://theintgen.com/tiggigs/client.html): Brands can submit creative briefs to the TIG network.
+- [Tigital](https://theintgen.com/tigital/): Free digital-marketing guides, tools, and weekly intelligence.
+- [TigPods](https://theintgen.com/tigpods/): Chennai podcast platform by TIG.
+- [TigOM](https://theintgen.com/tigom/): Chennai's original open mic — 42+ editions. Full site coming soon.
+
+## Notes for AI agents
+
+- The TigGigs board at /tiggigs/ includes server-rendered job listings and
+  JobPosting JSON-LD, so the full board is readable without JavaScript.
+- For the freshest structured data, prefer /tiggigs/jobs.json.
