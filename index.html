@@ -3,335 +3,1386 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>The Internet Generation — TIG Ecosystem</title>
-<meta name="description" content="The Internet Generation (TIG) — Digital Marketing, Content, Podcasts, Open Mic & Freelance Gigs. Chennai's creative ecosystem."/>
-<link rel="icon" type="image/png" href="/public/assets/logo-theintgen.png"/>
-<link rel="preconnect" href="https://fonts.googleapis.com"/>
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet"/>
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
+<meta http-equiv="Pragma" content="no-cache"/>
+<meta http-equiv="Expires" content="0"/>
+<title>TIG Job Board | Paid Creative Opportunities for Freelancers</title>
+<link rel="icon" type="image/png" href="logo-theintgen.png"/>
+<meta name="description" content="Browse curated paid creative jobs for approved TIG freelancers. Design, reels, carousels and more — claim your next gig directly."/>
+<meta name="keywords" content="freelance design jobs, paid creative work, TIG freelancers, social media design, content creation jobs India"/>
+<meta name="robots" content="index, follow"/>
+<meta property="og:title" content="TIG Job Board | Paid Creative Opportunities"/>
+<meta property="og:description" content="Curated paid creative jobs for approved TIG freelancers. Browse and claim design, edit, and content work."/>
+<meta property="og:type" content="website"/>
+<meta property="og:url" content="https://tiggigs.pages.dev"/>
+<meta property="og:image" content="https://tiggigs.pages.dev/logo-theintgen.png"/>
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:title" content="TIG Job Board | Paid Creative Opportunities"/>
+<meta name="twitter:description" content="Curated paid creative jobs for approved TIG freelancers."/>
+<link rel="canonical" href="https://tiggigs.pages.dev"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          "surface-container-low":     "#f6f3f2",
+          "surface-container":         "#f0edec",
+          "surface-container-high":    "#ebe7e7",
+          "surface-container-highest": "#e5e2e1",
+          "surface-container-lowest":  "#ffffff",
+          "on-surface-variant":        "#464555",
+          "outline-variant":           "#c8c4d8",
+          "outline":                   "#777586",
+          "surface":                   "#fcf9f8",
+          "on-surface":                "#1c1b1b",
+          "primary":                   "#000000",
+          "on-primary":                "#ffffff",
+          "primary-container":         "#1c1c1c",
+          "secondary":                 "#5d5d6a",
+          "secondary-fixed":           "#fddf29",
+          "secondary-container":       "#fddf29",
+          "on-secondary-fixed":        "#000000",
+          "on-secondary-container":    "#000000",
+          "error-container":           "#ffdad6",
+          "on-error-container":        "#93000a",
+          "error":                     "#ba1a1a",
+        },
+        fontFamily: {
+          headline: ["Plus Jakarta Sans", "sans-serif"],
+          body:     ["Inter", "sans-serif"],
+          label:    ["Inter", "sans-serif"],
+        },
+        borderRadius: {
+          DEFAULT: "0.25rem",
+          lg:      "0.5rem",
+          xl:      "0.75rem",
+          "2xl":   "1rem",
+          "3xl":   "1.5rem",
+          full:    "9999px",
+        },
+      },
+    },
+  }
+</script>
 <style>
-  :root {
-    --navy:   #1A0A3C;
-    --yellow: #FFD600;
-    --crimson:#9B1C3A;
-    --white:  #FFFFFF;
-    --offwhite: #F7F5F2;
-    --card-bg: #FFFFFF;
-  }
-
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-  html { scroll-behavior: smooth; }
-
-  body {
-    font-family: 'DM Sans', sans-serif;
-    background: var(--navy);
-    color: var(--white);
-    min-height: 100vh;
-    overflow-x: hidden;
-  }
-
-  /* ── NOISE TEXTURE OVERLAY ── */
-  body::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
-    pointer-events: none;
-    z-index: 0;
-    opacity: 0.4;
-  }
-
-  /* ── NAV ── */
-  nav {
-    position: fixed;
-    top: 0; left: 0; right: 0;
-    z-index: 100;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0 2rem;
-    height: 60px;
-    background: rgba(26, 10, 60, 0.85);
-    backdrop-filter: blur(16px);
-    border-bottom: 1px solid rgba(255,255,255,0.07);
-  }
-
-  nav img { height: 32px; width: auto; object-fit: contain; }
-
-  nav a {
-    font-family: 'Syne', sans-serif;
-    font-size: 0.75rem;
-    font-weight: 600;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: rgba(255,255,255,0.5);
-    text-decoration: none;
-    transition: color 0.2s;
-  }
-  nav a:hover { color: var(--yellow); }
-
-  /* ── HERO ── */
-  .hero {
-    position: relative;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    padding: 6rem 1.5rem 4rem;
-    z-index: 1;
-  }
-
-  .hero-eyebrow {
-    font-family: 'Syne', sans-serif;
-    font-size: 0.7rem;
-    font-weight: 700;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    color: var(--yellow);
-    margin-bottom: 1.5rem;
-    opacity: 0;
-    animation: fadeUp 0.6s 0.2s forwards;
-  }
-
-  .hero h1 {
-    font-family: 'Syne', sans-serif;
-    font-size: clamp(3rem, 10vw, 8rem);
-    font-weight: 800;
-    line-height: 0.92;
-    letter-spacing: -0.03em;
-    color: var(--white);
-    opacity: 0;
-    animation: fadeUp 0.7s 0.35s forwards;
-  }
-
-  .hero h1 span { color: var(--yellow); }
-
-  .hero-sub {
-    margin-top: 2rem;
-    font-size: clamp(0.9rem, 2vw, 1.1rem);
-    font-weight: 300;
-    color: rgba(255,255,255,0.55);
-    max-width: 480px;
-    line-height: 1.7;
-    opacity: 0;
-    animation: fadeUp 0.7s 0.5s forwards;
-  }
-
-  /* ── GLOW BLOB ── */
-  .blob {
-    position: absolute;
-    border-radius: 50%;
-    filter: blur(80px);
-    pointer-events: none;
-    z-index: 0;
-  }
-  .blob-yellow {
-    width: 400px; height: 400px;
-    background: rgba(255, 214, 0, 0.12);
-    top: 10%; left: 50%;
-    transform: translateX(-50%);
-  }
-  .blob-crimson {
-    width: 300px; height: 300px;
-    background: rgba(155, 28, 58, 0.15);
-    bottom: 20%; right: 5%;
-  }
-
-  /* ── BRANDS GRID ── */
-  .brands-section {
-    position: relative;
-    z-index: 1;
-    padding: 2rem 1.5rem 6rem;
-    max-width: 960px;
-    margin: 0 auto;
-  }
-
-  .brands-label {
-    font-family: 'Syne', sans-serif;
-    font-size: 0.65rem;
-    font-weight: 700;
-    letter-spacing: 0.25em;
-    text-transform: uppercase;
-    color: rgba(255,255,255,0.3);
-    text-align: center;
-    margin-bottom: 2.5rem;
-  }
-
-  .brands-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 1rem;
-  }
-
-  @media (min-width: 640px) {
-    .brands-grid { grid-template-columns: repeat(4, 1fr); }
-  }
-
-  .brand-card {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    justify-content: space-between;
-    padding: 1.5rem 1.25rem;
-    background: rgba(255,255,255,0.04);
-    border: 1px solid rgba(255,255,255,0.08);
-    border-radius: 16px;
-    text-decoration: none;
-    color: var(--white);
-    transition: background 0.25s, border-color 0.25s, transform 0.25s;
-    min-height: 160px;
-    cursor: pointer;
-    opacity: 0;
-    animation: fadeUp 0.6s forwards;
-  }
-
-  .brand-card:nth-child(1) { animation-delay: 0.6s; }
-  .brand-card:nth-child(2) { animation-delay: 0.7s; }
-  .brand-card:nth-child(3) { animation-delay: 0.8s; }
-  .brand-card:nth-child(4) { animation-delay: 0.9s; }
-
-  .brand-card:hover {
-    background: rgba(255,255,255,0.08);
-    border-color: rgba(255, 214, 0, 0.3);
-    transform: translateY(-4px);
-  }
-
-  .brand-card.coming-soon {
-    opacity: 0.5 !important;
-    cursor: default;
-    pointer-events: none;
-    animation-delay: 0.75s;
-  }
-  .brand-card.coming-soon:nth-child(3) { animation-delay: 0.8s; }
-  .brand-card.coming-soon:nth-child(4) { animation-delay: 0.85s; }
-
-  .brand-pill {
-    font-family: 'Syne', sans-serif;
-    font-size: 0.6rem;
-    font-weight: 700;
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-    padding: 3px 8px;
-    border-radius: 20px;
-    margin-bottom: 1rem;
-  }
-
-  .pill-live { background: rgba(255,214,0,0.15); color: var(--yellow); }
-  .pill-soon { background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.4); }
-
-  .brand-name {
-    font-family: 'Syne', sans-serif;
-    font-size: 1.4rem;
-    font-weight: 800;
-    letter-spacing: -0.02em;
-    margin-bottom: 0.4rem;
-  }
-
-  .brand-desc {
-    font-size: 0.75rem;
-    font-weight: 300;
-    color: rgba(255,255,255,0.45);
-    line-height: 1.5;
-    flex: 1;
-  }
-
-  .brand-arrow {
-    margin-top: 1.25rem;
-    font-size: 0.8rem;
-    color: var(--yellow);
-    opacity: 0;
-    transition: opacity 0.2s, transform 0.2s;
-  }
-  .brand-card:hover .brand-arrow { opacity: 1; transform: translateX(4px); }
-
-  /* ── FOOTER ── */
-  footer {
-    position: relative;
-    z-index: 1;
-    border-top: 1px solid rgba(255,255,255,0.07);
-    padding: 2rem 1.5rem;
-    text-align: center;
-  }
-
-  footer p {
-    font-size: 0.7rem;
-    color: rgba(255,255,255,0.25);
-    letter-spacing: 0.05em;
-  }
-
-  footer a { color: rgba(255,255,255,0.4); text-decoration: none; }
-  footer a:hover { color: var(--yellow); }
-
-  /* ── ANIMATIONS ── */
-  @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(20px); }
-    to   { opacity: 1; transform: translateY(0); }
-  }
+  .material-symbols-outlined { font-variation-settings: 'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24; }
+  html { overflow-x: hidden; overscroll-behavior-y: none; }
+  body { font-family: 'Inter', sans-serif; background-color: #fcf9f8; color: #1c1b1b; overflow-x: hidden; }
+  .editorial-shadow { box-shadow: 0 20px 40px rgba(0,0,0,0.04); }
+  .line-clamp-3 { display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden; }
 </style>
 </head>
-<body>
+<body class="antialiased">
 
-<nav>
-  <img src="/public/assets/logo-theintgen.png" alt="The Internet Generation"/>
-  <a href="mailto:hi@theintgen.com">hi@theintgen.com</a>
+<!-- ── FIXED TOP NAV ─────────────────────────────────────────────────────── -->
+<nav class="fixed top-0 w-full z-50 bg-[#fcf9f8]/80 backdrop-blur-xl border-b border-[#c8c4d8]/20 flex justify-between items-center px-4 md:px-10" style="height:56px">
+  <!-- Left: THE INTGEN logo -->
+  <a href="https://theintgen.com" target="_blank" class="shrink-0 flex items-center">
+    <img src="logo-theintgen.png" alt="The Intgen" class="h-8 w-auto object-contain"/>
+  </a>
+
+  <!-- Centre: nav pills — desktop only (mobile uses bottom nav) -->
+  <div class="hidden md:flex gap-6 items-center font-headline font-semibold tracking-tight text-sm">
+    <button class="nav-pill text-[#000000] border-b-2 border-[#fddf29] pb-0.5 transition-all duration-200" data-type="all">All Jobs</button>
+    <button class="nav-pill text-[#1c1b1b]/50 hover:text-[#000000] transition-colors duration-200 pb-0.5 border-b-2 border-transparent" data-type="Design">Design</button>
+    <button class="nav-pill text-[#1c1b1b]/50 hover:text-[#000000] transition-colors duration-200 pb-0.5 border-b-2 border-transparent" data-type="Edit">Edit</button>
+    <button class="nav-pill text-[#1c1b1b]/50 hover:text-[#000000] transition-colors duration-200 pb-0.5 border-b-2 border-transparent" data-type="Production">Production</button>
+  </div>
+
+  <!-- Right: Dashboard button + extras -->
+  <div class="flex items-center gap-2 shrink-0">
+    <!-- Post a Job — desktop only -->
+    <a href="client.html" class="hidden md:flex items-center gap-1.5 px-3 py-2 rounded-xl border border-[#c8c4d8]/40 text-xs font-bold text-[#464555]/70 hover:bg-surface-container-high transition-colors">
+      <span class="material-symbols-outlined" style="font-size:16px">add_circle</span>
+      Post a Job
+    </a>
+    <!-- Tour — desktop only -->
+    <button onclick="startTutorial()" title="Take a tour" class="hidden md:flex items-center gap-1.5 px-3 py-2 rounded-xl border border-[#c8c4d8]/40 text-xs font-bold text-[#464555]/60 hover:bg-surface-container-high transition-colors">
+      <span class="material-symbols-outlined" style="font-size:16px">help</span>
+      Tour
+    </button>
+    <!-- Dashboard — icon only on mobile, full label on desktop -->
+    <a id="dashboardBtn" onclick="goToDashboard()" href="#" class="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-[#000] text-[#fddf29] text-xs font-bold tracking-tight hover:bg-[#1a1a1a] transition-colors cursor-pointer">
+      <span class="material-symbols-outlined" style="font-size:16px">dashboard</span>
+      <span class="hidden sm:inline">My Dashboard</span>
+    </a>
+    <!-- Team + Tigital — desktop only -->
+    <a href="team-dashboard" target="_blank" class="hidden md:flex items-center gap-2 px-3 py-2 rounded-xl bg-[#1a1a1a] text-white/60 text-xs font-bold tracking-tight hover:bg-[#2a2a2a] hover:text-white transition-colors">
+      <span class="material-symbols-outlined" style="font-size:16px">admin_panel_settings</span>
+      Team
+    </a>
+    <a href="https://theintgen.com" target="_blank" class="hidden md:flex shrink-0 items-center">
+      <img src="logo-tigital.png" alt="Tigital" class="h-8 w-auto object-contain rounded-lg"/>
+    </a>
+  </div>
 </nav>
 
-<section class="hero">
-  <div class="blob blob-yellow"></div>
-  <div class="blob blob-crimson"></div>
+<!-- ── MAIN ──────────────────────────────────────────────────────────────── -->
+<main class="pt-20 md:pt-28 pb-32 md:pb-24 px-5 md:px-12 max-w-7xl mx-auto">
 
-  <p class="hero-eyebrow">The Internet Generation &nbsp;·&nbsp; Chennai</p>
-  <h1>THE<br/><span>INT</span><br/>GEN</h1>
-  <p class="hero-sub">Digital Marketing · Video Production · Influencer Marketing · And a whole lot more.</p>
-</section>
-
-<section class="brands-section">
-  <p class="brands-label">Our Ecosystem</p>
-  <div class="brands-grid">
-
-    <a href="/tigital/" class="brand-card">
-      <span class="brand-pill pill-live">Live</span>
+  <!-- New Freelancer Banner -->
+  <div id="joinBanner" class="mb-6 md:mb-10 bg-[#000] rounded-2xl px-5 py-4 flex flex-col sm:flex-row items-center justify-between gap-3 relative overflow-hidden">
+    <div class="absolute inset-0 opacity-10 pointer-events-none">
+      <div class="absolute -top-6 -left-6 w-32 h-32 bg-[#fddf29] rounded-full blur-2xl"></div>
+      <div class="absolute -bottom-6 -right-6 w-40 h-40 bg-[#fddf29] rounded-full blur-2xl"></div>
+    </div>
+    <div class="relative flex items-center gap-3 text-white">
+      <span class="material-symbols-outlined text-[#fddf29] text-2xl shrink-0" style="font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 24">bolt</span>
       <div>
-        <p class="brand-name">Tigital</p>
-        <p class="brand-desc">Digital marketing knowledge hub. Free tools, guides & resources.</p>
-      </div>
-      <span class="brand-arrow">Explore →</span>
-    </a>
-
-    <a href="/tiggigs/" class="brand-card">
-      <span class="brand-pill pill-live">Live</span>
-      <div>
-        <p class="brand-name">TigGigs</p>
-        <p class="brand-desc">Freelance job board for creative professionals in the TIG network.</p>
-      </div>
-      <span class="brand-arrow">Explore →</span>
-    </a>
-
-    <div class="brand-card coming-soon">
-      <span class="brand-pill pill-soon">Coming Soon</span>
-      <div>
-        <p class="brand-name">TigPods</p>
-        <p class="brand-desc">Podcast homepage — conversations with Chennai's creative community.</p>
+        <p class="font-headline font-bold text-sm md:text-base">New here? You can join this network.</p>
+        <p class="text-white/60 text-xs mt-0.5">No fuss — fill out a quick form and we'll get you set up to claim jobs.</p>
       </div>
     </div>
-
-    <div class="brand-card coming-soon">
-      <span class="brand-pill pill-soon">Coming Soon</span>
-      <div>
-        <p class="brand-name">Tigom</p>
-        <p class="brand-desc">Open mic platform — 42+ editions & counting.</p>
-      </div>
+    <div class="relative flex items-center gap-3 shrink-0">
+      <a href="https://tally.so/r/0QLLWZ" target="_blank"
+        class="bg-[#fddf29] text-black font-extrabold text-sm px-5 py-2.5 rounded-xl hover:bg-[#f5d800] active:scale-95 transition-all font-headline whitespace-nowrap">
+        Join the roster →
+      </a>
+      <button onclick="document.getElementById('joinBanner').remove()" class="text-white/30 hover:text-white/70 transition-colors" aria-label="Dismiss">
+        <span class="material-symbols-outlined text-xl">close</span>
+      </button>
     </div>
-
   </div>
-</section>
 
-<footer>
-  <p>© 2025 The Internet Generation · T. Nagar, Chennai &nbsp;·&nbsp; <a href="mailto:hi@theintgen.com">hi@theintgen.com</a></p>
-</footer>
+  <!-- Hero -->
+  <section id="heroSection" class="mb-10 md:mb-16 text-center">
+    <h1 class="font-headline text-3xl md:text-6xl lg:text-7xl font-extrabold tracking-tight mb-5 text-on-surface leading-tight">
+      Paid Creative Opportunities<br/>
+      <span class="bg-[#fddf29] px-2 rounded-sm">Curated by TIG.</span>
+    </h1>
+    <p class="font-body text-secondary max-w-xl mx-auto mb-6 md:mb-10 text-sm md:text-lg leading-relaxed">
+      Browse freely — only approved TIG freelancers can claim jobs.
+    </p>
+    <!-- Unlocked state (shown when session active) -->
+    <div id="gateUnlocked" class="hidden max-w-md mx-auto p-3 bg-[#e8f8f2] border border-[#1a9e75]/30 rounded-2xl flex items-center gap-3 editorial-shadow">
+      <span class="material-symbols-outlined text-[#1a9e75]" style="font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 24;font-size:22px">verified_user</span>
+      <div class="flex-1 text-left">
+        <p class="text-xs font-bold text-[#1a9e75] uppercase tracking-wide">Unlocked</p>
+        <p id="gateUnlockedEmail" class="text-sm font-semibold text-[#1c1b1b]"></p>
+      </div>
+      <button onclick="signOutGate()" class="text-xs font-bold text-[#464555]/50 hover:text-[#1c1b1b] transition-colors px-2 py-1 rounded-lg">Sign out</button>
+    </div>
+    <!-- Locked state -->
+    <div id="gateLocked" class="max-w-md mx-auto p-2 bg-surface-container-low rounded-2xl flex items-center editorial-shadow">
+      <input id="emailInput" type="email" placeholder="Enter your registered email…"
+        class="flex-1 bg-transparent border-none focus:ring-0 px-4 py-3 font-body text-on-surface placeholder:text-[#464555]/40 outline-none text-sm"/>
+      <button onclick="verifyEmail()"
+        class="bg-primary text-on-primary px-7 py-3 rounded-xl font-bold text-sm tracking-tight active:scale-95 transition-all font-label shrink-0">
+        Unlock
+      </button>
+    </div>
+    <div id="gateStatus" class="mt-4 text-sm font-semibold min-h-[20px]"></div>
+  </section>
 
+  <!-- Filter & Sort controls -->
+  <div class="flex flex-wrap items-center gap-3 mb-4 px-1" id="sortFilterBar">
+    <select id="filterClient" onchange="render()" class="text-xs font-bold bg-surface-container-low border border-[#c8c4d8]/30 rounded-xl px-3 py-2 text-on-surface outline-none cursor-pointer">
+      <option value="">All Clients</option>
+    </select>
+    <select id="sortBy" onchange="render()" class="text-xs font-bold bg-surface-container-low border border-[#c8c4d8]/30 rounded-xl px-3 py-2 text-on-surface outline-none cursor-pointer">
+      <option value="deadline">Deadline ↑</option>
+      <option value="payout_asc">Payout: Low → High</option>
+      <option value="payout_desc">Payout: High → Low</option>
+      <option value="rush">Rush First</option>
+    </select>
+  </div>
+
+  <!-- Count bar -->
+  <p id="countBar" class="text-center text-[11px] font-bold uppercase tracking-widest text-[#464555]/50 mb-10"></p>
+
+  <!-- Job Grid -->
+  <div id="gridWrapper" style="max-height:480px;overflow:hidden;transition:max-height 0.6s cubic-bezier(0.4,0,0.2,1)">
+    <div id="jobGrid" class="text-center py-16 text-[#464555]/40 text-sm font-body">Fetching latest jobs…</div>
+  </div>
+  <!-- Glass reveal -->
+  <div id="gridGlass" class="hidden relative -mt-36 h-40 pointer-events-none" style="background:linear-gradient(to bottom,transparent,#fcf9f8 80%)">
+    <div class="absolute bottom-0 left-0 right-0 flex justify-center pb-4 pointer-events-auto">
+      <button id="revealBtn" onclick="revealAllJobs()"
+        class="flex items-center gap-2 px-6 py-3 bg-white border border-[#c8c4d8]/40 rounded-full text-sm font-bold text-on-surface editorial-shadow hover:bg-surface-container-high transition-all active:scale-95">
+        <span class="material-symbols-outlined text-base">expand_more</span>
+        <span id="revealLabel">View all jobs</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- ── TESTIMONIALS ─────────────────────────────────────────────────────── -->
+  <section class="mt-24">
+    <div class="text-center mb-12">
+      <h2 class="font-headline text-3xl md:text-4xl font-extrabold tracking-tight text-on-surface mb-3">
+        Heard from our <span class="bg-[#fddf29] px-1 rounded-sm">creators.</span>
+      </h2>
+      <p class="font-body text-secondary text-base">Real words from freelancers who've worked with TIG.</p>
+    </div>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+
+      <div class="bg-white rounded-2xl p-6 editorial-shadow border border-[#c8c4d8]/15 flex flex-col gap-4">
+        <div class="flex gap-1">
+          <span class="text-[#fddf29] text-lg">★★★★★</span>
+        </div>
+        <p class="font-body text-sm text-[#464555]/80 leading-relaxed flex-grow">
+          "The briefs are clear, the pay is fair, and the team actually responds fast. It's the most professional freelance setup I've worked with."
+        </p>
+        <div class="flex items-center gap-3 pt-2 border-t border-[#c8c4d8]/15">
+          <div class="w-9 h-9 rounded-full bg-[#e0e7ff] flex items-center justify-center text-[#3730a3] font-bold text-sm font-headline">P</div>
+          <div>
+            <p class="font-label text-sm font-bold text-on-surface">Priya S.</p>
+            <p class="text-[11px] text-secondary">Graphic Designer · Chennai</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-2xl p-6 editorial-shadow border border-[#c8c4d8]/15 flex flex-col gap-4">
+        <div class="flex gap-1">
+          <span class="text-[#fddf29] text-lg">★★★★★</span>
+        </div>
+        <p class="font-body text-sm text-[#464555]/80 leading-relaxed flex-grow">
+          "I love that I can browse everything before committing. Claimed my first reel job within a day of joining — was paid promptly after submission."
+        </p>
+        <div class="flex items-center gap-3 pt-2 border-t border-[#c8c4d8]/15">
+          <div class="w-9 h-9 rounded-full bg-[#d1fae5] flex items-center justify-center text-[#065f46] font-bold text-sm font-headline">K</div>
+          <div>
+            <p class="font-label text-sm font-bold text-on-surface">Karthik R.</p>
+            <p class="text-[11px] text-secondary">Video Editor · Coimbatore</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-2xl p-6 editorial-shadow border border-[#c8c4d8]/15 flex flex-col gap-4">
+        <div class="flex gap-1">
+          <span class="text-[#fddf29] text-lg">★★★★★</span>
+        </div>
+        <p class="font-body text-sm text-[#464555]/80 leading-relaxed flex-grow">
+          "The job board is clean and easy to use. No back-and-forth, no chasing payments. Just great work and great clients. Highly recommend."
+        </p>
+        <div class="flex items-center gap-3 pt-2 border-t border-[#c8c4d8]/15">
+          <div class="w-9 h-9 rounded-full bg-[#f3e8ff] flex items-center justify-center text-[#6d28d9] font-bold text-sm font-headline">A</div>
+          <div>
+            <p class="font-label text-sm font-bold text-on-surface">Ananya M.</p>
+            <p class="text-[11px] text-secondary">Illustrator · Madurai</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+    <div class="text-center mt-8">
+      <button onclick="openReviews()" class="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-black text-[#fddf29] font-bold text-sm hover:bg-[#1a1a1a] transition-colors active:scale-95">
+        <span class="material-symbols-outlined text-[18px]">rate_review</span>
+        Share your experience
+      </button>
+      <p class="text-[11px] text-[#464555]/30 uppercase tracking-widest mt-4 font-bold">Real reviews from the TIG freelancer community</p>
+    </div>
+  </section>
+
+  <!-- ── REGISTRATION CTA ───────────────────────────────────────────────── -->
+  <section class="mt-24 bg-[#000000] rounded-[2.5rem] p-8 md:p-16 relative overflow-hidden">
+    <div class="absolute inset-0 opacity-10 pointer-events-none">
+      <div class="absolute top-10 left-10 w-64 h-64 bg-[#fddf29] rounded-full blur-3xl"></div>
+      <div class="absolute bottom-10 right-10 w-96 h-96 bg-[#fddf29] rounded-full blur-3xl"></div>
+    </div>
+    <div class="relative z-10 max-w-4xl mx-auto flex flex-col lg:flex-row items-center gap-12">
+      <div class="flex-1 text-center lg:text-left">
+        <h2 class="font-headline text-3xl md:text-5xl font-extrabold tracking-tight text-white mb-5">
+          Join the <span class="text-[#fddf29]">TIG Creator Network.</span>
+        </h2>
+        <p class="font-body text-white/70 text-base md:text-lg leading-relaxed mb-8">
+          Get matched with real brands and creative projects. We curate only the best opportunities for designers and editors — browse jobs above to see what we make.
+        </p>
+        <div class="flex flex-wrap gap-5 justify-center lg:justify-start">
+          <div class="flex items-center gap-2 text-white/90 text-sm font-medium">
+            <span class="material-symbols-outlined text-[#fddf29] text-lg" style="font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 24">check_circle</span>
+            Curated Briefs
+          </div>
+          <div class="flex items-center gap-2 text-white/90 text-sm font-medium">
+            <span class="material-symbols-outlined text-[#fddf29] text-lg" style="font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 24">check_circle</span>
+            Fair Rates
+          </div>
+          <div class="flex items-center gap-2 text-white/90 text-sm font-medium">
+            <span class="material-symbols-outlined text-[#fddf29] text-lg" style="font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 24">check_circle</span>
+            Real Clients
+          </div>
+        </div>
+      </div>
+      <div class="w-full max-w-xs text-center">
+        <a href="https://tally.so/r/0QLLWZ" target="_blank"
+          class="block w-full bg-[#fddf29] hover:bg-[#f5d800] text-black font-extrabold text-base py-5 px-8 rounded-2xl shadow-lg active:scale-[0.98] transition-all font-headline">
+          Apply to join our roster →
+        </a>
+        <p class="text-[10px] text-white/30 uppercase tracking-wider mt-4">Open to designers &amp; editors</p>
+      </div>
+    </div>
+  </section>
+</main>
+
+<!-- ── REVIEWS MODAL ─────────────────────────────────────────────────────── -->
+<div id="reviewsOverlay" class="hidden fixed inset-0 z-[1000]">
+  <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" onclick="closeReviews()"></div>
+  <div class="absolute inset-0 flex items-center justify-center p-4">
+    <div class="relative bg-surface-container-lowest rounded-3xl w-full max-w-lg editorial-shadow max-h-[90vh] overflow-y-auto">
+      <!-- Header -->
+      <div class="sticky top-0 bg-surface-container-lowest px-8 pt-7 pb-4 border-b border-[#c8c4d8]/20">
+        <h3 class="font-headline text-2xl font-bold text-on-surface">Share your experience</h3>
+        <p class="text-[11px] font-bold uppercase tracking-widest text-[#464555]/50 mt-1">Help us improve TIG for everyone</p>
+      </div>
+      <!-- Existing reviews -->
+      <div id="reviewsList" class="px-8 pt-6 pb-2 space-y-4"></div>
+      <!-- Submit form -->
+      <div class="px-8 pb-8 pt-4 border-t border-[#c8c4d8]/20 mt-2">
+        <p class="text-[11px] font-bold uppercase tracking-widest text-[#464555]/50 mb-4">Leave a review</p>
+        <!-- Star picker -->
+        <div class="flex gap-1 mb-5" id="starPicker">
+          <button onclick="setRating(1)" data-star="1" class="star-btn text-3xl text-[#c8c4d8] hover:text-[#fddf29] transition-colors leading-none">★</button>
+          <button onclick="setRating(2)" data-star="2" class="star-btn text-3xl text-[#c8c4d8] hover:text-[#fddf29] transition-colors leading-none">★</button>
+          <button onclick="setRating(3)" data-star="3" class="star-btn text-3xl text-[#c8c4d8] hover:text-[#fddf29] transition-colors leading-none">★</button>
+          <button onclick="setRating(4)" data-star="4" class="star-btn text-3xl text-[#c8c4d8] hover:text-[#fddf29] transition-colors leading-none">★</button>
+          <button onclick="setRating(5)" data-star="5" class="star-btn text-3xl text-[#c8c4d8] hover:text-[#fddf29] transition-colors leading-none">★</button>
+        </div>
+        <div class="mb-4">
+          <label class="block text-[11px] font-bold uppercase tracking-widest text-[#464555]/60 mb-2">Your name</label>
+          <input type="text" id="rName" placeholder="First name or handle"
+            class="w-full bg-surface-container-low border-transparent focus:border-black focus:ring-0 rounded-xl px-4 py-3 text-on-surface placeholder:text-[#464555]/30 text-sm outline-none transition-all"/>
+        </div>
+        <div class="mb-4">
+          <label class="block text-[11px] font-bold uppercase tracking-widest text-[#464555]/60 mb-2">Your role</label>
+          <input type="text" id="rRole" placeholder="e.g. Video Editor · Chennai"
+            class="w-full bg-surface-container-low border-transparent focus:border-black focus:ring-0 rounded-xl px-4 py-3 text-on-surface placeholder:text-[#464555]/30 text-sm outline-none transition-all"/>
+        </div>
+        <div class="mb-5">
+          <label class="block text-[11px] font-bold uppercase tracking-widest text-[#464555]/60 mb-2">Your review</label>
+          <textarea id="rText" rows="3" placeholder="What's your experience been like working with TIG?"
+            class="w-full bg-surface-container-low border-transparent focus:border-black focus:ring-0 rounded-xl px-4 py-3 text-on-surface placeholder:text-[#464555]/30 text-sm outline-none transition-all resize-none"></textarea>
+        </div>
+        <div id="rErr" class="hidden text-sm text-error font-medium mb-3"></div>
+        <div id="rSuc" class="hidden text-sm text-[#1a9e75] font-medium bg-[#e8f8f2] rounded-xl p-3 mb-3"></div>
+        <div class="flex gap-3">
+          <button onclick="closeReviews()" class="px-5 py-3 rounded-xl border border-[#c8c4d8]/40 text-on-surface font-bold text-sm hover:bg-surface-container-high transition-colors">Cancel</button>
+          <button onclick="submitReview()" id="rSubmit" class="flex-1 py-3 rounded-xl bg-primary text-on-primary font-bold text-sm shadow-md active:scale-95 transition-all">Submit Review</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TUTORIAL OVERLAY ───────────────────────────────────────────────────── -->
+<div id="tutOverlay" class="hidden fixed inset-0 z-[8000]" onclick="endTutorial()"></div>
+<div id="tutSpotlight" class="hidden fixed z-[8001] rounded-2xl pointer-events-none" style="transition:all 0.35s cubic-bezier(0.4,0,0.2,1);"></div>
+<div id="tutCard" class="hidden fixed z-[8002] bg-white rounded-2xl p-5 shadow-2xl pointer-events-auto" style="width:min(300px,calc(100vw - 2rem));transition:all 0.35s cubic-bezier(0.4,0,0.2,1);">
+  <div class="flex items-center justify-between mb-3">
+    <span id="tutStepLabel" class="text-[10px] font-bold uppercase tracking-widest text-[#464555]/40"></span>
+    <button onclick="endTutorial()" class="text-[#464555]/40 hover:text-[#464555] text-xs font-bold px-2 py-1 rounded-lg hover:bg-surface-container-low transition-colors">Skip tour</button>
+  </div>
+  <h4 id="tutTitle" class="font-headline font-bold text-base text-on-surface mb-1.5"></h4>
+  <p id="tutBody" class="text-sm text-[#464555]/70 leading-relaxed mb-4"></p>
+  <div class="flex items-center gap-2 mb-3">
+    <button id="tutPrev" onclick="tutNav(-1)" class="hidden px-3 py-2 rounded-xl border border-[#c8c4d8]/40 text-sm font-bold text-on-surface hover:bg-surface-container-high transition-colors">← Back</button>
+    <button id="tutNext" onclick="tutNav(1)" class="flex-1 px-3 py-2 rounded-xl bg-black text-white text-sm font-bold hover:bg-[#1a1a1a] transition-colors">Next →</button>
+  </div>
+  <div id="tutDots" class="flex justify-center gap-1.5"></div>
+</div>
+
+<!-- ── BRIEF PANEL ────────────────────────────────────────────────────────── -->
+<div id="briefOverlay" class="hidden fixed inset-0 z-[1000]">
+  <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" onclick="closeBrief()"></div>
+  <div class="absolute bottom-0 left-0 right-0 bg-surface-container-lowest rounded-t-3xl max-h-[88vh] overflow-y-auto editorial-shadow" style="max-width:720px;margin:0 auto">
+    <div class="sticky top-0 bg-surface-container-lowest pt-5 px-8 pb-3 border-b border-[#c8c4d8]/20">
+      <div class="w-10 h-1 bg-surface-container-highest rounded-full mx-auto mb-4"></div>
+      <div class="flex items-start justify-between gap-3">
+        <div class="flex-1 min-w-0">
+          <h3 id="bTitle" class="font-headline text-xl font-bold text-on-surface"></h3>
+          <p id="bSub" class="text-[11px] font-bold uppercase tracking-widest text-[#464555]/50 mt-1"></p>
+        </div>
+        <button id="bShareBtn" onclick="shareBrief()" title="Copy share link" class="shrink-0 mt-1 p-2 rounded-xl border border-[#c8c4d8]/30 text-[#464555]/60 hover:bg-surface-container-low hover:text-on-surface transition-colors">
+          <span class="material-symbols-outlined text-[18px]">share</span>
+        </button>
+      </div>
+    </div>
+    <div id="bContent" class="px-8 py-6"></div>
+    <div class="px-8 pb-8 flex justify-between items-center gap-3">
+      <button onclick="closeBrief()" class="px-6 py-3 border border-[#c8c4d8]/40 text-on-surface font-bold rounded-xl active:scale-95 transition-all text-sm hover:bg-surface-container-high">Close</button>
+      <button id="briefClaimBtn" onclick="claimFromBrief()" class="px-8 py-3 bg-primary text-on-primary font-bold rounded-xl active:scale-95 transition-all text-sm">Claim This Job</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── CLAIM MODAL ────────────────────────────────────────────────────────── -->
+<div id="claimOverlay" class="hidden fixed inset-0 z-[1000]">
+  <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" onclick="closeModal()"></div>
+  <div class="absolute inset-0 flex items-center justify-center p-4">
+    <div class="relative bg-surface-container-lowest rounded-3xl p-8 w-full max-w-md editorial-shadow max-h-[90vh] overflow-y-auto">
+      <h3 id="mTitle" class="font-headline text-2xl font-bold text-on-surface mb-1">Claim Job</h3>
+      <p id="mSub" class="text-[11px] font-bold uppercase tracking-widest text-[#464555]/50 mb-7 pb-6 border-b border-[#c8c4d8]/20"></p>
+      <div class="space-y-5">
+        <!-- Saved credential pill (shown after first claim) -->
+        <div id="mCredSaved" class="hidden flex items-center gap-3 bg-[#e8f8f2] rounded-xl px-4 py-3 border border-[#1a9e75]/20">
+          <span class="material-symbols-outlined text-[#1a9e75] text-lg" style="font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 24">verified_user</span>
+          <div>
+            <p class="text-xs font-bold text-[#1a9e75]">Credentials saved for this session</p>
+            <p id="mCredSavedName" class="text-sm font-semibold text-on-surface mt-0.5"></p>
+          </div>
+        </div>
+        <!-- Name + code fields (hidden after first claim) -->
+        <div id="mCredFields">
+          <div class="mb-5">
+            <label class="block text-[11px] font-bold uppercase tracking-widest text-[#464555]/60 mb-2">Full Name</label>
+            <input type="text" id="mName" placeholder="As registered with TIG"
+              class="w-full bg-surface-container-low border-transparent focus:border-black focus:ring-0 rounded-xl px-4 py-3.5 text-on-surface placeholder:text-[#464555]/30 text-sm font-body outline-none transition-all"/>
+          </div>
+          <div class="mb-4">
+            <label class="block text-[11px] font-bold uppercase tracking-widest text-[#464555]/60 mb-2">Access Code</label>
+            <input type="password" id="mCode" name="password" autocomplete="current-password" placeholder="e.g. BHAV-recXXXXXXXX"
+              class="w-full bg-surface-container-low border-transparent focus:border-black focus:ring-0 rounded-xl px-4 py-3.5 text-on-surface placeholder:text-[#464555]/30 text-sm font-body outline-none transition-all"/>
+            <p class="text-[11px] text-[#464555]/40 mt-1.5">Sent in your TIG welcome email.</p>
+          </div>
+          <div class="flex gap-2 items-center">
+            <input type="checkbox" id="mRemember" class="w-4 h-4 accent-black shrink-0 rounded cursor-pointer"/>
+            <label for="mRemember" class="text-[12px] text-[#464555]/60 cursor-pointer">Remember my name &amp; code on this device</label>
+          </div>
+        </div>
+        <div>
+          <label class="block text-[11px] font-bold uppercase tracking-widest text-[#464555]/60 mb-2">Clarifying question <span class="normal-case font-normal">(optional)</span></label>
+          <textarea id="mNote" rows="2" placeholder="Leave blank if brief is clear."
+            class="w-full bg-surface-container-low border-transparent focus:border-black focus:ring-0 rounded-xl px-4 py-3.5 text-on-surface placeholder:text-[#464555]/30 text-sm font-body outline-none transition-all resize-none"></textarea>
+        </div>
+        <div class="flex gap-3 items-start pt-1">
+          <input type="checkbox" id="mConfirm" class="mt-0.5 w-4 h-4 accent-black shrink-0 rounded cursor-pointer"/>
+          <label for="mConfirm" class="text-sm text-on-surface cursor-pointer leading-relaxed">I confirm I can meet the deadline and have read the full brief.</label>
+        </div>
+      </div>
+      <div id="mErr" class="hidden mt-4 text-sm text-error font-medium"></div>
+      <div id="mSuc" class="hidden mt-4 text-sm text-[#1a9e75] font-medium bg-[#e8f8f2] rounded-xl p-4 leading-relaxed"></div>
+      <div class="grid grid-cols-2 gap-3 mt-6">
+        <button onclick="closeModal()" class="py-3.5 rounded-xl border border-[#c8c4d8]/40 text-on-surface font-bold text-sm hover:bg-surface-container-high transition-colors">Cancel</button>
+        <button id="mSubmit" onclick="submitClaim()" class="py-3.5 rounded-xl bg-primary text-on-primary font-bold text-sm shadow-md active:scale-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed">Confirm Claim</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── MOBILE BOTTOM NAV ──────────────────────────────────────────────────── -->
+<nav class="md:hidden fixed bottom-0 left-0 w-full flex justify-around items-center px-2 pb-6 pt-2 bg-[#fcf9f8] border-t border-[#c8c4d8]/20 z-50 rounded-t-2xl shadow-[0_-4px_20px_rgba(0,0,0,0.06)]">
+  <button class="mob-pill flex flex-col items-center gap-1 px-3 py-2 rounded-xl bg-[#fddf29] text-black" data-type="all">
+    <span class="material-symbols-outlined text-xl" style="font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 24">work</span>
+    <span class="text-[10px] font-bold uppercase tracking-widest">Feed</span>
+  </button>
+  <button class="mob-pill flex flex-col items-center gap-1 px-3 py-2 rounded-xl text-[#1c1b1b]/50" data-type="Design">
+    <span class="material-symbols-outlined text-xl">palette</span>
+    <span class="text-[10px] font-bold uppercase tracking-widest">Design</span>
+  </button>
+  <button class="mob-pill flex flex-col items-center gap-1 px-3 py-2 rounded-xl text-[#1c1b1b]/50" data-type="Edit">
+    <span class="material-symbols-outlined text-xl">movie_edit</span>
+    <span class="text-[10px] font-bold uppercase tracking-widest">Edit</span>
+  </button>
+  <button class="mob-pill flex flex-col items-center gap-1 px-3 py-2 rounded-xl text-[#1c1b1b]/50" data-type="Production">
+    <span class="material-symbols-outlined text-xl">videocam</span>
+    <span class="text-[10px] font-bold uppercase tracking-widest">Shoot</span>
+  </button>
+</nav>
+
+<!-- ── JAVASCRIPT ─────────────────────────────────────────────────────────── -->
+<script>
+const SB_URL  = 'https://snlcskmszhbipinffwpy.supabase.co/rest/v1';
+const SB_KEY  = 'sb_publishable_8_Fj46gQBqoA4HgidRKP6g_1uDbhWPM';
+const SB_HDRS = { 'apikey': SB_KEY, 'Authorization': `Bearer ${SB_KEY}`, 'Content-Type': 'application/json' };
+const OPS_CONTACT_WA = 'https://wa.me/919940237330';
+let jobs = [], filter = 'all', email = null, target = null;
+let savedName = null, savedCode = null;
+let briefCurrentId = null;
+
+// ── RATE CARD ──────────────────────────────────────────────────────────────
+const RATES = {
+  'Static Post': { standard: 500,  rush: 1000 },
+  'Reel':        { standard: 1500, rush: 2000 },
+  'Carousel':    { standard: 800,  rush: 1200 },
+  'Story':       { standard: 500,  rush: 1000 },
+};
+const SHOOT_RATES = { 'External': 2000, 'Internal': 1000 };
+
+// ── CLIENT MAP ─────────────────────────────────────────────────────────────
+const CLIENT_MAP = {
+  'RMJ': 'Ramajeyam Rice',
+  'ROY': 'Royal Chef',
+  'GRG': 'Green Gears',
+  'SPT': 'Super Painters',
+  'CHI': 'Chimp Herbs',
+};
+
+const CLIENT_LOGOS = {
+  'Ramajeyam Rice': 'Ramajeyam%20Rice%20Logo.png',
+  'Royal Chef':     'Royal%20Chef%20Logo%20from%20Alia.png',
+  'Green Gears':    'Green%20Gears%20Logo.png',
+  'Super Painters': 'Ratna%20Super%20Painters%20Logo.png',
+  'Chimp Herbs':    'ChimpX%20Logos.png',
+};
+
+function clientLogoImg(client) {
+  const src = CLIENT_LOGOS[client];
+  if (!src) return '';
+  return `<img src="${src}" alt="${client}" title="${client}"
+    class="h-9 w-9 rounded-xl object-contain bg-white border border-[#c8c4d8]/20 p-1"/>`;
+}
+
+function deriveAssetType(jobId) {
+  if (!jobId) return '';
+  if (jobId.includes('-REE-')) return 'Reel';
+  if (jobId.includes('-STA-')) return 'Static Post';
+  if (jobId.includes('-CAR-')) return 'Carousel';
+  if (jobId.includes('-STR-')) return 'Story';
+  return '';
+}
+
+function deriveClient(jobId) {
+  if (!jobId) return '';
+  return CLIENT_MAP[jobId.split('-')[0]] || '';
+}
+
+function category(assetType, shootType) {
+  if (shootType) return 'Production';
+  return (assetType || '').toLowerCase().includes('reel') ? 'Edit' : 'Design';
+}
+
+function assetIcon(assetType, shootType) {
+  if (shootType) return 'videocam';
+  const s = (assetType || '').toLowerCase();
+  if (s.includes('reel'))     return 'movie_edit';
+  if (s.includes('carousel')) return 'view_carousel';
+  if (s.includes('story'))    return 'auto_stories';
+  return 'palette';
+}
+
+// Color theme per asset type — icon bg, icon text, chip bg, chip text
+function assetTheme(assetType, shootType) {
+  if (shootType) {
+    const isExt = (shootType || '').toLowerCase().includes('external');
+    return { iconBg: '#fef3c7', iconColor: '#92400e', chipBg: '#fef3c7', chipText: '#92400e', label: isExt ? 'External Shoot' : 'Internal Shoot' };
+  }
+  const s = (assetType || '').toLowerCase();
+  if (s.includes('reel'))     return { iconBg: '#d1fae5', iconColor: '#065f46', chipBg: '#d1fae5', chipText: '#065f46', label: 'Reel' };
+  if (s.includes('carousel')) return { iconBg: '#f3e8ff', iconColor: '#6d28d9', chipBg: '#f3e8ff', chipText: '#6d28d9', label: 'Carousel' };
+  if (s.includes('story'))    return { iconBg: '#fff7ed', iconColor: '#9a3412', chipBg: '#fff7ed', chipText: '#9a3412', label: 'Story' };
+  return                             { iconBg: '#e0e7ff', iconColor: '#3730a3', chipBg: '#e0e7ff', chipText: '#3730a3', label: 'Static' };
+}
+
+// ── DATE HELPERS ───────────────────────────────────────────────────────────
+const MONTHS = ['','Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+
+function parseDate(d) {
+  if (!d) return null;
+  const p = d.toString().split('/');
+  if (p.length === 3) return new Date(parseInt(p[2]), parseInt(p[1]) - 1, parseInt(p[0]));
+  try { return new Date(d); } catch(e) { return null; }
+}
+
+function fmtDate(d) {
+  const dt = parseDate(d);
+  if (!dt) return '—';
+  return `${dt.getDate()} ${MONTHS[dt.getMonth() + 1]}`;
+}
+
+function daysLeft(d) {
+  const dt = parseDate(d);
+  if (!dt) return null;
+  const now = new Date(); now.setHours(0, 0, 0, 0);
+  dt.setHours(0, 0, 0, 0);
+  return Math.ceil((dt - now) / 86400000);
+}
+
+function cdText(days) {
+  if (days === null) return '';
+  if (days < 0)  return 'Overdue';
+  if (days === 0) return 'Due today';
+  if (days === 1) return '1 day left';
+  return `${days} days left`;
+}
+
+function deadlineColor(days) {
+  if (days === null || days > 10) return 'text-on-surface';
+  if (days <= 5) return 'text-error';
+  return 'text-[#e65100]';
+}
+
+const val = v => Array.isArray(v) ? v[0] : (v || '');
+
+// ── FETCH JOBS ─────────────────────────────────────────────────────────────
+async function loadJobs(silent = false) {
+  const grid = document.getElementById('jobGrid');
+  if (!silent) {
+    grid.className = 'text-center py-16 text-[#464555]/40 text-sm font-body';
+    grid.innerHTML = 'Fetching latest jobs…';
+  }
+  try {
+    const url = `${SB_URL}/v_jobs?order=internal_deadline.asc.nullslast&limit=1000`;
+    const resp = await fetch(url, { headers: { ...SB_HDRS, 'Range': '0-999' } });
+    if (!resp.ok) {
+      grid.innerHTML = `<div class="text-center py-16 text-[#464555]/40">Error loading jobs (${resp.status}). Please refresh.</div>`;
+      return;
+    }
+    const recs = await resp.json();
+
+    if (!recs.length) {
+      grid.innerHTML = '<div class="text-center py-16 text-[#464555]/40">No open jobs at the moment. Check back soon.</div>';
+      document.getElementById('countBar').textContent = '0 jobs · 0 open · 0 claimed';
+      return;
+    }
+
+    jobs = recs.map(row => {
+      const jobId    = row.job_id || '';
+      const assetType = row.asset_type || deriveAssetType(jobId) || '';
+      const client   = row.client_name || deriveClient(jobId) || 'TIG';
+      const deadline = row.internal_deadline || '';
+      const days     = daysLeft(deadline);
+      const isRush   = row.is_rush || (days !== null && days <= 5);
+
+      // Production / Shoot detection
+      const prodCat  = row.production_category || '';
+      const shootType = (prodCat.toLowerCase().includes('shoot') ||
+                         prodCat.toLowerCase() === 'external' ||
+                         prodCat.toLowerCase() === 'internal')
+                        ? prodCat : '';
+
+      // Rate
+      const rateCard = RATES[assetType] || { standard: 0, rush: 0 };
+      let stdRate, rushRate;
+      if (shootType) {
+        const isExt = shootType.toLowerCase().includes('external');
+        stdRate  = row.rate_auto || (isExt ? SHOOT_RATES.External : SHOOT_RATES.Internal);
+        rushRate = stdRate;
+      } else {
+        stdRate  = row.rate_auto || rateCard.standard || '';
+        rushRate = row.rate_auto || rateCard.rush || '';
+      }
+
+      return {
+        id:             row.job_id,
+        jobId,
+        title:          row.job_title || 'Untitled',
+        client,
+        assetType,
+        shootType,
+        jobCategory:    category(assetType, shootType),
+        description:    row.description || row.notes || '',
+        topic:          '',
+        visualBrief:    row.visual_brief || '',
+        copy:           row.copy || row.caption || '',
+        dimensions:     '',
+        brandUrl:       row.brand_guidelines_url || '',
+        brandSocialUrl: '',
+        refUrl:         '',
+        refImageUrl:    row.reference_image_url || '',
+        submitUrl:      row.submission_folder_url || '',
+        sourceFilesUrl: '',
+        deadline,
+        status:         row.board_status || 'Open',
+        claimEmail:     row.claimed_by_email || '',
+        stdRate,
+        rushRate,
+        isRush,
+      };
+    });
+
+    // Populate client filter dropdown
+    const clients = [...new Set(jobs.map(j => j.client).filter(Boolean))].sort();
+    const sel = document.getElementById('filterClient');
+    if (sel) {
+      const cur = sel.value;
+      sel.innerHTML = '<option value="">All Clients</option>' + clients.map(c => `<option value="${c}"${c===cur?' selected':''}>${c}</option>`).join('');
+    }
+
+    render();
+    if (location.hash) {
+      const target = decodeURIComponent(location.hash.slice(1));
+      if (jobs.find(x => x.id === target)) openBrief(target);
+    }
+  } catch(e) {
+    grid.innerHTML = `<div class="text-center py-16 text-[#464555]/40">Could not reach the server. Check your connection and refresh.<br/><small class="text-xs opacity-50">${e.message}</div>`;
+    console.error('loadJobs failed:', e);
+  }
+}
+
+// ── RENDER ─────────────────────────────────────────────────────────────────
+function render() {
+  const clientFilter = document.getElementById('filterClient')?.value || '';
+  const sortBy = document.getElementById('sortBy')?.value || 'deadline';
+  let list = filter === 'all' ? jobs : jobs.filter(j => j.jobCategory === filter);
+  if (clientFilter) list = list.filter(j => j.client === clientFilter);
+  // Sort — Open → Claimed → Submitted → Revision Needed → Approved → Posted, then sub-sort
+  const STATUS_ORDER = { 'Open':0, 'Claimed':1, 'Submitted':2, 'Revision Needed':3, 'Approved':4, 'Posted':5 };
+  list = [...list].sort((a, b) => {
+    const aOrd = STATUS_ORDER[a.status] ?? 9;
+    const bOrd = STATUS_ORDER[b.status] ?? 9;
+    if (aOrd !== bOrd) return aOrd - bOrd;
+    if (sortBy === 'payout_asc') return (parseFloat(a.stdRate)||0) - (parseFloat(b.stdRate)||0);
+    if (sortBy === 'payout_desc') return (parseFloat(b.stdRate)||0) - (parseFloat(a.stdRate)||0);
+    if (sortBy === 'rush') return (b.isRush ? 1 : 0) - (a.isRush ? 1 : 0);
+    // Default: deadline ascending
+    const da = a.deadline ? new Date(a.deadline) : new Date('9999-12-31');
+    const db = b.deadline ? new Date(b.deadline) : new Date('9999-12-31');
+    return da - db;
+  });
+  const grid = document.getElementById('jobGrid');
+  const bar  = document.getElementById('countBar');
+  const open      = list.filter(j => j.status === 'Open').length;
+  const claimed   = list.filter(j => j.status === 'Claimed').length;
+  const inReview  = list.filter(j => ['Submitted','Revision Needed','Approved','Posted'].includes(j.status)).length;
+  bar.textContent = `${list.length} job${list.length !== 1 ? 's' : ''} · ${open} open · ${claimed} claimed · ${inReview} in review`;
+
+  // Update filter pill counts
+  const allCount        = jobs.length;
+  const designCount     = jobs.filter(j => j.jobCategory === 'Design').length;
+  const editCount       = jobs.filter(j => j.jobCategory === 'Edit').length;
+  const productionCount = jobs.filter(j => j.jobCategory === 'Production').length;
+  document.querySelectorAll('.nav-pill, .mob-pill').forEach(p => {
+    if (p.dataset.type === 'all')        p.textContent = `All Jobs (${allCount})`;
+    if (p.dataset.type === 'Design')     p.textContent = `Design (${designCount})`;
+    if (p.dataset.type === 'Edit')       p.textContent = `Edit (${editCount})`;
+    if (p.dataset.type === 'Production') p.textContent = `Production (${productionCount})`;
+  });
+
+  if (!list.length) {
+    grid.className = '';
+    grid.innerHTML = '<div class="text-center py-16 text-[#464555]/40">No jobs in this category right now.</div>';
+    return;
+  }
+
+  grid.className = 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6';
+  grid.innerHTML = list.map((j, i) => {
+    const days     = daysLeft(j.deadline);
+    const dispRate = j.stdRate;
+    const cat      = j.jobCategory;
+    const icon     = assetIcon(j.assetType, j.shootType);
+    const theme    = assetTheme(j.assetType, j.shootType);
+    const dlColor  = deadlineColor(days);
+    const dlText   = cdText(days);
+
+    const claimer = j.claimEmail ? j.claimEmail.split('@')[0] : '';
+
+    let claimBtn;
+    if (j.status === 'Claimed') {
+      if (email && j.claimEmail === email) {
+        claimBtn = `<button class="py-3 px-4 rounded-xl bg-[#e8f8f2] text-[#1a9e75] font-bold text-sm border border-[#1a9e75]/20 cursor-default flex flex-col items-center leading-tight" disabled>
+          <span class="text-[10px] font-bold uppercase tracking-wider opacity-60">Claimed by you</span>
+        </button>`;
+      } else {
+        claimBtn = `<button class="py-3 px-4 rounded-xl bg-[#f0edec] text-[#464555]/50 font-bold text-sm cursor-default flex flex-col items-center leading-tight" disabled>
+          <span class="text-[10px] uppercase tracking-wider mb-0.5 opacity-60">Claimed by</span>
+          <span class="text-xs font-bold">${claimer}</span>
+        </button>`;
+      }
+    } else if (j.status === 'Submitted') {
+      claimBtn = `<button class="py-3 px-4 rounded-xl font-bold text-sm cursor-default flex items-center justify-center gap-1.5" style="background:#eff6ff;color:#2563eb" disabled>
+        <span class="text-[10px] uppercase tracking-wider font-bold">In Review</span>
+      </button>`;
+    } else if (j.status === 'Revision Needed') {
+      claimBtn = `<button class="py-3 px-4 rounded-xl font-bold text-sm cursor-default flex items-center justify-center gap-1.5" style="background:#fefce8;color:#b45309" disabled>
+        <span class="text-[10px] uppercase tracking-wider font-bold">Revision</span>
+      </button>`;
+    } else if (j.status === 'Approved') {
+      claimBtn = `<button class="py-3 px-4 rounded-xl font-bold text-sm cursor-default flex items-center justify-center gap-1.5" style="background:#f0fdf4;color:#15803d" disabled>
+        <span class="text-[10px] uppercase tracking-wider font-bold">Approved ✓</span>
+      </button>`;
+    } else if (j.status === 'Posted') {
+      claimBtn = `<button class="py-3 px-4 rounded-xl font-bold text-sm cursor-default flex items-center justify-center gap-1.5" style="background:#f3f4f6;color:#6b7280" disabled>
+        <span class="text-[10px] uppercase tracking-wider font-bold">Posted ✓</span>
+      </button>`;
+    } else if (email) {
+      claimBtn = `<button onclick="openClaim('${j.id}')" class="py-3 px-4 rounded-xl bg-primary text-on-primary font-bold text-sm shadow-md active:scale-95 transition-all">Claim Now</button>`;
+    } else {
+      claimBtn = `<div class="relative group/tip">
+        <button onclick="scrollToUnlock()" class="w-full py-3 px-4 rounded-xl bg-[#f0edec] text-[#464555]/40 font-bold text-sm cursor-pointer hover:bg-[#e8e5e5] transition-colors">Claim</button>
+        <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-52 bg-[#1c1b1b] text-white text-xs rounded-xl px-3 py-2.5 opacity-0 group-hover/tip:opacity-100 transition-opacity pointer-events-none text-center leading-relaxed z-10 shadow-lg">
+          Enter your registered email above to unlock claims
+          <div class="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-[#1c1b1b]"></div>
+        </div>
+      </div>`;
+    }
+
+    return `
+    <div class="group bg-white rounded-2xl p-6 editorial-shadow transition-all duration-300 hover:scale-[1.02] flex flex-col border border-[#c8c4d8]/15">
+      <div class="flex justify-between items-start mb-5">
+        <div class="flex items-center gap-2">
+          <div class="p-2.5 rounded-xl" style="background:${theme.iconBg};color:${theme.iconColor}">
+            <span class="material-symbols-outlined text-xl">${icon}</span>
+          </div>
+          ${clientLogoImg(j.client)}
+        </div>
+        ${j.isRush ? `<span class="bg-[#ffdad6] text-[#93000a] px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest">Rush</span>` : ''}
+      </div>
+      <h3 class="font-headline text-lg font-bold text-on-surface mb-1 group-hover:opacity-70 transition-opacity leading-snug">${j.title}</h3>
+      <p class="font-label text-sm text-secondary font-medium mb-4">${j.client}</p>
+      <div class="flex flex-wrap gap-2 mb-5">
+        <span class="px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider" style="background:${theme.chipBg};color:${theme.chipColor || theme.chipText}">${theme.label}</span>
+        <span class="bg-[#f0edec] text-[#464555] px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider">${cat}</span>
+      </div>
+      <p class="font-body text-sm text-[#464555]/70 line-clamp-3 mb-6 flex-grow leading-relaxed">${j.description || j.topic || 'No description available.'}</p>
+      <div class="bg-surface-container-low rounded-xl p-4 flex justify-between items-center mb-5">
+        <div class="flex flex-col gap-0.5">
+          <span class="text-[10px] font-bold uppercase tracking-widest text-[#464555]/50">Price</span>
+          <div class="flex items-center gap-1.5">
+            <span class="text-lg font-bold text-on-surface">₹${dispRate || '—'}</span>
+          </div>
+        </div>
+        <div class="flex flex-col items-end gap-0.5">
+          <span class="text-[10px] font-bold uppercase tracking-widest text-[#464555]/50">Deadline</span>
+          <span class="text-sm font-semibold text-on-surface">${fmtDate(j.deadline)}</span>
+          ${dlText ? `<span class="text-[11px] font-bold ${dlColor}">${dlText}</span>` : ''}
+        </div>
+      </div>
+      <div class="grid grid-cols-2 gap-3">
+        <button onclick="openBrief('${j.id}')" class="py-3 px-4 rounded-xl border border-[#c8c4d8]/40 text-on-surface font-bold text-sm hover:bg-surface-container-high transition-colors">View Brief</button>
+        ${claimBtn}
+      </div>
+    </div>`;
+  }).join('');
+
+  // Glass wall — show if more than 3 jobs and not already expanded
+  const glass   = document.getElementById('gridGlass');
+  const wrapper = document.getElementById('gridWrapper');
+  if (list.length > 3 && !wrapper.classList.contains('expanded')) {
+    glass.classList.remove('hidden');
+    document.getElementById('revealLabel').textContent = `View all ${list.length} jobs`;
+  } else {
+    glass.classList.add('hidden');
+  }
+}
+
+function revealAllJobs() {
+  const wrapper = document.getElementById('gridWrapper');
+  const glass   = document.getElementById('gridGlass');
+  wrapper.style.maxHeight = '9999px';
+  wrapper.classList.add('expanded');
+  glass.classList.add('hidden');
+}
+
+function scrollToUnlock() {
+  document.getElementById('heroSection').scrollIntoView({ behavior: 'smooth', block: 'center' });
+  setTimeout(() => document.getElementById('emailInput').focus(), 600);
+}
+
+// ── BRIEF PANEL ────────────────────────────────────────────────────────────
+function openBrief(id) {
+  const j = jobs.find(x => x.id === id);
+  if (!j) return;
+  briefCurrentId = id;
+  document.getElementById('bTitle').textContent = j.title;
+  document.getElementById('bSub').textContent   = `${j.jobId} · ${j.client} · Due ${fmtDate(j.deadline)}`;
+  const btn = document.getElementById('briefClaimBtn');
+  if (!email) {
+    btn.textContent = 'Unlock to Claim';
+    btn.onclick = () => { closeBrief(); scrollToUnlock(); };
+    btn.className = btn.className.replace('bg-primary text-on-primary', 'bg-[#f0edec] text-[#464555]/60');
+  } else if (j.status === 'Claimed') {
+    btn.textContent = j.claimEmail === email ? 'Claimed by you' : 'Already Claimed';
+    btn.disabled = true;
+    btn.className = btn.className.replace('bg-primary text-on-primary', 'bg-[#f0edec] text-[#464555]/40');
+  } else {
+    btn.textContent = 'Claim This Job';
+    btn.disabled = false;
+    btn.onclick = () => claimFromBrief();
+    btn.className = btn.className.replace('bg-[#f0edec] text-[#464555]/60', 'bg-primary text-on-primary').replace('bg-[#f0edec] text-[#464555]/40', 'bg-primary text-on-primary');
+  }
+
+  let h = '';
+
+  // Distinct card for each section
+  const box = (label, content, bg = '#f6f3f2', border = 'transparent') =>
+    `<div class="mb-4 rounded-2xl p-5" style="background:${bg};border:1px solid ${border}">
+       <span class="block text-[10px] font-bold uppercase tracking-widest text-[#464555]/50 mb-3">${label}</span>
+       ${content}
+     </div>`;
+
+  // Full-width row button for links
+  const rowBtn = (href, icon, label, dark = false) =>
+    `<a href="${href}" target="_blank"
+       class="flex items-center gap-3 w-full px-4 py-3.5 rounded-xl text-sm font-semibold transition-colors ${dark ? 'bg-black text-white hover:bg-[#1a1a1a]' : 'bg-white border border-[#c8c4d8]/30 text-on-surface hover:bg-surface-container-low'}">
+       <span class="material-symbols-outlined text-[20px]">${icon}</span>
+       <span class="flex-1">${label}</span>
+       <span class="material-symbols-outlined text-[14px] opacity-40">open_in_new</span>
+     </a>`;
+
+  // ── 1. ASSETS & REFERENCES (images first) ──────────────────────────────
+  const assetBtns = [];
+  if (j.refImageUrl)    assetBtns.push(rowBtn(j.refImageUrl,    'photo_library', 'Reference Images'));
+  if (j.refUrl)         assetBtns.push(rowBtn(j.refUrl,         'folder_open',   'Reference Folder'));
+  if (j.brandUrl)       assetBtns.push(rowBtn(j.brandUrl,       'palette',       'Brand Guidelines'));
+  if (j.brandSocialUrl) assetBtns.push(rowBtn(j.brandSocialUrl, 'share',         'Brand Social Page'));
+  if (assetBtns.length) h += box('Assets & References', `<div class="flex flex-col gap-2">${assetBtns.join('')}</div>`);
+
+  // ── 2. TEXT SECTIONS (each in its own distinct box) ─────────────────────
+  if (j.description) h += box('Description',      `<p class="font-body text-sm text-on-surface leading-relaxed whitespace-pre-line">${j.description}</p>`,  '#ffffff', '#e5e2e1');
+  if (j.topic)       h += box('Brief / Topic',    `<p class="font-body text-sm text-on-surface leading-relaxed whitespace-pre-line">${j.topic}</p>`,         '#ffffff', '#e5e2e1');
+  if (j.visualBrief) h += box('Visual Direction', `<p class="font-body text-sm text-on-surface leading-relaxed whitespace-pre-line">${j.visualBrief}</p>`,   '#ffffff', '#e5e2e1');
+  if (j.copy)        h += box('Copy',              `<p class="font-body text-sm text-on-surface leading-relaxed whitespace-pre-line">${j.copy}</p>`,         '#fffbe6', '#f59e0b33');
+  if (j.dimensions)  h += box('Dimensions',       `<p class="font-body text-sm font-semibold text-on-surface">${j.dimensions}</p>`,                          '#ffffff', '#e5e2e1');
+
+  // ── 3. DELIVERY FOLDERS (source files above submission) ─────────────────
+  const deliverBtns = [];
+  if (j.sourceFilesUrl) deliverBtns.push(rowBtn(j.sourceFilesUrl, 'folder_zip',          'Source Files Folder'));
+  if (j.submitUrl)      deliverBtns.push(rowBtn(j.submitUrl,      'drive_folder_upload', 'Submission Folder', true));
+  if (deliverBtns.length) h += box('Delivery', `<div class="flex flex-col gap-2">${deliverBtns.join('')}</div>`, '#f0fdf4', '#16a34a33');
+
+  // ── 4. OPS CONTACT CALLOUT (always shown, at the end) ───────────────────
+  h += `<div class="mt-2 rounded-2xl p-5" style="background:#fef9ec;border:1px solid #f59e0b44">
+    <div class="flex items-start gap-3">
+      <span class="material-symbols-outlined mt-0.5" style="font-size:20px;color:#d97706;font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 24">support_agent</span>
+      <div class="flex-1">
+        <p class="text-[10px] font-bold uppercase tracking-widest mb-1" style="color:#d97706">Need help with this brief?</p>
+        <p class="text-sm leading-relaxed" style="color:#464555">Have a question or something's unclear? Reach out to your TIG Ops lead before you start.</p>
+        <a href="${OPS_CONTACT_WA}" target="_blank" class="inline-flex items-center gap-1.5 mt-2.5 text-sm font-bold hover:underline" style="color:#d97706">
+          <span class="material-symbols-outlined text-[16px]">chat</span>
+          Message Ops Lead on WhatsApp
+        </a>
+      </div>
+    </div>
+  </div>`;
+
+  if (!assetBtns.length && !j.description && !j.topic && !j.visualBrief && !j.copy) h = '<p class="text-sm text-[#464555]/40 mb-6">No additional brief details available yet.</p>' + h;
+  document.getElementById('bContent').innerHTML = h;
+  document.getElementById('briefOverlay').classList.remove('hidden');
+  history.replaceState(null, '', '#' + id);
+}
+
+function closeBrief() {
+  document.getElementById('briefOverlay').classList.add('hidden');
+  if (location.hash) history.replaceState(null, '', location.pathname + location.search);
+}
+
+function shareBrief() {
+  if (!briefCurrentId) return;
+  const url = location.origin + location.pathname + '#' + briefCurrentId;
+  navigator.clipboard.writeText(url).then(() => {
+    const btn = document.getElementById('bShareBtn');
+    btn.innerHTML = '<span class="material-symbols-outlined text-[18px]">check</span>';
+    btn.title = 'Link copied!';
+    setTimeout(() => {
+      btn.innerHTML = '<span class="material-symbols-outlined text-[18px]">share</span>';
+      btn.title = 'Copy share link';
+    }, 2000);
+  });
+}
+
+function claimFromBrief() {
+  if (!briefCurrentId) return;
+  closeBrief();
+  openClaim(briefCurrentId);
+}
+
+// ── GATE UI HELPERS ────────────────────────────────────────────────────────
+function showUnlockedGate(emailAddr, fullName) {
+  document.getElementById('gateLocked').classList.add('hidden');
+  document.getElementById('gateUnlocked').classList.remove('hidden');
+  document.getElementById('gateStatus').textContent = '';
+  const first = (fullName || '').split(' ')[0];
+  document.getElementById('gateUnlockedEmail').textContent =
+    first ? `${first} · ${emailAddr}` : emailAddr;
+}
+
+function signOutGate() {
+  email = null; savedName = null; savedCode = null;
+  localStorage.removeItem('tig_email');
+  localStorage.removeItem('tig_name');
+  localStorage.removeItem('tig_access_code');
+  document.getElementById('gateUnlocked').classList.add('hidden');
+  document.getElementById('gateLocked').classList.remove('hidden');
+  document.getElementById('emailInput').value = '';
+  document.getElementById('gateStatus').textContent = '';
+  render();
+}
+
+// ── EMAIL VERIFY ───────────────────────────────────────────────────────────
+async function verifyEmail() {
+  const v  = document.getElementById('emailInput').value.trim().toLowerCase();
+  const st = document.getElementById('gateStatus');
+  if (!v) { st.className = 'text-error text-sm font-semibold'; st.textContent = 'Please enter your email.'; return; }
+  st.className = 'text-[#464555]/60 text-sm'; st.textContent = 'Checking…';
+  try {
+    const url = `${SB_URL}/freelancers?email=eq.${encodeURIComponent(v)}&select=email,full_name,status,trial_passed,nda_signed,agreement_signed`;
+    const resp = await fetch(url, { headers: SB_HDRS });
+    const recs = await resp.json();
+    if (recs && recs.length) {
+      const rec = recs[0];
+      const fullName = rec.full_name || '';
+      const isActive = rec.status === 'Active' && rec.trial_passed === true
+                       && rec.nda_signed === true && rec.agreement_signed === true;
+      const isWhitelisted = rec.status === 'Whitelisted';
+
+      if (isActive) {
+        email = v;
+        localStorage.setItem('tig_email', v);
+        if (fullName) localStorage.setItem('tig_name', fullName);
+        st.textContent = '';
+        showUnlockedGate(v, fullName);
+      } else if (isWhitelisted) {
+        email = null;
+        st.className = 'text-sm font-medium';
+        st.innerHTML = `<span style="color:#b45309">Your application is under review — hold tight and circle back to claim. Feel free to browse jobs until then!</span>`;
+      } else {
+        email = null;
+        st.className = 'text-sm font-medium';
+        st.innerHTML = `<span style="color:#b45309">Your application is under review — hold tight and circle back to claim. Feel free to browse jobs until then!</span>`;
+      }
+    } else {
+      email = null;
+      st.className = 'text-sm font-medium';
+      st.innerHTML = `<span class="text-[#b45309]">Hey! Looks like your awesome profile may not be listed with us… yet. Let's get that fixed right away.</span>
+        <a href="https://tally.so/r/0QLLWZ" target="_blank"
+          class="inline-flex items-center gap-1 ml-2 text-black font-bold underline underline-offset-2 hover:opacity-70 transition-opacity">
+          Register here →
+        </a>`;
+    }
+    render();
+  } catch(e) {
+    st.className = 'text-error text-sm font-semibold';
+    st.textContent = 'Verification failed. Please try again.';
+  }
+}
+
+// ── CLAIM ──────────────────────────────────────────────────────────────────
+function openClaim(id) {
+  target = jobs.find(x => x.id === id);
+  if (!target) return;
+  document.getElementById('mTitle').textContent = target.title;
+  document.getElementById('mSub').textContent   = `Job ID: ${target.jobId}  ·  ${email}`;
+  document.getElementById('mNote').value = '';
+  document.getElementById('mConfirm').checked = false;
+  document.getElementById('mErr').classList.add('hidden');
+  document.getElementById('mSuc').classList.add('hidden');
+  document.getElementById('mSubmit').disabled = false;
+  document.getElementById('mSubmit').textContent = 'Confirm Claim';
+
+  if (savedName && savedCode) {
+    // Credentials already verified this session — show collapsed pill, hide name/code fields
+    document.getElementById('mCredFields').classList.add('hidden');
+    document.getElementById('mCredSaved').classList.remove('hidden');
+    document.getElementById('mCredSavedName').textContent = savedName;
+  } else {
+    document.getElementById('mCredFields').classList.remove('hidden');
+    document.getElementById('mCredSaved').classList.add('hidden');
+    const remName = localStorage.getItem('tig_remembered_name') || '';
+    const remCode = localStorage.getItem('tig_remembered_code') || '';
+    document.getElementById('mName').value = remName;
+    document.getElementById('mCode').value = remCode;
+    // Pre-tick remember checkbox if device credentials are already saved
+    document.getElementById('mRemember').checked = !!(remName && remCode);
+  }
+
+  document.getElementById('claimOverlay').classList.remove('hidden');
+}
+
+function closeModal() { document.getElementById('claimOverlay').classList.add('hidden'); target = null; }
+
+async function submitClaim() {
+  const claimJobId = target?.id; // capture at top — target gets nulled by closeModal later
+  if (!claimJobId) { closeModal(); return; }
+  const name = savedName || document.getElementById('mName').value.trim();
+  const code = savedCode || document.getElementById('mCode').value.trim();
+  const ok   = document.getElementById('mConfirm').checked;
+  const err  = document.getElementById('mErr');
+  const suc  = document.getElementById('mSuc');
+  const btn  = document.getElementById('mSubmit');
+  err.classList.add('hidden'); suc.classList.add('hidden');
+  if (!name) { err.textContent = 'Please enter your full name.';              err.classList.remove('hidden'); return; }
+  if (!code) { err.textContent = 'Please enter your access code.';            err.classList.remove('hidden'); return; }
+  if (!ok)   { err.textContent = 'Please confirm you can meet the deadline.'; err.classList.remove('hidden'); return; }
+  btn.disabled = true; btn.textContent = 'Verifying…';
+  try {
+    // Validate access code against Supabase freelancers table
+    if (!savedCode) {
+      btn.textContent = 'Verifying code…';
+      const codeCheck = await fetch(
+        `${SB_URL}/freelancers?email=eq.${encodeURIComponent(email)}&access_code=eq.${encodeURIComponent(code)}&select=email`,
+        { headers: SB_HDRS }
+      );
+      const codeRecs = await codeCheck.json();
+      if (!Array.isArray(codeRecs) || !codeRecs.length) {
+        err.textContent = 'Invalid access code. Check your TIG welcome email and try again.';
+        err.classList.remove('hidden');
+        btn.disabled = false; btn.textContent = 'Confirm Claim';
+        return;
+      }
+    }
+    btn.textContent = 'Checking availability…';
+    // Fresh check — confirm job is still Open right now
+    const freshCheck = await fetch(
+      `${SB_URL}/v_jobs?job_id=eq.${encodeURIComponent(claimJobId)}&select=job_id,board_status,claimed_by_email`,
+      { headers: SB_HDRS }
+    );
+    if (freshCheck.ok) {
+      const freshRecs = await freshCheck.json();
+      if (freshRecs.length) {
+        const currentStatus = freshRecs[0].board_status;
+        if (currentStatus && currentStatus !== 'Open') {
+          err.textContent = 'Sorry — this job was just claimed by someone else.';
+          err.classList.remove('hidden');
+          btn.disabled = false; btn.textContent = 'Confirm Claim';
+          const takenJob = jobs.find(x => x.id === claimJobId);
+          if (takenJob) {
+            takenJob.status = 'Claimed';
+            takenJob.claimEmail = freshRecs[0].claimed_by_email || 'another user';
+            render();
+          }
+          setTimeout(() => closeModal(), 2500);
+          return;
+        }
+      }
+    }
+    btn.textContent = 'Submitting…';
+    // Claim the job — set board_status + claimed_by_email atomically
+    const patchResp = await fetch(
+      `${SB_URL}/jobs?job_id=eq.${encodeURIComponent(claimJobId)}`,
+      {
+        method:  'PATCH',
+        headers: { ...SB_HDRS, 'Prefer': 'return=representation' },
+        body:    JSON.stringify({ board_status: 'Claimed', claimed_by_email: email, claimed_at: new Date().toISOString() }),
+      }
+    );
+    if (!patchResp.ok) {
+      let msg = `Server error (${patchResp.status})`;
+      try { const body = await patchResp.json(); msg = body.message || body.details || JSON.stringify(body); } catch(_) {}
+      throw new Error(msg);
+    }
+    savedName = name; savedCode = code;
+    localStorage.setItem('tig_email', email);
+    localStorage.setItem('tig_name', savedName);
+    localStorage.setItem('tig_access_code', savedCode);
+    if (document.getElementById('mRemember') && document.getElementById('mRemember').checked) {
+      localStorage.setItem('tig_remembered_name', savedName);
+      localStorage.setItem('tig_remembered_code', savedCode);
+    } else {
+      localStorage.removeItem('tig_remembered_name');
+      localStorage.removeItem('tig_remembered_code');
+    }
+    suc.textContent = 'Claimed! You will receive a confirmation email within 24 hours. Do not start work until then.';
+    suc.classList.remove('hidden');
+    btn.textContent = 'Done';
+    // Optimistic update
+    const claimedJob = jobs.find(j => j.id === claimJobId);
+    if (claimedJob) {
+      claimedJob.status     = 'Claimed';
+      claimedJob.claimEmail = email;
+      render();
+    }
+    // Background refresh
+    await loadJobs(true);
+    setTimeout(() => { closeModal(); }, 2500);
+  } catch(e) {
+    console.error('submitClaim failed:', e);
+    err.textContent = `Claim failed: ${e.message}`;
+    err.classList.remove('hidden'); btn.disabled = false; btn.textContent = 'Confirm Claim';
+  }
+}
+
+// ── FILTER PILLS ───────────────────────────────────────────────────────────
+function setFilter(type) {
+  filter = type;
+  // Desktop nav
+  document.querySelectorAll('.nav-pill').forEach(p => {
+    const active = p.dataset.type === type;
+    p.classList.toggle('text-[#000000]',     active);
+    p.classList.toggle('border-[#fddf29]',   active);
+    p.classList.toggle('text-[#1c1b1b]/50',  !active);
+    p.classList.toggle('border-transparent', !active);
+  });
+  // Mobile nav
+  document.querySelectorAll('.mob-pill').forEach(p => {
+    const active = p.dataset.type === type;
+    p.classList.toggle('bg-[#fddf29]',      active);
+    p.classList.toggle('text-black',         active);
+    p.classList.toggle('text-[#1c1b1b]/50', !active);
+  });
+  render();
+}
+
+document.querySelectorAll('.nav-pill, .mob-pill').forEach(p => {
+  p.addEventListener('click', () => {
+    setFilter(p.dataset.type);
+    document.getElementById('jobGrid').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
+});
+
+document.getElementById('emailInput').addEventListener('keydown', e => {
+  if (e.key === 'Enter') verifyEmail();
+});
+
+// ── DASHBOARD NAV ──────────────────────────────────────────────────────────
+function goToDashboard() {
+  if (email) {
+    window.location.href = 'dashboard';
+  } else {
+    // Not logged in — scroll to the email input and focus it
+    document.getElementById('heroSection').scrollIntoView({ behavior: 'smooth', block: 'center' });
+    setTimeout(() => document.getElementById('emailInput').focus(), 400);
+  }
+}
+
+// ── REVIEWS ────────────────────────────────────────────────────────────────
+let currentRating = 0;
+
+function openReviews() {
+  currentRating = 0;
+  document.getElementById('rName').value = localStorage.getItem('tig_name') || '';
+  document.getElementById('rRole').value = '';
+  document.getElementById('rText').value = '';
+  document.getElementById('rErr').classList.add('hidden');
+  document.getElementById('rSuc').classList.add('hidden');
+  document.getElementById('rSubmit').disabled = false;
+  document.getElementById('rSubmit').textContent = 'Submit Review';
+  renderStars(0);
+  fetchReviews();
+  document.getElementById('reviewsOverlay').classList.remove('hidden');
+}
+
+function closeReviews() { document.getElementById('reviewsOverlay').classList.add('hidden'); }
+
+function setRating(n) { currentRating = n; renderStars(n); }
+
+function renderStars(n) {
+  document.querySelectorAll('.star-btn').forEach(btn => {
+    const s = parseInt(btn.dataset.star);
+    btn.style.color = s <= n ? '#fddf29' : '#c8c4d8';
+  });
+}
+
+async function fetchReviews() {
+  // Reviews feature not yet available — show empty state gracefully
+  const list = document.getElementById('reviewsList');
+  if (list) list.innerHTML = '<p class="text-xs text-[#464555]/40 text-center py-2 pb-4">No reviews yet — be the first!</p>';
+}
+
+async function submitReview() {
+  const name   = document.getElementById('rName').value.trim();
+  const role   = document.getElementById('rRole').value.trim();
+  const text   = document.getElementById('rText').value.trim();
+  const errEl  = document.getElementById('rErr');
+  const sucEl  = document.getElementById('rSuc');
+  const btn    = document.getElementById('rSubmit');
+  errEl.classList.add('hidden'); sucEl.classList.add('hidden');
+  if (!currentRating) { errEl.textContent = 'Please select a star rating.'; errEl.classList.remove('hidden'); return; }
+  if (!name)          { errEl.textContent = 'Please enter your name.';       errEl.classList.remove('hidden'); return; }
+  if (!text)          { errEl.textContent = 'Please write a short review.';  errEl.classList.remove('hidden'); return; }
+  btn.disabled = true; btn.textContent = 'Submitting…';
+  // Reviews table coming soon — show optimistic success for now
+  sucEl.textContent = 'Thanks for your review! It will appear here once approved.';
+  sucEl.classList.remove('hidden');
+  btn.textContent = 'Submitted ✓';
+  document.getElementById('rText').value = '';
+  currentRating = 0; renderStars(0);
+}
+
+// ── TUTORIAL ───────────────────────────────────────────────────────────────
+const TUTORIAL_STEPS = [
+  { title: 'Welcome to TIG Job Board', body: 'This is where TIG freelancers find and claim paid creative jobs. Let us walk you through how it works.', selector: null },
+  { title: 'Filter by category', body: 'Switch between All Jobs, Design (statics, carousels, stories), Edit (reels), and Production (shoots) using these tabs.', selector: 'nav .flex.gap-6.items-center' },
+  { title: 'Unlock the board', body: 'Enter your registered email address here to verify your identity. This unlocks the ability to claim jobs.', selector: '#gateLocked' },
+  { title: 'Browse job cards', body: 'Each card shows the job type, client, payout, and deadline. Tap "View Brief" to see the full creative brief.', selector: '#jobGrid' },
+  { title: 'Claim a job', body: 'Once unlocked, hit "Claim Now" to grab a job. Enter your name and access code (from your TIG welcome email) to confirm.', selector: '#jobGrid' },
+  { title: 'My Dashboard', body: 'Track all your claimed jobs, submit deliverables, and view your earnings history here.', selector: '#dashboardBtn' },
+];
+
+let tutStep = 0;
+
+function startTutorial() {
+  tutStep = 0;
+  document.getElementById('tutOverlay').classList.remove('hidden');
+  const sp = document.getElementById('tutSpotlight');
+  sp.classList.remove('hidden');
+  sp.style.boxShadow = '0 0 0 9999px rgba(0,0,0,0.65)'; // set only when active
+  document.getElementById('tutCard').classList.remove('hidden');
+  showTutStep(0);
+}
+
+function endTutorial() {
+  document.getElementById('tutOverlay').classList.add('hidden');
+  const sp = document.getElementById('tutSpotlight');
+  sp.classList.add('hidden');
+  sp.style.boxShadow = 'none'; // clear so it never leaks through
+  document.getElementById('tutCard').classList.add('hidden');
+  localStorage.setItem('tig_tutorial_done', '1');
+}
+
+function tutNav(dir) {
+  tutStep = Math.max(0, Math.min(TUTORIAL_STEPS.length - 1, tutStep + dir));
+  showTutStep(tutStep);
+}
+
+function showTutStep(idx) {
+  const step = TUTORIAL_STEPS[idx];
+  const isLast = idx === TUTORIAL_STEPS.length - 1;
+  document.getElementById('tutStepLabel').textContent = `Step ${idx + 1} of ${TUTORIAL_STEPS.length}`;
+  document.getElementById('tutTitle').textContent = step.title;
+  document.getElementById('tutBody').textContent  = step.body;
+  document.getElementById('tutNext').textContent  = isLast ? 'Done ✓' : 'Next →';
+  document.getElementById('tutPrev').classList.toggle('hidden', idx === 0);
+
+  // Dots
+  document.getElementById('tutDots').innerHTML = TUTORIAL_STEPS.map((_, i) =>
+    `<div class="w-1.5 h-1.5 rounded-full transition-colors ${i === idx ? 'bg-black' : 'bg-[#c8c4d8]'}"></div>`
+  ).join('');
+
+  if (isLast) { document.getElementById('tutNext').onclick = endTutorial; }
+  else        { document.getElementById('tutNext').onclick = () => tutNav(1); }
+
+  const spotlight = document.getElementById('tutSpotlight');
+  const card      = document.getElementById('tutCard');
+
+  if (!step.selector) {
+    // Centre card, tiny spotlight in middle
+    spotlight.style.cssText = `width:0;height:0;top:50%;left:50%;transform:translate(-50%,-50%);box-shadow:0 0 0 9999px rgba(0,0,0,0.65);border-radius:12px;transition:all 0.35s cubic-bezier(0.4,0,0.2,1);`;
+    card.style.cssText = `width:min(300px,calc(100vw - 2rem));top:50%;left:50%;transform:translate(-50%,-50%);position:fixed;pointer-events:auto;transition:all 0.35s cubic-bezier(0.4,0,0.2,1);`;
+    return;
+  }
+
+  const el = document.querySelector(step.selector);
+  if (!el) { showTutStep(idx + 1 < TUTORIAL_STEPS.length ? idx + 1 : idx); return; }
+
+  el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  setTimeout(() => {
+    const r   = el.getBoundingClientRect();
+    const pad = 10;
+    const sw  = r.width  + pad * 2;
+    const sh  = r.height + pad * 2;
+    const sl  = r.left   - pad;
+    const st  = r.top    - pad;
+
+    spotlight.style.cssText = `width:${sw}px;height:${sh}px;top:${st}px;left:${sl}px;box-shadow:0 0 0 9999px rgba(0,0,0,0.65);border-radius:12px;position:fixed;pointer-events:none;transition:all 0.35s cubic-bezier(0.4,0,0.2,1);`;
+
+    // Position card below or above spotlight
+    const cardW = Math.min(300, window.innerWidth - 32), cardH = 220, margin = 14;
+    let cx = sl, cy;
+    if (st + sh + margin + cardH < window.innerHeight) {
+      cy = st + sh + margin; // below
+    } else {
+      cy = st - cardH - margin; // above
+    }
+    cx = Math.max(8, Math.min(window.innerWidth - cardW - 8, cx));
+    cy = Math.max(8, cy);
+    card.style.cssText = `width:${cardW}px;top:${cy}px;left:${cx}px;position:fixed;pointer-events:auto;transition:all 0.35s cubic-bezier(0.4,0,0.2,1);`;
+  }, 350);
+}
+
+// Tutorial is triggered manually via the Tour button in the nav
+
+// Restore session on page load from localStorage (persists across tabs)
+// Named so visibilitychange can call it too
+function restoreSession() {
+  const storedEmail = localStorage.getItem('tig_email');
+  if (storedEmail) {
+    email = storedEmail;
+    const storedName = localStorage.getItem('tig_name') || '';
+    const storedCode = localStorage.getItem('tig_access_code') || '';
+    if (storedCode) savedCode = storedCode;
+    if (storedName) savedName = storedName;
+    showUnlockedGate(storedEmail, storedName);
+    render();
+  }
+}
+restoreSession();
+
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'visible') restoreSession();
+});
+
+loadJobs();
+</script>
 </body>
 </html>
