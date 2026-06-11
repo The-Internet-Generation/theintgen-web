@@ -13,6 +13,15 @@
 <meta property="og:url" content="https://theintgen.com/">
 <link rel="canonical" href="https://theintgen.com/">
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"Organization","name":"The Internet Generation","alternateName":"TIG","url":"https://theintgen.com","email":"hi@theintgen.com","description":"Chennai-based creative and digital agency: digital marketing, video production, influencer marketing, podcasts, open mic events, and the TigGigs freelance job board.","address":{"@type":"PostalAddress","addressLocality":"Chennai","addressCountry":"IN"},"sameAs":["https://theintgen.com/tiggigs/","https://theintgen.com/tigital/","https://theintgen.com/tigpods/"]}</script>
+<script>
+// Phones get the mobile-designed portal at /m/ — ?desktop=1 forces the desktop OS.
+// Only fires when served as the site root, so local previews of tig-os.html are unaffected.
+(function(){
+  var isPhone = /Android.*Mobile|iPhone|iPod/i.test(navigator.userAgent);
+  var isRoot = location.pathname === '/' || location.pathname === '/index.html';
+  if(isPhone && isRoot && !/[?&]desktop=1/.test(location.search)) location.replace('/m/');
+})();
+</script>
 <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;700;800&family=JetBrains+Mono:wght@400;700&family=Press+Start+2P&display=swap" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet">
 <style>
@@ -93,16 +102,26 @@ html,body{width:100%;height:100%;font-family:var(--font-ui);font-size:12px;
 .sm-item .ms{font-size:16px;color:#5d5e5f}
 
 /* === DESKTOP ICONS === */
-.icon-grid{display:grid;grid-template-columns:repeat(3,96px);gap:8px 0;padding:12px 8px}
-@media(min-width:480px){.icon-grid{grid-template-columns:repeat(4,96px)}}
-@media(min-width:768px){.icon-grid{grid-template-columns:repeat(7,96px)}}
-.dicon{display:flex;flex-direction:column;align-items:center;gap:4px;
-  cursor:pointer;padding:6px 4px;width:92px;
+.icon-grid{display:grid;grid-template-columns:repeat(3,104px);gap:16px 4px;padding:14px 10px}
+@media(min-width:480px){.icon-grid{grid-template-columns:repeat(4,110px)}}
+@media(min-width:768px){.icon-grid{grid-template-columns:140px;gap:26px 0;padding:24px 18px}}
+#icons-right{position:absolute;top:14px;right:12px;display:flex;flex-direction:column;
+  gap:16px;align-items:center}
+@media(min-width:768px){#icons-right{top:24px;right:18px;gap:26px}}
+#icon-recycle{position:absolute;right:12px;bottom:195px}
+@media(min-width:768px){#icon-recycle{right:18px;bottom:215px}}
+.dicon{display:flex;flex-direction:column;align-items:center;gap:5px;
+  cursor:pointer;padding:6px 4px;width:100px;
   -webkit-tap-highlight-color:transparent;touch-action:manipulation;border:1px solid transparent}
 .dicon:focus{outline:none;border:1px dotted #fff}
-.dicon .di-img{width:48px;height:48px;image-rendering:pixelated}
+.dicon .di-img{width:52px;height:52px;image-rendering:pixelated}
 .dicon .di-lbl{font-family:var(--font-ui);font-size:11px;color:#fff;
-  text-align:center;text-shadow:1px 1px 0 #000;line-height:1.3;padding:1px 2px;max-width:88px;word-break:break-word}
+  text-align:center;text-shadow:1px 1px 0 #000;line-height:1.3;padding:1px 2px;max-width:96px;word-break:break-word}
+@media(min-width:768px){
+  .dicon{width:130px}
+  .dicon .di-img{width:76px;height:76px}
+  .dicon .di-lbl{font-size:12px;max-width:126px}
+}
 .dicon.sel .di-img{filter:sepia(100%) hue-rotate(190deg) saturate(500%)}
 .dicon.sel .di-lbl{background:#000080;color:#fff;text-shadow:none}
 
@@ -323,17 +342,9 @@ html,body{width:100%;height:100%;font-family:var(--font-ui);font-size:12px;
 <div id="desktop">
   <div class="icon-grid">
 
-    <!-- Tigital -->
+    <!-- Tigital — real logo, sized down -->
     <div class="dicon" data-win="tigital" tabindex="0" role="button" aria-label="Tigital">
-      <svg class="di-img" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
-        <rect x="2" y="8" width="28" height="21" fill="#ffc83d" stroke="#000" stroke-width="1"/>
-        <rect x="2" y="5" width="11" height="5" fill="#ffc83d" stroke="#000" stroke-width="1"/>
-        <rect x="3" y="9" width="26" height="19" fill="#fde021"/>
-        <!-- Tigital "t" miniature logo -->
-        <rect x="11" y="13" width="4" height="2" fill="#2d1a4e"/>
-        <path d="M13 13 v8 q0 3 3 3 q2 0 3 -1 l-1.5 -2 q-0.8 0.8 -1.5 0.3 q-0.6 -0.4 -0.6 -1.3 v-7 z" fill="#2d1a4e"/>
-        <polygon points="16,11 25,15 20,17 18,21" fill="#2d1a4e"/>
-      </svg>
+      <img class="di-img" src="/public/assets/logo-tigital.png" alt="" style="image-rendering:auto;border:1px solid #000;box-shadow:1px 1px 0 rgba(0,0,0,.4)" onerror="this.onerror=null;this.src='logo-tigital.png'">
       <span class="di-lbl">Tigital</span>
     </div>
 
@@ -377,52 +388,6 @@ html,body{width:100%;height:100%;font-family:var(--font-ui);font-size:12px;
       <span class="di-lbl">TIGOM</span>
     </div>
 
-    <!-- Our Work -->
-    <div class="dicon" data-win="ourwork" tabindex="0" role="button" aria-label="Our Work">
-      <svg class="di-img" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
-        <rect x="2" y="8" width="28" height="21" fill="#80ff80" stroke="#000" stroke-width="1"/>
-        <rect x="2" y="5" width="11" height="5" fill="#80ff80" stroke="#000" stroke-width="1"/>
-        <rect x="3" y="9" width="26" height="19" fill="#c0ffc0"/>
-        <rect x="8" y="13" width="13" height="16" fill="#fff" stroke="#000" stroke-width="1"/>
-        <rect x="10" y="11" width="13" height="16" fill="#fff" stroke="#000" stroke-width="1"/>
-        <rect x="12" y="9" width="13" height="16" fill="#fff" stroke="#000" stroke-width="1"/>
-        <line x1="14" y1="14" x2="22" y2="14" stroke="#808080" stroke-width="1"/>
-        <line x1="14" y1="17" x2="22" y2="17" stroke="#808080" stroke-width="1"/>
-        <line x1="14" y1="20" x2="19" y2="20" stroke="#808080" stroke-width="1"/>
-      </svg>
-      <span class="di-lbl">Our Work</span>
-    </div>
-
-    <!-- Find Us -->
-    <div class="dicon" data-win="findus" tabindex="0" role="button" aria-label="Find Us">
-      <svg class="di-img" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
-        <rect x="2" y="8" width="28" height="21" fill="#ffff80" stroke="#000" stroke-width="1"/>
-        <rect x="2" y="5" width="11" height="5" fill="#ffff80" stroke="#000" stroke-width="1"/>
-        <rect x="3" y="9" width="26" height="19" fill="#ffffc0"/>
-        <circle cx="16" cy="17" r="6" fill="#ff3333" stroke="#000" stroke-width="1"/>
-        <circle cx="16" cy="17" r="2.5" fill="#fff"/>
-        <polygon points="16,23 13,29 19,29" fill="#ff3333" stroke="#000" stroke-width="1"/>
-      </svg>
-      <span class="di-lbl">Find Us</span>
-    </div>
-
-    <!-- Portfolio -->
-    <div class="dicon" data-win="portfolio" tabindex="0" role="button" aria-label="Portfolio">
-      <svg class="di-img" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
-        <rect x="4" y="3" width="20" height="26" rx="0" fill="#fff" stroke="#000" stroke-width="1"/>
-        <rect x="4" y="3" width="20" height="5" fill="#c0392b"/>
-        <text x="6" y="8" font-family="Arial" font-weight="800" font-size="4" fill="#fff">PPT</text>
-        <line x1="7" y1="13" x2="21" y2="13" stroke="#e3e2e2" stroke-width="1"/>
-        <line x1="7" y1="16" x2="21" y2="16" stroke="#e3e2e2" stroke-width="1"/>
-        <line x1="7" y1="19" x2="17" y2="19" stroke="#e3e2e2" stroke-width="1"/>
-        <rect x="7" y="22" width="8" height="4" fill="#c0392b" opacity=".4"/>
-        <rect x="16" y="22" width="5" height="4" fill="#006565" opacity=".4"/>
-        <rect x="24" y="18" width="8" height="11" fill="#ffab40" stroke="#000" stroke-width="1"/>
-        <rect x="21" y="20" width="5" height="3" fill="#ffab40" stroke="#000" stroke-width="1"/>
-      </svg>
-      <span class="di-lbl">Portfolio</span>
-    </div>
-
     <!-- TigHQ -->
     <div class="dicon" data-win="tighq" tabindex="0" role="button" aria-label="TigHQ">
       <svg class="di-img" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
@@ -441,7 +406,56 @@ html,body{width:100%;height:100%;font-family:var(--font-ui);font-size:12px;
       <span class="di-lbl">TigHQ 🚧</span>
     </div>
 
-    <!-- Recycle Bin -->
+  </div>
+
+  <!-- Right-edge icons: Our Work, Find Us, Portfolio -->
+  <div id="icons-right">
+    <div class="dicon" data-win="ourwork" tabindex="0" role="button" aria-label="Our Work">
+      <svg class="di-img" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+        <rect x="2" y="8" width="28" height="21" fill="#80ff80" stroke="#000" stroke-width="1"/>
+        <rect x="2" y="5" width="11" height="5" fill="#80ff80" stroke="#000" stroke-width="1"/>
+        <rect x="3" y="9" width="26" height="19" fill="#c0ffc0"/>
+        <rect x="8" y="13" width="13" height="16" fill="#fff" stroke="#000" stroke-width="1"/>
+        <rect x="10" y="11" width="13" height="16" fill="#fff" stroke="#000" stroke-width="1"/>
+        <rect x="12" y="9" width="13" height="16" fill="#fff" stroke="#000" stroke-width="1"/>
+        <line x1="14" y1="14" x2="22" y2="14" stroke="#808080" stroke-width="1"/>
+        <line x1="14" y1="17" x2="22" y2="17" stroke="#808080" stroke-width="1"/>
+        <line x1="14" y1="20" x2="19" y2="20" stroke="#808080" stroke-width="1"/>
+      </svg>
+      <span class="di-lbl">Our Work</span>
+    </div>
+
+    <div class="dicon" data-win="findus" tabindex="0" role="button" aria-label="Find Us">
+      <svg class="di-img" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+        <rect x="2" y="8" width="28" height="21" fill="#ffff80" stroke="#000" stroke-width="1"/>
+        <rect x="2" y="5" width="11" height="5" fill="#ffff80" stroke="#000" stroke-width="1"/>
+        <rect x="3" y="9" width="26" height="19" fill="#ffffc0"/>
+        <circle cx="16" cy="17" r="6" fill="#ff3333" stroke="#000" stroke-width="1"/>
+        <circle cx="16" cy="17" r="2.5" fill="#fff"/>
+        <polygon points="16,23 13,29 19,29" fill="#ff3333" stroke="#000" stroke-width="1"/>
+      </svg>
+      <span class="di-lbl">Find Us</span>
+    </div>
+
+    <div class="dicon" data-win="portfolio" tabindex="0" role="button" aria-label="Portfolio">
+      <svg class="di-img" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+        <rect x="4" y="3" width="20" height="26" rx="0" fill="#fff" stroke="#000" stroke-width="1"/>
+        <rect x="4" y="3" width="20" height="5" fill="#c0392b"/>
+        <text x="6" y="8" font-family="Arial" font-weight="800" font-size="4" fill="#fff">PPT</text>
+        <line x1="7" y1="13" x2="21" y2="13" stroke="#e3e2e2" stroke-width="1"/>
+        <line x1="7" y1="16" x2="21" y2="16" stroke="#e3e2e2" stroke-width="1"/>
+        <line x1="7" y1="19" x2="17" y2="19" stroke="#e3e2e2" stroke-width="1"/>
+        <rect x="7" y="22" width="8" height="4" fill="#c0392b" opacity=".4"/>
+        <rect x="16" y="22" width="5" height="4" fill="#006565" opacity=".4"/>
+        <rect x="24" y="18" width="8" height="11" fill="#ffab40" stroke="#000" stroke-width="1"/>
+        <rect x="21" y="20" width="5" height="3" fill="#ffab40" stroke="#000" stroke-width="1"/>
+      </svg>
+      <span class="di-lbl">Portfolio</span>
+    </div>
+  </div>
+
+  <!-- Recycle Bin — bottom right, above Bane -->
+  <div id="icon-recycle">
     <div class="dicon" data-win="recycle" tabindex="0" role="button" aria-label="Recycle Bin">
       <svg class="di-img" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
         <polygon points="7,9 25,9 23,29 9,29" fill="#dfdfdf" stroke="#000" stroke-width="1"/>
@@ -455,7 +469,6 @@ html,body{width:100%;height:100%;font-family:var(--font-ui);font-size:12px;
       </svg>
       <span class="di-lbl">Recycle Bin</span>
     </div>
-
   </div>
 </div>
 
@@ -746,7 +759,16 @@ html,body{width:100%;height:100%;font-family:var(--font-ui);font-size:12px;
 <div class="woverlay" id="win-tigpods">
 <div class="wframe">
   <div class="wtbar">
-    <span class="ms" style="font-size:12px">podcasts</span>
+    <a href="https://theintgen.com/" aria-label="Back to TIG homepage" style="display:flex;align-items:center;text-decoration:none">
+      <svg width="16" height="16" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+        <rect width="20" height="20" fill="#fff"/>
+        <text font-family="Hanken Grotesk,sans-serif" font-weight="800">
+          <tspan x="1" y="8" font-size="7" fill="#c0392b">T</tspan><tspan font-size="7" fill="#000">HE</tspan>
+          <tspan x="1" y="14" font-size="7" fill="#c0392b">I</tspan><tspan font-size="7" fill="#000">NT</tspan>
+          <tspan x="1" y="20" font-size="7" fill="#c0392b">G</tspan><tspan font-size="7" fill="#000">EN</tspan>
+        </text>
+      </svg>
+    </a>
     <span class="wt">Tigpods — Media Player</span>
     <div class="wbtn" data-close="tigpods">_</div>
     <div class="wbtn" data-close="tigpods" style="font-size:7px">□</div>
@@ -761,15 +783,15 @@ html,body{width:100%;height:100%;font-family:var(--font-ui);font-size:12px;
   <div class="wcontent">
     <div class="wc" style="background:#000;padding:10px 14px">
       <div style="font-family:var(--font-mono);font-size:10px;color:#00cc00;margin-bottom:6px" id="tigpods-nowplaying">
-        ▶ NOW PLAYING: EP.23 — "Public Speaker Journey and What is an Outlier?"
+        ▶ READY: EP.23 — "Public Speaker Journey and What is an Outlier?"
       </div>
       <div class="waveform" id="waveform"></div>
+      <div id="tigpods-embed" style="display:none;margin:0 0 2px"></div>
       <div style="display:flex;justify-content:space-between;align-items:center;margin-top:6px">
-        <div style="font-family:var(--font-mono);font-size:9px;color:#808080">02:34 / 48:12</div>
         <div style="display:flex;gap:4px">
-          <div class="out btn-press" style="background:var(--gray);padding:3px 8px;font-size:10px;cursor:pointer">|◀</div>
-          <div class="out btn-press" style="background:var(--gray);padding:3px 10px;font-size:10px;cursor:pointer">▶ ▐▐</div>
-          <div class="out btn-press" style="background:var(--gray);padding:3px 8px;font-size:10px;cursor:pointer">▶|</div>
+          <div class="out btn-press" id="tigpods-prev" style="background:var(--gray);padding:3px 8px;font-size:10px;cursor:pointer" title="Previous episode">|◀</div>
+          <div class="out btn-press" id="tigpods-play" style="background:var(--gray);padding:3px 10px;font-size:10px;cursor:pointer" title="Play">▶</div>
+          <div class="out btn-press" id="tigpods-next" style="background:var(--gray);padding:3px 8px;font-size:10px;cursor:pointer" title="Next episode">▶|</div>
         </div>
         <div style="display:flex;gap:8px">
           <a href="https://open.spotify.com/show/24ft92ZKYHNniM2onRhckB" target="_blank" rel="noopener" style="font-family:var(--font-ui);font-size:11px;font-weight:700;color:#00cc00;text-decoration:none">Spotify</a>
@@ -777,8 +799,11 @@ html,body{width:100%;height:100%;font-family:var(--font-ui);font-size:12px;
         </div>
       </div>
     </div>
+    <div style="padding:8px 14px;border-bottom:1px solid #e3e2e2;text-align:center;background:#efeded">
+      <a href="https://theintgen.com/tigpods/" target="_blank" rel="noopener" class="wc-btn" style="width:100%;text-align:center;background:#000080;color:#fff;font-size:12px;padding:7px 14px;margin-top:0">▶ GO TO THE FULL TIGPODS SITE ↗</a>
+    </div>
     <div style="padding:6px 14px 4px;font-family:var(--font-ui);font-size:11px;color:#5d5e5f;border-bottom:1px solid #e3e2e2;display:flex;align-items:center;gap:4px">
-      <span class="ms" style="font-size:14px">queue_music</span><strong>All Episodes</strong>
+      <span class="ms" style="font-size:14px">queue_music</span><strong>All Episodes</strong> <span style="font-weight:400;color:#808080">— click to play</span>
     </div>
     <div id="tigpods-eps">
       <div class="podcast-ep"><div class="ep-num">...</div><div class="ep-title">Spinning up the tape deck...</div></div>
@@ -1303,24 +1328,76 @@ const PODS_FALLBACK = [
 
 function cleanEpTitle(t){ return (t||'').split('|')[0].trim(); }
 
+// Extract a YouTube video id from watch/youtu.be/embed URL shapes
+function ytVid(url){
+  if(!url) return null;
+  const m = url.match(/(?:youtube\.com\/(?:watch\?(?:.*&)?v=|embed\/|shorts\/)|youtu\.be\/)([A-Za-z0-9_-]{11})/);
+  return m ? m[1] : null;
+}
+
+let PODS_EPS = [];   // sorted newest-first
+let podsIdx = 0;     // current episode index
+let podsPlaying = false;
+
+function podsUpdateNP(prefix){
+  const np = document.getElementById('tigpods-nowplaying');
+  const ep = PODS_EPS[podsIdx];
+  if(np && ep) np.textContent = `${prefix}: EP.${ep.no} — "${cleanEpTitle(ep.title)}"`;
+}
+
+function podsPlay(i){
+  if(!PODS_EPS.length) return;
+  podsIdx = Math.max(0, Math.min(i, PODS_EPS.length-1));
+  const ep = PODS_EPS[podsIdx];
+  const vid = ytVid(ep.youtube_url);
+  const embed = document.getElementById('tigpods-embed');
+  const wfEl = document.getElementById('waveform');
+  if(vid && embed){
+    embed.innerHTML = `<iframe width="100%" height="170" src="https://www.youtube.com/embed/${vid}?autoplay=1&playsinline=1&rel=0&modestbranding=1" title="TigPods episode player" frameborder="0" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen style="display:block;border:1px solid #1a1a1a"></iframe>`;
+    embed.style.display = 'block';
+    if(wfEl) wfEl.style.display = 'none';
+    podsPlaying = true;
+    podsUpdateNP('▶ NOW PLAYING');
+  }else{
+    // No embeddable video — fall back to the channel
+    window.open(ep.spotify_url || 'https://www.youtube.com/@TigPods', '_blank', 'noopener');
+    podsUpdateNP('▶ OPENED EXTERNALLY');
+  }
+  // highlight the active row
+  document.querySelectorAll('#tigpods-eps .podcast-ep').forEach((row,idx)=>{
+    row.style.background = idx===podsIdx ? '#efeded' : '';
+  });
+}
+
 function renderEps(eps){
   const list = document.getElementById('tigpods-eps');
   const count = document.getElementById('tigpods-count');
-  const np = document.getElementById('tigpods-nowplaying');
   if(!list) return;
-  const sorted = [...eps].sort((a,b)=>b.no-a.no);
-  list.innerHTML = sorted.map((ep,i)=>{
-    const url = ep.youtube_url || ep.spotify_url || 'https://www.youtube.com/@TigPods';
-    return `<a class="podcast-ep" href="${esc(url)}" target="_blank" rel="noopener" style="text-decoration:none;color:inherit${i===0?';background:#efeded':''}">
+  PODS_EPS = [...eps].sort((a,b)=>b.no-a.no);
+  list.innerHTML = PODS_EPS.map((ep,i)=>{
+    const yt = ep.youtube_url || 'https://www.youtube.com/@TigPods';
+    return `<div class="podcast-ep" data-idx="${i}" style="cursor:pointer${i===0?';background:#efeded':''}">
       <div class="ep-play out"><span class="ms">play_arrow</span></div>
       <div class="ep-num">EP ${ep.no}</div>
       <div class="ep-title">${esc(cleanEpTitle(ep.title))}<span style="font-weight:400;color:#5d5e5f"> — ${esc((ep.guest||'').trim())}</span></div>
       <div class="ep-dur" style="width:auto">${esc((ep.cat||'').trim())}</div>
-    </a>`;
+      <a href="${esc(yt)}" target="_blank" rel="noopener" title="Open on YouTube" style="color:#006565;text-decoration:none;font-size:11px;flex-shrink:0" onclick="event.stopPropagation()">↗</a>
+    </div>`;
   }).join('');
-  if(count) count.textContent = sorted.length+' episodes available';
-  if(np && sorted[0]) np.textContent = `▶ NOW PLAYING: EP.${sorted[0].no} — "${cleanEpTitle(sorted[0].title)}"`;
+  list.querySelectorAll('.podcast-ep').forEach(row=>{
+    row.addEventListener('click', ()=>podsPlay(Number(row.dataset.idx)));
+  });
+  if(count) count.textContent = PODS_EPS.length+' episodes available';
+  podsUpdateNP('▶ READY');
 }
+
+// transport controls
+const podsPlayBtn = document.getElementById('tigpods-play');
+const podsPrevBtn = document.getElementById('tigpods-prev');
+const podsNextBtn = document.getElementById('tigpods-next');
+if(podsPlayBtn) podsPlayBtn.addEventListener('click', ()=>podsPlay(podsIdx));
+if(podsPrevBtn) podsPrevBtn.addEventListener('click', ()=>podsPlay(Math.max(0, podsIdx-1)));
+if(podsNextBtn) podsNextBtn.addEventListener('click', ()=>podsPlay(Math.min(PODS_EPS.length-1, podsIdx+1)));
 
 (async function loadEps(){
   try{

@@ -840,12 +840,12 @@ function Welcome() {
   const header = document.createElement('div');
   header.style.cssText = 'position:absolute;top:56px;left:0;right:0;padding:0 20px;display:flex;align-items:center;justify-content:space-between;z-index:10;';
 
+  /* Top-left: theintgen logo, back to the TIG homepage */
   const logoLink = document.createElement('a');
-  logoLink.href = 'https://open.spotify.com/show/24ft92ZKYHNniM2onRhckB';
-  logoLink.target = '_blank'; logoLink.rel = 'noopener noreferrer';
-  logoLink.style.cssText = 'text-decoration:none;display:inline-flex;align-items:center;';
-  logoLink.setAttribute('aria-label', 'Open TigPods on Spotify');
-  logoLink.appendChild(logoEl(26, true));
+  logoLink.href = 'https://theintgen.com/';
+  logoLink.style.cssText = 'text-decoration:none;display:inline-flex;align-items:center;gap:8px;';
+  logoLink.setAttribute('aria-label', 'Back to The Internet Generation homepage');
+  logoLink.innerHTML = `<span style="background:#fff;border-radius:7px;padding:3px;display:inline-flex;box-shadow:0 2px 8px rgba(0,0,0,0.35);"><img src="/public/assets/logo-theintgen.png" alt="The Internet Generation" style="width:24px;height:24px;display:block;" onerror="this.onerror=null;this.src='logo-theintgen.png'"/></span><span style="font-family:var(--body);font-size:10px;color:var(--fg-dim);letter-spacing:0.08em;text-transform:uppercase;">theintgen.com</span>`;
   header.appendChild(logoLink);
   el.appendChild(header);
 
