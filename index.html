@@ -69,8 +69,7 @@ html,body{width:100%;height:100%;font-family:var(--font-ui);font-size:12px;
   cursor:pointer;display:flex;align-items:center;gap:5px;
   -webkit-tap-highlight-color:transparent;touch-action:manipulation}
 .taskbar-sep{width:1px;height:20px;background:#808080;box-shadow:1px 0 0 #fff;flex-shrink:0}
-#clock{font-family:var(--font-ui);font-size:11px;font-weight:700;padding:2px 8px;
-  white-space:nowrap}
+#clock{font-family:var(--font-ui);font-size:11px;font-weight:700;white-space:nowrap}
 #taskbar-label{font-family:var(--font-ui);font-size:11px;
   padding:0 8px;height:22px;display:flex;align-items:center;gap:4px;
   flex:1;overflow:hidden}
@@ -93,16 +92,16 @@ html,body{width:100%;height:100%;font-family:var(--font-ui);font-size:12px;
 .sm-item .ms{font-size:16px;color:#5d5e5f}
 
 /* === DESKTOP ICONS === */
-.icon-grid{display:grid;grid-template-columns:repeat(3,80px);gap:4px 0;padding:12px 8px}
-@media(min-width:480px){.icon-grid{grid-template-columns:repeat(4,80px)}}
-@media(min-width:768px){.icon-grid{grid-template-columns:repeat(7,80px)}}
-.dicon{display:flex;flex-direction:column;align-items:center;gap:3px;
-  cursor:pointer;padding:6px 4px;width:76px;
+.icon-grid{display:grid;grid-template-columns:repeat(3,96px);gap:8px 0;padding:12px 8px}
+@media(min-width:480px){.icon-grid{grid-template-columns:repeat(4,96px)}}
+@media(min-width:768px){.icon-grid{grid-template-columns:repeat(7,96px)}}
+.dicon{display:flex;flex-direction:column;align-items:center;gap:4px;
+  cursor:pointer;padding:6px 4px;width:92px;
   -webkit-tap-highlight-color:transparent;touch-action:manipulation;border:1px solid transparent}
 .dicon:focus{outline:none;border:1px dotted #fff}
-.dicon .di-img{width:32px;height:32px;image-rendering:pixelated}
+.dicon .di-img{width:48px;height:48px;image-rendering:pixelated}
 .dicon .di-lbl{font-family:var(--font-ui);font-size:11px;color:#fff;
-  text-align:center;text-shadow:1px 1px 0 #000;line-height:1.3;padding:1px 2px;max-width:72px;word-break:break-word}
+  text-align:center;text-shadow:1px 1px 0 #000;line-height:1.3;padding:1px 2px;max-width:88px;word-break:break-word}
 .dicon.sel .di-img{filter:sepia(100%) hue-rotate(190deg) saturate(500%)}
 .dicon.sel .di-lbl{background:#000080;color:#fff;text-shadow:none}
 
@@ -267,6 +266,28 @@ html,body{width:100%;height:100%;font-family:var(--font-ui);font-size:12px;
   60%{transform:scale(.96)}100%{transform:scale(1)}}
 #bane.react #bane-canvas{animation:bane-react .45s ease-in-out;transform-origin:center bottom}
 
+/* === MINI BROWSER PAGES === */
+.bpage{display:none}
+.bpage.active{display:block}
+.tbtn.nav-btn{cursor:pointer}
+.tbtn.disabled{opacity:.35;pointer-events:none}
+.addr-text{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+/* === UC BADGE === */
+.uc-badge{display:inline-block;background:#ffff80;color:#000;font-family:var(--font-px);
+  font-size:7px;padding:4px 6px;border:1px dashed #000;line-height:1.6}
+
+/* === TICKER === */
+.ticker-wrap{overflow:hidden;background:#000080;padding:3px 0;border-top:1px solid #000;border-bottom:1px solid #000}
+.ticker-line{display:inline-block;white-space:nowrap;font-family:var(--font-mono);font-size:10px;
+  color:#fff;animation:tickerScroll 18s linear infinite}
+.ticker-line span{margin:0 10px}
+@keyframes tickerScroll{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+
+/* === SYSTEM TRAY === */
+#tray{display:flex;align-items:center;gap:6px;padding:2px 8px}
+#tray svg{display:block}
+
 /* === SCANLINES === */
 #scanlines{position:fixed;inset:0;pointer-events:none;z-index:9999;
   background:repeating-linear-gradient(to bottom,transparent 0,transparent 2px,rgba(0,0,0,.05) 2px,rgba(0,0,0,.05) 4px)}
@@ -295,11 +316,6 @@ html,body{width:100%;height:100%;font-family:var(--font-ui);font-size:12px;
     </svg>
     The Internet Generation
   </div>
-  <div style="display:flex">
-    <div class="tb-btn">_</div>
-    <div class="tb-btn" style="font-size:7px">□</div>
-    <div class="tb-btn">✕</div>
-  </div>
 </div>
 
 <!-- ═══════════════ DESKTOP ═══════════════ -->
@@ -311,9 +327,11 @@ html,body{width:100%;height:100%;font-family:var(--font-ui);font-size:12px;
       <svg class="di-img" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
         <rect x="2" y="8" width="28" height="21" fill="#ffc83d" stroke="#000" stroke-width="1"/>
         <rect x="2" y="5" width="11" height="5" fill="#ffc83d" stroke="#000" stroke-width="1"/>
-        <rect x="3" y="9" width="26" height="19" fill="#ffe080"/>
-        <rect x="10" y="14" width="12" height="2" fill="#000"/>
-        <rect x="15" y="16" width="3" height="9" fill="#000"/>
+        <rect x="3" y="9" width="26" height="19" fill="#fde021"/>
+        <!-- Tigital "t" miniature logo -->
+        <rect x="11" y="13" width="4" height="2" fill="#2d1a4e"/>
+        <path d="M13 13 v8 q0 3 3 3 q2 0 3 -1 l-1.5 -2 q-0.8 0.8 -1.5 0.3 q-0.6 -0.4 -0.6 -1.3 v-7 z" fill="#2d1a4e"/>
+        <polygon points="16,11 25,15 20,17 18,21" fill="#2d1a4e"/>
       </svg>
       <span class="di-lbl">Tigital</span>
     </div>
@@ -324,9 +342,8 @@ html,body{width:100%;height:100%;font-family:var(--font-ui);font-size:12px;
         <rect x="2" y="8" width="28" height="21" fill="#80c0ff" stroke="#000" stroke-width="1"/>
         <rect x="2" y="5" width="11" height="5" fill="#80c0ff" stroke="#000" stroke-width="1"/>
         <rect x="3" y="9" width="26" height="19" fill="#c0e0ff"/>
-        <rect x="10" y="16" width="12" height="9" fill="#000"/>
-        <rect x="13" y="13" width="6" height="4" fill="#404060" stroke="#000" stroke-width="1"/>
-        <rect x="13" y="20" width="6" height="2" fill="#fff"/>
+        <!-- Rupee symbol -->
+        <text x="16" y="25" text-anchor="middle" font-family="Hanken Grotesk,sans-serif" font-weight="800" font-size="15" fill="#000080">₹</text>
       </svg>
       <span class="di-lbl">TigGigs</span>
     </div>
@@ -405,6 +422,39 @@ html,body{width:100%;height:100%;font-family:var(--font-ui);font-size:12px;
       <span class="di-lbl">Portfolio</span>
     </div>
 
+    <!-- TigHQ -->
+    <div class="dicon" data-win="tighq" tabindex="0" role="button" aria-label="TigHQ">
+      <svg class="di-img" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+        <rect x="6" y="7" width="20" height="22" fill="#c0c0c0" stroke="#000" stroke-width="1"/>
+        <rect x="7" y="8" width="18" height="20" fill="#dfdfdf"/>
+        <rect x="9" y="10" width="4" height="4" fill="#80c0ff" stroke="#000" stroke-width="0.5"/>
+        <rect x="14" y="10" width="4" height="4" fill="#ffe080" stroke="#000" stroke-width="0.5"/>
+        <rect x="19" y="10" width="4" height="4" fill="#80c0ff" stroke="#000" stroke-width="0.5"/>
+        <rect x="9" y="16" width="4" height="4" fill="#ffe080" stroke="#000" stroke-width="0.5"/>
+        <rect x="14" y="16" width="4" height="4" fill="#80c0ff" stroke="#000" stroke-width="0.5"/>
+        <rect x="19" y="16" width="4" height="4" fill="#80c0ff" stroke="#000" stroke-width="0.5"/>
+        <rect x="13" y="23" width="6" height="6" fill="#006565" stroke="#000" stroke-width="1"/>
+        <line x1="16" y1="7" x2="16" y2="3" stroke="#000" stroke-width="1"/>
+        <polygon points="16,3 24,4.5 16,6" fill="#c0392b" stroke="#000" stroke-width="0.5"/>
+      </svg>
+      <span class="di-lbl">TigHQ 🚧</span>
+    </div>
+
+    <!-- Recycle Bin -->
+    <div class="dicon" data-win="recycle" tabindex="0" role="button" aria-label="Recycle Bin">
+      <svg class="di-img" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+        <polygon points="7,9 25,9 23,29 9,29" fill="#dfdfdf" stroke="#000" stroke-width="1"/>
+        <ellipse cx="16" cy="9" rx="9" ry="2.5" fill="#c0c0c0" stroke="#000" stroke-width="1"/>
+        <line x1="11" y1="12" x2="11.8" y2="26" stroke="#808080" stroke-width="1"/>
+        <line x1="16" y1="12" x2="16" y2="26" stroke="#808080" stroke-width="1"/>
+        <line x1="21" y1="12" x2="20.2" y2="26" stroke="#808080" stroke-width="1"/>
+        <path d="M13 18 l2.6 -4.4 l1.6 2.6" fill="none" stroke="#006500" stroke-width="1.4"/>
+        <path d="M18.6 15.5 l1.6 2.8 l-3 0.4" fill="none" stroke="#006500" stroke-width="1.4"/>
+        <path d="M16.6 21.8 l-3.2 0 l1.2 -2.6" fill="none" stroke="#006500" stroke-width="1.4"/>
+      </svg>
+      <span class="di-lbl">Recycle Bin</span>
+    </div>
+
   </div>
 </div>
 
@@ -428,7 +478,16 @@ html,body{width:100%;height:100%;font-family:var(--font-ui);font-size:12px;
     <span>TIG Home</span>
   </div>
   <div class="taskbar-sep"></div>
-  <div id="clock" class="in"></div>
+  <div id="tray" class="in">
+    <!-- classic "ethernet connected" tray icon: two PCs linked -->
+    <svg width="16" height="14" viewBox="0 0 16 14" xmlns="http://www.w3.org/2000/svg" aria-label="Network connected">
+      <rect x="0.5" y="0.5" width="8" height="6" fill="#dfdfdf" stroke="#000" stroke-width="1"/>
+      <rect x="1.5" y="1.5" width="6" height="4" fill="#2f63d6"/>
+      <rect x="7.5" y="7.5" width="8" height="6" fill="#dfdfdf" stroke="#000" stroke-width="1"/>
+      <rect x="8.5" y="8.5" width="6" height="4" fill="#2f63d6"/>
+    </svg>
+    <span id="clock"></span>
+  </div>
 </div>
 
 <!-- ═══════════════ START MENU ═══════════════ -->
@@ -436,12 +495,14 @@ html,body{width:100%;height:100%;font-family:var(--font-ui);font-size:12px;
   <div class="sm-sidebar"><span>TIG OS 98</span></div>
   <div class="sm-items">
     <div class="sm-item" data-win="tigital"><span class="ms">library_books</span>Tigital</div>
-    <div class="sm-item" data-win="tiggigs"><span class="ms">work</span>TigGigs</div>
+    <div class="sm-item" data-win="tiggigs"><span class="ms">currency_rupee</span>TigGigs</div>
     <div class="sm-item" data-win="tigpods"><span class="ms">podcasts</span>Tigpods</div>
     <div class="sm-item" data-win="tigom"><span class="ms">forum</span>TIGOM</div>
+    <div class="sm-item" data-win="tighq"><span class="ms">apartment</span>TigHQ</div>
     <div class="sm-item" data-win="ourwork"><span class="ms">folder_open</span>Our Work</div>
     <div class="sm-item" data-win="findus"><span class="ms">location_on</span>Find Us</div>
     <div class="sm-item" data-win="portfolio"><span class="ms">slideshow</span>Portfolio</div>
+    <div class="sm-item" data-win="recycle"><span class="ms">delete</span>Recycle Bin</div>
   </div>
 </div>
 
@@ -449,9 +510,9 @@ html,body{width:100%;height:100%;font-family:var(--font-ui);font-size:12px;
      WINDOWS
 ═══════════════════════════════════════ -->
 
-<!-- TIGITAL -->
+<!-- TIGITAL — mini browser mirroring theintgen.com/tigital/ -->
 <div class="woverlay" id="win-tigital">
-<div class="wframe">
+<div class="wframe" data-browser="tigital">
   <div class="wtbar">
     <span class="ms" style="font-size:12px">library_books</span>
     <span class="wt">Tigital — Microsoft Internet Explorer</span>
@@ -463,56 +524,139 @@ html,body{width:100%;height:100%;font-family:var(--font-ui);font-size:12px;
     <span>File</span><span>Edit</span><span>View</span><span>Favorites</span><span>Tools</span><span>Help</span>
   </div>
   <div class="wtoolbar">
-    <div class="tbtn"><span class="ms">arrow_back</span><span>Back</span></div>
-    <div class="tbtn"><span class="ms">arrow_forward</span><span>Fwd</span></div>
+    <div class="tbtn nav-btn" data-nav="back"><span class="ms">arrow_back</span><span>Back</span></div>
+    <div class="tbtn nav-btn" data-nav="fwd"><span class="ms">arrow_forward</span><span>Fwd</span></div>
     <div class="tbtn"><span class="ms">close</span><span>Stop</span></div>
-    <div class="tbtn"><span class="ms">refresh</span><span>Refresh</span></div>
+    <div class="tbtn nav-btn" data-nav="refresh"><span class="ms">refresh</span><span>Refresh</span></div>
     <div class="tool-sep"></div>
-    <div class="tbtn"><span class="ms">home</span><span>Home</span></div>
+    <div class="tbtn nav-btn" data-nav="home"><span class="ms">home</span><span>Home</span></div>
+    <div class="tool-sep"></div>
+    <a class="tbtn nav-btn" href="https://theintgen.com/tigital/" target="_blank" rel="noopener" style="text-decoration:none;color:inherit"><span class="ms">open_in_new</span><span>Open Site</span></a>
   </div>
   <div class="waddr">
     <span class="al">Address</span>
-    <div class="af"><span class="ms" style="font-size:12px;color:#006565;margin-right:4px">language</span>http://www.tigital.io/library</div>
+    <div class="af"><span class="ms" style="font-size:12px;color:#006565;margin-right:4px">language</span><span class="addr-text">https://theintgen.com/tigital/</span></div>
     <div class="ago out btn-press">Go</div>
   </div>
   <div class="wcontent">
-    <div class="wc">
-      <div class="wc-hero">
-        <div class="wc-iconbox"><span class="ms" style="font-size:28px;color:#006565">computer</span></div>
-        <div>
-          <div class="wc-h1">Your Digital Marketing Library</div>
-          <div class="wc-body">Learn the internet. Master the craft.<br>Your complete toolkit for digital-first thinking.</div>
-          <a href="#" class="wc-btn">Explore Assets</a>
-          <a href="#" class="wc-btn" style="margin-left:6px">Documentation</a>
+
+    <!-- PAGE: HOME -->
+    <div class="bpage active" data-bpage="home" data-url="https://theintgen.com/tigital/">
+      <div class="wc">
+        <div class="wc-hero">
+          <div class="wc-iconbox" style="background:#fde021"><img src="logo-tigital.png" alt="Tigital" width="40" height="40" style="image-rendering:auto" onerror="this.onerror=null;this.src='/public/assets/logo-tigital.png'"></div>
+          <div>
+            <div class="wc-h1">Learn Digital. Grow Fast.<br>Build Yourself.</div>
+            <div class="wc-body">Free guides, tools and weekly insights from the team that's run campaigns for 50+ brands across India and beyond. No agency fluff — just what works.</div>
+            <a href="#" class="wc-btn" data-page="blog">Blog</a>
+            <a href="#" class="wc-btn" data-page="tools" style="margin-left:6px">Free Tools</a>
+            <a href="#" class="wc-btn" data-page="guides" style="margin-left:6px">Free Guides</a>
+          </div>
         </div>
       </div>
-    </div>
-    <div class="wc-grid">
-      <div class="wc-card">
-        <div class="wc-card-name">Growth_Framework.exe</div>
-        <div class="wc-card-desc">Scale digital footprints. 14 modules on SEO and neural branding.</div>
-        <div class="wc-card-meta">4.2 MB · System Tool</div>
-      </div>
-      <div class="wc-card">
-        <div class="wc-card-name">SEO_Manifesto.txt</div>
-        <div class="wc-card-desc">Attention debt is the new currency. Why content isn't king anymore.</div>
-        <div class="wc-card-meta">892 KB · Document</div>
-      </div>
-      <div class="wc-card">
-        <div class="wc-card-name">AD_GEN_V2.bat</div>
-        <div class="terminal">&gt; INITIALIZING CAMPAIGN...<br>&gt; ANALYZING TRENDS...<br>&gt; GENERATING LIKES...</div>
-        <div class="wc-card-meta">12 KB · Batch Script</div>
-      </div>
-      <div class="wc-card">
-        <div class="wc-card-name">Global_Config.ini</div>
-        <div class="kv-list">
-          <div><span class="kv-key">Retargeting=</span><span class="kv-val">TRUE</span></div>
-          <div><span class="kv-key">Psychographics=</span><span class="kv-val">ENABLED</span></div>
-          <div><span class="kv-key">Conversion_Hook=</span><span class="kv-val">MAX</span></div>
+      <div class="ticker-wrap">
+        <div class="ticker-line">
+          <span>MetaAds</span><span>✦</span><span>Content Strategy</span><span>✦</span><span>Instagram Growth</span><span>✦</span><span>Reels Playbook</span><span>✦</span><span>Google Ads</span><span>✦</span><span>Brand Building</span><span>✦</span><span>Influencer Marketing</span><span>✦</span><span>Analytics</span><span>✦</span>
+          <span>MetaAds</span><span>✦</span><span>Content Strategy</span><span>✦</span><span>Instagram Growth</span><span>✦</span><span>Reels Playbook</span><span>✦</span><span>Google Ads</span><span>✦</span><span>Brand Building</span><span>✦</span><span>Influencer Marketing</span><span>✦</span><span>Analytics</span><span>✦</span>
         </div>
-        <div class="wc-card-meta">1 KB · Config File</div>
+      </div>
+      <div class="wc" style="padding:10px 14px">
+        <div class="wc-card" style="background:#efeded">
+          <div class="wc-card-name">📲 Latest_from_the_Blog.url</div>
+          <div class="wc-card-desc">Why Your Meta Ads Are Burning Money — And What to Do About It in 2025</div>
+          <div class="wc-card-meta">Meta Ads · May 2025 · 8 min read</div>
+          <a href="#" class="wc-btn" data-page="blog" style="margin-top:6px">Read the Blog</a>
+        </div>
+      </div>
+      <div style="text-align:center;padding:4px 14px 12px">
+        <a href="https://wa.me/919940237330" target="_blank" rel="noopener" class="wc-btn">📲 Join the WhatsApp Community</a>
       </div>
     </div>
+
+    <!-- PAGE: BLOG -->
+    <div class="bpage" data-bpage="blog" data-url="https://theintgen.com/tigital/#blog">
+      <div style="padding:8px 14px 4px;font-family:var(--font-ui);font-size:11px;color:#5d5e5f;border-bottom:1px solid #e3e2e2"><strong>Latest from the Blog</strong></div>
+      <div class="wc-grid">
+        <div class="wc-card">
+          <div class="wc-card-name">📲 Meta_Ads_2025.html</div>
+          <div class="wc-card-desc">Why Your Meta Ads Are Burning Money — And What to Do About It in 2025</div>
+          <div class="wc-card-meta">Meta Ads · May 2025 · 8 min</div>
+        </div>
+        <div class="wc-card">
+          <div class="wc-card-name">📊 3_Post_Formula.html</div>
+          <div class="wc-card-desc">The 3-Post Formula That Doubled Engagement for Our Clients</div>
+          <div class="wc-card-meta">Instagram · April 2025 · 5 min</div>
+        </div>
+        <div class="wc-card">
+          <div class="wc-card-name">🎬 Reels_2025.html</div>
+          <div class="wc-card-desc">Reels in 2025: The Format, Length and Hook Formula That Still Works</div>
+          <div class="wc-card-meta">Reels · April 2025 · 6 min</div>
+        </div>
+        <div class="wc-card">
+          <div class="wc-card-name">🎯 Content_Calendar.html</div>
+          <div class="wc-card-desc">How to Build a 3-Month Content Calendar From Scratch</div>
+          <div class="wc-card-meta">Strategy · March 2025 · 7 min</div>
+        </div>
+      </div>
+      <div style="text-align:center;padding:10px"><a href="https://theintgen.com/tigital/#blog" target="_blank" rel="noopener" class="wc-btn">All Posts ↗</a></div>
+    </div>
+
+    <!-- PAGE: TOOLS -->
+    <div class="bpage" data-bpage="tools" data-url="https://theintgen.com/tigital/#tools">
+      <div style="padding:8px 14px 4px;font-family:var(--font-ui);font-size:11px;color:#5d5e5f;border-bottom:1px solid #e3e2e2"><strong>Free Tools</strong></div>
+      <div class="wc-grid">
+        <div class="wc-card">
+          <div class="wc-card-name">📅 Calendar_Gen.exe</div>
+          <div class="wc-card-desc">Input your business type and get a 30-day content plan with post ideas, formats and captions.</div>
+          <div class="wc-card-meta">Free Tool</div>
+        </div>
+        <div class="wc-card">
+          <div class="wc-card-name">💰 Ad_Budget_Calc.exe</div>
+          <div class="wc-card-desc">Figure out how much to spend on Meta & Google Ads based on your revenue goals and industry.</div>
+          <div class="wc-card-meta">Free Tool</div>
+        </div>
+        <div class="wc-card">
+          <div class="wc-card-name">✍️ Caption_Builder.exe</div>
+          <div class="wc-card-desc">Build scroll-stopping Instagram captions using proven hook → body → CTA frameworks.</div>
+          <div class="wc-card-meta">Free Tool</div>
+        </div>
+        <div class="wc-card">
+          <div class="wc-card-name">📈 Engagement_Check.exe</div>
+          <div class="wc-card-desc">Paste any Instagram handle and see whether their engagement is good, average or fake.</div>
+          <div class="wc-card-meta">Free Tool</div>
+        </div>
+      </div>
+      <div style="text-align:center;padding:10px"><a href="https://theintgen.com/tigital/#tools" target="_blank" rel="noopener" class="wc-btn">Use Them Free ↗</a></div>
+    </div>
+
+    <!-- PAGE: GUIDES -->
+    <div class="bpage" data-bpage="guides" data-url="https://theintgen.com/tigital/#guides">
+      <div style="padding:8px 14px 4px;font-family:var(--font-ui);font-size:11px;color:#5d5e5f;border-bottom:1px solid #e3e2e2"><strong>Free Guides &amp; Resources</strong></div>
+      <div class="wc-grid">
+        <div class="wc-card" style="border-top-color:#c0392b">
+          <div class="wc-card-name">📖 SMB_Starter_Kit.pdf</div>
+          <div class="wc-card-desc">A complete 20-page guide to setting up, running and growing your brand's social media from scratch.</div>
+          <div class="wc-card-meta">↓ Free PDF</div>
+        </div>
+        <div class="wc-card">
+          <div class="wc-card-name">🎯 Meta_Ads_Playbook.pdf</div>
+          <div class="wc-card-desc">Step-by-step guide to running your first profitable Meta Ad campaign without burning your budget.</div>
+          <div class="wc-card-meta">↓ Free PDF</div>
+        </div>
+        <div class="wc-card">
+          <div class="wc-card-name">🎬 Reel_Scripts.pdf</div>
+          <div class="wc-card-desc">10 fill-in-the-blank reel scripts for product brands, service businesses and personal brands.</div>
+          <div class="wc-card-meta">↓ Free PDF</div>
+        </div>
+        <div class="wc-card">
+          <div class="wc-card-name">💼 Work_With_Us.txt</div>
+          <div class="wc-card-desc">Spending ₹1 lakh+ a month on growth? We build customised strategies — not templates.</div>
+          <a href="mailto:hi@theintgen.com" class="wc-btn" style="margin-top:6px">Let's Talk →</a>
+        </div>
+      </div>
+      <div style="text-align:center;padding:10px"><a href="https://theintgen.com/tigital/#guides" target="_blank" rel="noopener" class="wc-btn">Download Free ↗</a></div>
+    </div>
+
   </div>
   <div class="wstatus">
     <div class="wsf">Done</div>
@@ -521,78 +665,79 @@ html,body{width:100%;height:100%;font-family:var(--font-ui);font-size:12px;
 </div>
 </div>
 
-<!-- TIGGIGS -->
+<!-- TIGGIGS — mini browser mirroring theintgen.com/tiggigs/ -->
 <div class="woverlay" id="win-tiggigs">
-<div class="wframe">
+<div class="wframe" data-browser="tiggigs">
   <div class="wtbar">
-    <span class="ms" style="font-size:12px">work</span>
-    <span class="wt">TigGigs — C:\WINDOWS\Desktop\TigGigs_Portal</span>
+    <span class="ms" style="font-size:12px">currency_rupee</span>
+    <span class="wt">TigGigs — Microsoft Internet Explorer</span>
     <div class="wbtn" data-close="tiggigs">_</div>
     <div class="wbtn" data-close="tiggigs" style="font-size:7px">□</div>
     <div class="wbtn" data-close="tiggigs">✕</div>
   </div>
   <div class="wmenu"><span>File</span><span>Edit</span><span>View</span><span>Favorites</span><span>Help</span></div>
+  <div class="wtoolbar">
+    <div class="tbtn nav-btn" data-nav="back"><span class="ms">arrow_back</span><span>Back</span></div>
+    <div class="tbtn nav-btn" data-nav="fwd"><span class="ms">arrow_forward</span><span>Fwd</span></div>
+    <div class="tbtn"><span class="ms">close</span><span>Stop</span></div>
+    <div class="tbtn nav-btn" data-nav="refresh"><span class="ms">refresh</span><span>Refresh</span></div>
+    <div class="tool-sep"></div>
+    <div class="tbtn nav-btn" data-nav="home"><span class="ms">home</span><span>Home</span></div>
+    <div class="tool-sep"></div>
+    <a class="tbtn nav-btn" href="https://theintgen.com/tiggigs/" target="_blank" rel="noopener" style="text-decoration:none;color:inherit"><span class="ms">open_in_new</span><span>Open Site</span></a>
+  </div>
   <div class="waddr">
     <span class="al">Address</span>
-    <div class="af">C:\WINDOWS\Desktop\TigGigs_Portal</div>
+    <div class="af"><span class="ms" style="font-size:12px;color:#006565;margin-right:4px">language</span><span class="addr-text">https://theintgen.com/tiggigs/</span></div>
     <div class="ago out btn-press">Go</div>
   </div>
   <div class="wcontent">
-    <div class="wc">
-      <div class="wc-hero">
-        <div class="wc-iconbox"><span class="ms" style="font-size:28px;color:#006565">work</span></div>
-        <div>
-          <div class="wc-h1">Chennai's Gig Portal</div>
-          <div class="wc-body">Find work. Get paid. Stay creative.<br>For the Internet Generation's digital talent.</div>
-          <a href="#" class="wc-btn">Post a Gig</a>
-          <a href="#" class="wc-btn" style="margin-left:6px">Member Login</a>
+
+    <!-- PAGE: HOME / BOARD -->
+    <div class="bpage active" data-bpage="home" data-url="https://theintgen.com/tiggigs/">
+      <div class="wc">
+        <div class="wc-hero">
+          <div class="wc-iconbox"><span class="ms" style="font-size:28px;color:#006565">currency_rupee</span></div>
+          <div>
+            <div class="wc-h1">Chennai's Gig Portal</div>
+            <div class="wc-body">Real briefs. Real budgets. Claim a gig, deliver, get paid.<br>For the Internet Generation's creative talent.</div>
+            <a href="https://theintgen.com/tiggigs/" target="_blank" rel="noopener" class="wc-btn">Open Job Board ↗</a>
+            <a href="#" class="wc-btn" data-page="how" style="margin-left:6px">How It Works</a>
+          </div>
         </div>
       </div>
-    </div>
-    <div style="padding:6px 14px;font-family:var(--font-ui);font-size:11px;color:#5d5e5f;border-bottom:1px solid #e3e2e2;display:flex;gap:4px;align-items:center">
-      <span class="ms" style="font-size:14px">folder_open</span>
-      <strong>Available Gigs</strong>
-    </div>
-    <div class="wc-grid" style="grid-template-columns:1fr 1fr 1fr">
-      <div class="wc-card" style="text-align:center">
-        <div style="font-size:22px;margin-bottom:3px">💼</div>
-        <div class="wc-card-name">UX_Designer_01.exe</div>
-        <div class="wc-card-meta">24.5 KB</div>
-        <div class="wc-btn" style="margin-top:4px;width:100%;text-align:center">Apply</div>
+      <div style="padding:6px 14px;font-family:var(--font-ui);font-size:11px;color:#5d5e5f;border-bottom:1px solid #e3e2e2;display:flex;gap:4px;align-items:center">
+        <span class="ms" style="font-size:14px">folder_open</span>
+        <strong>Live Gigs</strong>
       </div>
-      <div class="wc-card" style="text-align:center">
-        <div style="font-size:22px;margin-bottom:3px">📝</div>
-        <div class="wc-card-name">Copywriter_V2.doc</div>
-        <div class="wc-card-meta">12.0 KB</div>
-        <div class="wc-btn" style="margin-top:4px;width:100%;text-align:center">Apply</div>
+      <div class="wc-grid" id="gigs-live" style="grid-template-columns:1fr 1fr">
+        <div class="wc-card"><div class="wc-card-name">Dialing the board...</div><div class="wc-card-meta">Connecting to TigGigs server</div></div>
       </div>
-      <div class="wc-card" style="text-align:center">
-        <div style="font-size:22px;margin-bottom:3px">⚙️</div>
-        <div class="wc-card-name">React_Dev_Urgent.zip</div>
-        <div class="wc-card-meta">156 KB</div>
-        <div class="wc-btn" style="margin-top:4px;width:100%;text-align:center">Apply</div>
-      </div>
-      <div class="wc-card" style="text-align:center">
-        <div style="font-size:22px;margin-bottom:3px">🎬</div>
-        <div class="wc-card-name">Logo_Motion_GD.mov</div>
-        <div class="wc-card-meta">2.4 MB</div>
-        <div class="wc-btn" style="margin-top:4px;width:100%;text-align:center">Apply</div>
-      </div>
-      <div class="wc-card" style="text-align:center">
-        <div style="font-size:22px;margin-bottom:3px">📊</div>
-        <div class="wc-card-name">SEO_Analyst_CH.xlsx</div>
-        <div class="wc-card-meta">45 KB</div>
-        <div class="wc-btn" style="margin-top:4px;width:100%;text-align:center">Apply</div>
-      </div>
-      <div class="wc-card" style="text-align:center">
-        <div style="font-size:22px;margin-bottom:3px">🎙️</div>
-        <div class="wc-card-name">Voice_Artist_AD.wav</div>
-        <div class="wc-card-meta">890 KB</div>
-        <div class="wc-btn" style="margin-top:4px;width:100%;text-align:center">Apply</div>
+      <div style="text-align:center;padding:4px 14px 12px">
+        <a href="https://theintgen.com/tiggigs/" target="_blank" rel="noopener" class="wc-btn">See All Gigs &amp; Apply ↗</a>
       </div>
     </div>
+
+    <!-- PAGE: HOW IT WORKS -->
+    <div class="bpage" data-bpage="how" data-url="https://theintgen.com/tiggigs/#how-it-works">
+      <div style="padding:8px 14px 4px;font-family:var(--font-ui);font-size:11px;color:#5d5e5f;border-bottom:1px solid #e3e2e2"><strong>How TigGigs Works</strong></div>
+      <div class="wc-row"><span class="ms">person_check</span><span class="wc-row-name">1. Get approved as a TIG freelancer</span><span class="wc-row-type">Step</span></div>
+      <div class="wc-row"><span class="ms">touch_app</span><span class="wc-row-name">2. Claim a gig from the live board</span><span class="wc-row-type">Step</span></div>
+      <div class="wc-row"><span class="ms">schedule</span><span class="wc-row-name">3. Deliver before the deadline</span><span class="wc-row-type">Step</span></div>
+      <div class="wc-row"><span class="ms">currency_rupee</span><span class="wc-row-name">4. Get paid — rates auto-computed per tier</span><span class="wc-row-type">Step</span></div>
+      <div class="wc" style="padding:10px 14px">
+        <div class="kv-list">
+          <div><span class="kv-key">Rate=</span><span class="kv-val">BASE × COMPLEXITY × DEADLINE</span></div>
+          <div><span class="kv-key">Payouts=</span><span class="kv-val">₹ INR · per job</span></div>
+          <div><span class="kv-key">Curated=</span><span class="kv-val">TRUE</span></div>
+        </div>
+        <a href="https://wa.me/919940237330" target="_blank" rel="noopener" class="wc-btn">📲 Message Ops Lead</a>
+        <a href="https://theintgen.com/tiggigs/" target="_blank" rel="noopener" class="wc-btn" style="margin-left:6px">Member Login ↗</a>
+      </div>
+    </div>
+
   </div>
-  <div class="wstatus"><div class="wsf">6 objects found</div><div class="wsf">1.2 MB disk space free</div></div>
+  <div class="wstatus"><div class="wsf">Done</div><div class="wsf" id="gigs-count">— gigs on board</div></div>
 </div>
 </div>
 
@@ -614,8 +759,8 @@ html,body{width:100%;height:100%;font-family:var(--font-ui);font-size:12px;
   </div>
   <div class="wcontent">
     <div class="wc" style="background:#000;padding:10px 14px">
-      <div style="font-family:var(--font-mono);font-size:10px;color:#00cc00;margin-bottom:6px">
-        ▶ NOW PLAYING: EP.44 — "Digital Natives vs Digital Immigrants"
+      <div style="font-family:var(--font-mono);font-size:10px;color:#00cc00;margin-bottom:6px" id="tigpods-nowplaying">
+        ▶ NOW PLAYING: EP.23 — "Public Speaker Journey and What is an Outlier?"
       </div>
       <div class="waveform" id="waveform"></div>
       <div style="display:flex;justify-content:space-between;align-items:center;margin-top:6px">
@@ -625,45 +770,21 @@ html,body{width:100%;height:100%;font-family:var(--font-ui);font-size:12px;
           <div class="out btn-press" style="background:var(--gray);padding:3px 10px;font-size:10px;cursor:pointer">▶ ▐▐</div>
           <div class="out btn-press" style="background:var(--gray);padding:3px 8px;font-size:10px;cursor:pointer">▶|</div>
         </div>
-        <a href="#" style="font-family:var(--font-ui);font-size:11px;font-weight:700;color:#00cc00;text-decoration:none">Subscribe</a>
+        <div style="display:flex;gap:8px">
+          <a href="https://open.spotify.com/show/24ft92ZKYHNniM2onRhckB" target="_blank" rel="noopener" style="font-family:var(--font-ui);font-size:11px;font-weight:700;color:#00cc00;text-decoration:none">Spotify</a>
+          <a href="https://www.youtube.com/@TigPods" target="_blank" rel="noopener" style="font-family:var(--font-ui);font-size:11px;font-weight:700;color:#00cc00;text-decoration:none">YouTube</a>
+        </div>
       </div>
     </div>
     <div style="padding:6px 14px 4px;font-family:var(--font-ui);font-size:11px;color:#5d5e5f;border-bottom:1px solid #e3e2e2;display:flex;align-items:center;gap:4px">
       <span class="ms" style="font-size:14px">queue_music</span><strong>All Episodes</strong>
     </div>
-    <div class="podcast-ep" style="background:#efeded">
-      <div class="ep-play out"><span class="ms">play_arrow</span></div>
-      <div class="ep-num">EP 44</div>
-      <div class="ep-title">Digital Natives vs Digital Immigrants</div>
-      <div class="ep-dur">48:12</div>
+    <div id="tigpods-eps">
+      <div class="podcast-ep"><div class="ep-num">...</div><div class="ep-title">Spinning up the tape deck...</div></div>
     </div>
-    <div class="podcast-ep">
-      <div class="ep-play out"><span class="ms">play_arrow</span></div>
-      <div class="ep-num">EP 43</div>
-      <div class="ep-title">The Algorithm Doesn't Care About You</div>
-      <div class="ep-dur">41:05</div>
-    </div>
-    <div class="podcast-ep">
-      <div class="ep-play out"><span class="ms">play_arrow</span></div>
-      <div class="ep-num">EP 42</div>
-      <div class="ep-title">Attention Economy: A Survival Guide</div>
-      <div class="ep-dur">55:38</div>
-    </div>
-    <div class="podcast-ep">
-      <div class="ep-play out"><span class="ms">play_arrow</span></div>
-      <div class="ep-num">EP 41</div>
-      <div class="ep-title">Why Chennai is the Next Tech Hotspot</div>
-      <div class="ep-dur">37:20</div>
-    </div>
-    <div class="podcast-ep">
-      <div class="ep-play out"><span class="ms">play_arrow</span></div>
-      <div class="ep-num">EP 40</div>
-      <div class="ep-title">Building in Public: The TIG Story</div>
-      <div class="ep-dur">62:48</div>
-    </div>
-    <div style="text-align:center;padding:10px"><a href="#" class="wc-btn">Enter Tigpods</a></div>
+    <div style="text-align:center;padding:10px"><a href="https://theintgen.com/tigpods/" target="_blank" rel="noopener" class="wc-btn">Enter TigPods — Full Site ↗</a></div>
   </div>
-  <div class="wstatus"><div class="wsf">44 episodes available</div><div class="wsf">TIG Media Network</div></div>
+  <div class="wstatus"><div class="wsf" id="tigpods-count">Loading episodes...</div><div class="wsf">TIG Media Network</div></div>
 </div>
 </div>
 
@@ -775,16 +896,17 @@ html,body{width:100%;height:100%;font-family:var(--font-ui);font-size:12px;
         </div>
       </div>
     </div>
-    <div style="padding:4px 14px 2px;font-family:var(--font-mono);font-size:10px;color:#5d5e5f;border-bottom:1px solid #e3e2e2"><strong>Search Results — 6 items found</strong></div>
-    <div class="wc-row"><span class="ms">language</span><span class="wc-row-name">theintgen.com</span><span class="wc-row-type">Website</span><span class="wc-row-size" style="width:auto"><a href="#" style="color:#006565;font-size:9px">Open</a></span></div>
-    <div class="wc-row"><span class="ms" style="color:#c0392b">camera</span><span class="wc-row-name">@theintgen — Instagram</span><span class="wc-row-type">Social</span><span class="wc-row-size" style="width:auto"><a href="#" style="color:#006565;font-size:9px">Follow</a></span></div>
-    <div class="wc-row"><span class="ms" style="color:#1da1f2">alternate_email</span><span class="wc-row-name">@theintgen — Twitter/X</span><span class="wc-row-type">Social</span><span class="wc-row-size" style="width:auto"><a href="#" style="color:#006565;font-size:9px">Follow</a></span></div>
-    <div class="wc-row"><span class="ms" style="color:#0077b5">work</span><span class="wc-row-name">The Internet Generation — LinkedIn</span><span class="wc-row-type">Social</span><span class="wc-row-size" style="width:auto"><a href="#" style="color:#006565;font-size:9px">Connect</a></span></div>
-    <div class="wc-row"><span class="ms">mail</span><span class="wc-row-name">hello@theintgen.com</span><span class="wc-row-type">Email</span><span class="wc-row-size" style="width:auto"><a href="mailto:hello@theintgen.com" style="color:#006565;font-size:9px">Write</a></span></div>
-    <div class="wc-row"><span class="ms">location_city</span><span class="wc-row-name">Chennai, Tamil Nadu, India</span><span class="wc-row-type">Location</span><span class="wc-row-size" style="width:auto;font-size:9px">🗺</span></div>
-    <div style="text-align:center;padding:10px"><a href="#" class="wc-btn">Get In Touch</a></div>
+    <div style="padding:4px 14px 2px;font-family:var(--font-mono);font-size:10px;color:#5d5e5f;border-bottom:1px solid #e3e2e2"><strong>Search Results — 7 items found</strong></div>
+    <a class="wc-row" href="https://www.instagram.com/theintgen/" target="_blank" rel="noopener" style="text-decoration:none;color:inherit"><span class="ms" style="color:#c0392b">camera</span><span class="wc-row-name">@theintgen — Instagram</span><span class="wc-row-type">Social</span><span class="wc-row-size" style="width:auto;color:#006565;font-size:9px">Follow</span></a>
+    <a class="wc-row" href="https://www.linkedin.com/company/theintgen" target="_blank" rel="noopener" style="text-decoration:none;color:inherit"><span class="ms" style="color:#0077b5">business_center</span><span class="wc-row-name">The Internet Generation — LinkedIn</span><span class="wc-row-type">Social</span><span class="wc-row-size" style="width:auto;color:#006565;font-size:9px">Connect</span></a>
+    <a class="wc-row" href="https://www.youtube.com/@TigPods" target="_blank" rel="noopener" style="text-decoration:none;color:inherit"><span class="ms" style="color:#c0392b">smart_display</span><span class="wc-row-name">@TigPods — YouTube</span><span class="wc-row-type">Social</span><span class="wc-row-size" style="width:auto;color:#006565;font-size:9px">Watch</span></a>
+    <a class="wc-row" href="https://open.spotify.com/show/24ft92ZKYHNniM2onRhckB" target="_blank" rel="noopener" style="text-decoration:none;color:inherit"><span class="ms" style="color:#1db954">graphic_eq</span><span class="wc-row-name">TigPods — Spotify</span><span class="wc-row-type">Social</span><span class="wc-row-size" style="width:auto;color:#006565;font-size:9px">Listen</span></a>
+    <a class="wc-row" href="https://wa.me/919940237330" target="_blank" rel="noopener" style="text-decoration:none;color:inherit"><span class="ms" style="color:#25d366">chat</span><span class="wc-row-name">TIG Community — WhatsApp</span><span class="wc-row-type">Social</span><span class="wc-row-size" style="width:auto;color:#006565;font-size:9px">Join</span></a>
+    <a class="wc-row" href="mailto:hello@theintgen.com" style="text-decoration:none;color:inherit"><span class="ms">mail</span><span class="wc-row-name">hello@theintgen.com</span><span class="wc-row-type">Email</span><span class="wc-row-size" style="width:auto;color:#006565;font-size:9px">Write</span></a>
+    <a class="wc-row" href="https://maps.google.com/?q=T.+Nagar,+Chennai" target="_blank" rel="noopener" style="text-decoration:none;color:inherit"><span class="ms">location_city</span><span class="wc-row-name">T. Nagar, Chennai, Tamil Nadu</span><span class="wc-row-type">Location</span><span class="wc-row-size" style="width:auto;font-size:9px">🗺</span></a>
+    <div style="text-align:center;padding:10px"><a href="mailto:hello@theintgen.com" class="wc-btn">Get In Touch</a></div>
   </div>
-  <div class="wstatus"><div class="wsf">6 items found</div><div class="wsf">Find complete</div></div>
+  <div class="wstatus"><div class="wsf">7 items found</div><div class="wsf">Find complete</div></div>
 </div>
 </div>
 
@@ -852,6 +974,88 @@ html,body{width:100%;height:100%;font-family:var(--font-ui);font-size:12px;
     </div>
   </div>
   <div class="wstatus"><div class="wsf">48 slides · 24.5 MB</div><div class="wsf">Read-only mode</div></div>
+</div>
+</div>
+
+<!-- TIGHQ -->
+<div class="woverlay" id="win-tighq">
+<div class="wframe">
+  <div class="wtbar">
+    <span class="ms" style="font-size:12px">apartment</span>
+    <span class="wt">TigHQ — C:\WINDOWS\Desktop\TigHQ</span>
+    <div class="wbtn" data-close="tighq">_</div>
+    <div class="wbtn" data-close="tighq" style="font-size:7px">□</div>
+    <div class="wbtn" data-close="tighq">✕</div>
+  </div>
+  <div class="wmenu"><span>File</span><span>Edit</span><span>View</span><span>Bookings</span><span>Help</span></div>
+  <div class="waddr">
+    <span class="al">Address</span>
+    <div class="af">C:\WINDOWS\Desktop\TigHQ</div>
+    <div class="ago out btn-press">Go</div>
+  </div>
+  <div class="wcontent">
+    <div class="wc">
+      <div class="wc-hero">
+        <div class="wc-iconbox"><span class="ms" style="font-size:28px;color:#006565">apartment</span></div>
+        <div>
+          <div class="wc-h1">TigHQ — The Co-Working Space</div>
+          <div class="wc-body">Chennai's creative co-working space, by The Internet Generation.<br>Desks, studios and a community of people who make things.</div>
+          <div style="margin-top:8px"><span class="uc-badge">🚧 UNDER CONSTRUCTION</span></div>
+        </div>
+      </div>
+    </div>
+    <div style="padding:6px 14px 4px;font-family:var(--font-ui);font-size:11px;color:#5d5e5f;border-bottom:1px solid #e3e2e2"><strong>What's Being Built</strong></div>
+    <div class="wc-row"><span class="ms">desk</span><span class="wc-row-name">Hot desks &amp; dedicated seats</span><span class="wc-row-type">Space</span><span class="wc-row-size">SOON</span></div>
+    <div class="wc-row"><span class="ms">podcasts</span><span class="wc-row-name">TigPods recording studio</span><span class="wc-row-type">Studio</span><span class="wc-row-size">SOON</span></div>
+    <div class="wc-row"><span class="ms">videocam</span><span class="wc-row-name">Shoot floor &amp; edit bays</span><span class="wc-row-type">Studio</span><span class="wc-row-size">SOON</span></div>
+    <div class="wc-row"><span class="ms">groups</span><span class="wc-row-name">Community events &amp; open mics</span><span class="wc-row-type">Culture</span><span class="wc-row-size">SOON</span></div>
+    <div class="wc-row"><span class="ms">coffee</span><span class="wc-row-name">Filter coffee, obviously</span><span class="wc-row-type">Fuel</span><span class="wc-row-size">∞</span></div>
+    <div style="text-align:center;padding:10px">
+      <a href="https://wa.me/919940237330" target="_blank" rel="noopener" class="wc-btn">📲 Get Early Access</a>
+    </div>
+  </div>
+  <div class="wstatus"><div class="wsf">Opening soon</div><div class="wsf">Chennai</div></div>
+</div>
+</div>
+
+<!-- RECYCLE BIN -->
+<div class="woverlay" id="win-recycle">
+<div class="wframe">
+  <div class="wtbar">
+    <span class="ms" style="font-size:12px">delete</span>
+    <span class="wt">Recycle Bin — Scrapped Ideas</span>
+    <div class="wbtn" data-close="recycle">_</div>
+    <div class="wbtn" data-close="recycle" style="font-size:7px">□</div>
+    <div class="wbtn" data-close="recycle">✕</div>
+  </div>
+  <div class="wmenu"><span>File</span><span>Edit</span><span>View</span><span>Restore</span><span>Help</span></div>
+  <div class="waddr">
+    <span class="al">Address</span>
+    <div class="af">C:\RECYCLED</div>
+    <div class="ago out btn-press">Go</div>
+  </div>
+  <div class="wcontent">
+    <div class="wc" style="padding:8px 14px">
+      <div class="wc-h1" style="font-size:13px">Scrapped Ideas</div>
+      <div class="wc-body">Every agency has a graveyard. Ours is searchable.</div>
+      <div style="margin-top:8px"><span class="uc-badge">🚧 UNDER CONSTRUCTION</span></div>
+    </div>
+    <div style="padding:2px 14px 4px;font-family:var(--font-mono);font-size:10px;color:#5d5e5f;border-bottom:1px solid #e3e2e2;display:flex;gap:16px">
+      <span style="flex:1">Name</span><span style="width:90px">Reason Deleted</span>
+    </div>
+    <div class="wc-row"><span class="ms" style="color:#808080">description</span><span class="wc-row-name">TIG_NFT_Drop_2022.json</span><span class="wc-row-type" style="width:90px">Gas fees ate it</span></div>
+    <div class="wc-row"><span class="ms" style="color:#808080">favorite</span><span class="wc-row-name">TigDates.exe</span><span class="wc-row-type" style="width:90px">For your safety</span></div>
+    <div class="wc-row"><span class="ms" style="color:#808080">view_in_ar</span><span class="wc-row-name">Metaverse_Office.blend</span><span class="wc-row-type" style="width:90px">Nobody came</span></div>
+    <div class="wc-row"><span class="ms" style="color:#808080">paid</span><span class="wc-row-name">TIG_Coin_Whitepaper.docx</span><span class="wc-row-type" style="width:90px">Legal said no</span></div>
+    <div class="wc-row"><span class="ms" style="color:#808080">mic</span><span class="wc-row-name">Clubhouse_Strategy.txt</span><span class="wc-row-type" style="width:90px">Platform vanished</span></div>
+    <div class="wc-row"><span class="ms" style="color:#808080">smart_toy</span><span class="wc-row-name">AI_Replaces_Us_All.bat</span><span class="wc-row-type" style="width:90px">Too real</span></div>
+    <div style="text-align:center;padding:10px">
+      <span class="wc-btn" style="opacity:.5;cursor:not-allowed">Restore</span>
+      <span class="wc-btn" style="margin-left:6px;opacity:.5;cursor:not-allowed">Empty Bin</span>
+      <div style="font-family:var(--font-mono);font-size:9px;color:#5d5e5f;margin-top:8px">Some ideas are better left here.</div>
+    </div>
+  </div>
+  <div class="wstatus"><div class="wsf">6 objects</div><div class="wsf">404 KB of regret</div></div>
 </div>
 </div>
 
@@ -965,6 +1169,169 @@ document.querySelectorAll('.woverlay').forEach(overlay=>{
 
 // Escape key
 document.addEventListener('keydown',e=>{ if(e.key==='Escape'){ closeAllWins(); closeStart(); } });
+
+// ── MINI BROWSER (Tigital / TigGigs) ───────────
+// Each .wframe[data-browser] hosts .bpage divs; back/fwd/refresh/home
+// behave like a real browser over the minisite's internal pages.
+const browsers = {};
+
+function brShow(b, pageId, flash){
+  b.pages.forEach(p=>p.classList.toggle('active', p.dataset.bpage===pageId));
+  const pg = b.pages.find(p=>p.dataset.bpage===pageId);
+  if(pg && b.addr) b.addr.textContent = pg.dataset.url || '';
+  if(b.content) b.content.scrollTop = 0;
+  // back/fwd enabled states
+  if(b.btnBack) b.btnBack.classList.toggle('disabled', b.idx<=0);
+  if(b.btnFwd)  b.btnFwd.classList.toggle('disabled', b.idx>=b.hist.length-1);
+  // status flash like IE
+  if(flash && b.status){
+    b.status.textContent = 'Opening page...';
+    clearTimeout(b.statusTimer);
+    b.statusTimer = setTimeout(()=>{ b.status.textContent = 'Done'; }, 350);
+  }
+}
+
+function brNavTo(name, pageId){
+  const b = browsers[name]; if(!b) return;
+  b.hist = b.hist.slice(0, b.idx+1);
+  b.hist.push(pageId);
+  b.idx = b.hist.length-1;
+  brShow(b, pageId, true);
+}
+
+function brAction(name, action){
+  const b = browsers[name]; if(!b) return;
+  if(action==='back'  && b.idx>0){ b.idx--; brShow(b, b.hist[b.idx], true); }
+  if(action==='fwd'   && b.idx<b.hist.length-1){ b.idx++; brShow(b, b.hist[b.idx], true); }
+  if(action==='home'){ brNavTo(name, 'home'); }
+  if(action==='refresh'){
+    brShow(b, b.hist[b.idx], true);
+    if(name==='tiggigs') loadGigs();   // re-pull the live board
+    if(b.content){ b.content.style.opacity='0'; setTimeout(()=>{ b.content.style.opacity='1'; }, 180); }
+  }
+}
+
+document.querySelectorAll('.wframe[data-browser]').forEach(frame=>{
+  const name = frame.dataset.browser;
+  const b = {
+    pages: Array.from(frame.querySelectorAll('.bpage')),
+    addr: frame.querySelector('.addr-text'),
+    content: frame.querySelector('.wcontent'),
+    status: frame.querySelector('.wstatus .wsf'),
+    btnBack: frame.querySelector('[data-nav="back"]'),
+    btnFwd: frame.querySelector('[data-nav="fwd"]'),
+    hist: ['home'], idx: 0, statusTimer: null
+  };
+  browsers[name] = b;
+  frame.querySelectorAll('[data-page]').forEach(el=>{
+    el.addEventListener('click', e=>{ e.preventDefault(); brNavTo(name, el.dataset.page); });
+  });
+  frame.querySelectorAll('[data-nav]').forEach(btn=>{
+    btn.addEventListener('click', ()=>brAction(name, btn.dataset.nav));
+  });
+  brShow(b, 'home', false);
+});
+
+// ── LIVE GIGS — TigGigs board (Supabase) ───────
+const GIGS_URL = 'https://snlcskmszhbipinffwpy.supabase.co/rest/v1';
+const GIGS_KEY = 'sb_publishable_8_Fj46gQBqoA4HgidRKP6g_1uDbhWPM';
+const GIG_EMOJI = { 'Edit':'🎬', 'AI Vids':'🤖', 'Design':'🎨', 'Copy':'📝', 'Shoot':'📷' };
+
+function esc(s){ const d=document.createElement('div'); d.textContent=s==null?'':String(s); return d.innerHTML; }
+
+async function loadGigs(){
+  const grid = document.getElementById('gigs-live');
+  const count = document.getElementById('gigs-count');
+  if(!grid) return;
+  try{
+    const r = await fetch(`${GIGS_URL}/v_jobs?select=job_id,job_title,board_status,production_category,complexity,rate_auto,internal_deadline&order=internal_deadline.desc.nullslast&limit=6`,
+      { headers:{ apikey:GIGS_KEY, Authorization:`Bearer ${GIGS_KEY}` } });
+    if(!r.ok) throw new Error('HTTP '+r.status);
+    const jobs = await r.json();
+    if(!jobs.length) throw new Error('empty');
+    grid.innerHTML = jobs.map(j=>`
+      <div class="wc-card">
+        <div style="font-size:18px;margin-bottom:3px">${GIG_EMOJI[j.production_category]||'₹'}</div>
+        <div class="wc-card-name" title="${esc(j.job_title)}">${esc(j.job_title)}</div>
+        <div class="wc-card-meta">${esc(j.production_category||'Gig')} · ${esc(j.complexity||'')} · ₹${j.rate_auto!=null?Number(j.rate_auto).toLocaleString('en-IN'):'—'}</div>
+        <a href="https://theintgen.com/tiggigs/" target="_blank" rel="noopener" class="wc-btn" style="margin-top:4px;width:100%;text-align:center">Apply ↗</a>
+      </div>`).join('');
+    if(count) count.textContent = jobs.length+'+ gigs on board';
+  }catch(err){
+    grid.innerHTML = `
+      <div class="wc-card">
+        <div class="wc-card-name">⚠ Board_Offline.log</div>
+        <div class="wc-card-desc">Couldn't reach the live board. The full site has the latest gigs.</div>
+        <a href="https://theintgen.com/tiggigs/" target="_blank" rel="noopener" class="wc-btn" style="margin-top:4px">Open TigGigs ↗</a>
+      </div>`;
+    if(count) count.textContent = 'Board offline';
+  }
+}
+loadGigs();
+
+// ── LIVE EPISODES — TigPods (Supabase) ─────────
+const PODS_URL = 'https://gdhpohaopwcsvqyxjvfw.supabase.co';
+const PODS_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdkaHBvaGFvcHdjc3ZxeXhqdmZ3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk4NzQ3MDksImV4cCI6MjA5NTQ1MDcwOX0.tRf1FrjM7BCZO-x_qjsWZQjBBVdl_nSKNqoIOC-TGZc';
+// Fallback if the fetch fails — real episodes, frozen copy
+const PODS_FALLBACK = [
+  {no:23,guest:'Praveen Shekar',cat:'Marketer',title:'Public Speaker Journey and What is an Outlier?'},
+  {no:22,guest:'Yadhava',cat:'Artist',title:'Cinema, Art, Travel, and Game'},
+  {no:21,guest:'Rojusiview',cat:'Screenwriter',title:"Writers' Room in Tamil Cinema"},
+  {no:20,guest:'Prem Shankar',cat:'Agency Owner',title:'Running a 55+ Member Digital Marketing Agency in Chennai'},
+  {no:19,guest:'Guru Nicketan',cat:'Content Creator',title:'Deconstructing Humor: How to Perform Comedy'},
+  {no:18,guest:'Anbu Thasan',cat:'Actor',title:'Lights, Camera, YouTube: Growing as an Actor'},
+  {no:17,guest:'Vikkals Vikram',cat:'Comedian',title:'The Reel Talk: How I Got Viral'},
+  {no:16,guest:'Ram Ramasamy',cat:'Actor / Lyricist',title:'Handling Fame & Imposter Syndrome after Bigg Boss'},
+  {no:15,guest:'Akaash Ampili',cat:'Creative Director',title:'Creating Impactful Ads'},
+  {no:14,guest:'Radha Sridhar',cat:'Film Editor',title:"A Film Editor's Perspective: The Art of Cutting"},
+  {no:13,guest:'Nestor Carro',cat:'Metaverse Evangelist',title:'Being a Creator in the Metaverse'},
+  {no:12,guest:'Mercy John',cat:'RJ',title:'Beyond the Radio Station'},
+  {no:11,guest:'Bharathi & Keerti',cat:'TigPods Team',title:'Season 1 Retrospective'},
+  {no:10,guest:'Thajmola',cat:'Content Creator',title:'Becoming a Better Attention Seeker'},
+  {no:9,guest:'Prasanna Natarajan',cat:'Distiller',title:'The Zen of Gin Making'},
+  {no:8,guest:'Yogi',cat:'Tattoo Artist',title:'Becoming an Indian Tattoo Artist'},
+  {no:7,guest:'Aswin Pranav Shankar',cat:'Google Engineer',title:'Life at Silicon Valley'},
+  {no:6,guest:'Sarah Black',cat:'Singer / Musician',title:'The Songwriter Process'},
+  {no:5,guest:'Mavisha Ramachandran',cat:'Entrepreneur',title:'Double Up On Your Skills'},
+  {no:4,guest:'Arjun Manohar',cat:'Content Creator',title:'Sounds of Arjun: Becoming an Influencer'},
+  {no:3,guest:'Shanoo Murali',cat:'Art Director',title:'Building a Career through the Arts'},
+  {no:2,guest:'Kaushik MV',cat:'Actor',title:"The Actor's Life"},
+  {no:1,guest:'Kwochai',cat:'Costume Designer',title:'Understanding the Modern Fashion World'},
+  {no:0,guest:'ven.cut',cat:'Editor',title:'Introducing TigPodcast'}
+];
+
+function cleanEpTitle(t){ return (t||'').split('|')[0].trim(); }
+
+function renderEps(eps){
+  const list = document.getElementById('tigpods-eps');
+  const count = document.getElementById('tigpods-count');
+  const np = document.getElementById('tigpods-nowplaying');
+  if(!list) return;
+  const sorted = [...eps].sort((a,b)=>b.no-a.no);
+  list.innerHTML = sorted.map((ep,i)=>{
+    const url = ep.youtube_url || ep.spotify_url || 'https://www.youtube.com/@TigPods';
+    return `<a class="podcast-ep" href="${esc(url)}" target="_blank" rel="noopener" style="text-decoration:none;color:inherit${i===0?';background:#efeded':''}">
+      <div class="ep-play out"><span class="ms">play_arrow</span></div>
+      <div class="ep-num">EP ${ep.no}</div>
+      <div class="ep-title">${esc(cleanEpTitle(ep.title))}<span style="font-weight:400;color:#5d5e5f"> — ${esc((ep.guest||'').trim())}</span></div>
+      <div class="ep-dur" style="width:auto">${esc((ep.cat||'').trim())}</div>
+    </a>`;
+  }).join('');
+  if(count) count.textContent = sorted.length+' episodes available';
+  if(np && sorted[0]) np.textContent = `▶ NOW PLAYING: EP.${sorted[0].no} — "${cleanEpTitle(sorted[0].title)}"`;
+}
+
+(async function loadEps(){
+  try{
+    const r = await fetch(`${PODS_URL}/rest/v1/tigpods_episodes?select=no,guest,cat,title,youtube_url,spotify_url&order=no.desc`,
+      { headers:{ apikey:PODS_KEY, Authorization:`Bearer ${PODS_KEY}` } });
+    if(!r.ok) throw new Error('HTTP '+r.status);
+    const eps = await r.json();
+    renderEps(eps.length ? eps : PODS_FALLBACK);
+  }catch(err){
+    renderEps(PODS_FALLBACK);
+  }
+})();
 
 // ── IMP (Bane) sprite engine — 30x30 cel, 10 poses ──
 const IMP_N = 30;
