@@ -4,9 +4,20 @@
 ## What This Repo Is
 The ONE repo for all TIG web properties. All subsites live as subfolders here.
 - **GitHub:** `The-Internet-Generation/theintgen-web`
-- **Local clone:** `/Users/jaytesh/Documents/theintgen-web/`
-- **Canonical local source (newest files):** `/Users/jaytesh/Documents/TIGLancers Website/`
+- **Local clone:** `~/Documents/TIG/theintgen-web/`
+- **Canonical local source (newest files):** `~/Documents/TIG/TIGLancers Website/`
 - **CI/CD:** `.github/workflows/deploy.yml` → pushes to Cloudflare Pages project `theintgen-web`
+
+## Mother Folder
+All TIG codebases live under one parent:
+```
+~/Documents/TIG/
+├── TIGLancers Website/     ← canonical working files (source of truth for edits)
+├── theintgen-web/          ← THIS REPO — live site, all subsites
+├── theintgen-os/           ← legacy Worker-based TIG OS (do not use as source of truth)
+├── tigital/                ← standalone tigital repo
+└── tigpods/                ← standalone tigpods repo
+```
 
 ## Repo Structure
 ```
@@ -16,6 +27,9 @@ theintgen-web/
 ├── .github/workflows/deploy.yml  ← GitHub Actions → CF Pages auto-deploy
 ├── public/assets/                ← logos
 ├── functions/                    ← CF Pages Functions (API routes)
+├── m/
+│   ├── index.html                ← Mobile portal (TIG OS phone UI)
+│   └── icons/                    ← App icons (tigital, tigom, tigpods)
 ├── tiggigs/                      ← TIG job board / freelance marketplace
 │   ├── index.html
 │   ├── dashboard.html
@@ -28,7 +42,7 @@ theintgen-web/
 ```
 
 ## ⚠️ File Sync Status
-Canonical latest versions live at `/Users/jaytesh/Documents/TIGLancers Website/`.
+Canonical latest versions live at `~/Documents/TIG/TIGLancers Website/`.
 Run the sync command below before making changes to ensure you're on the newest code.
 
 | File | Notes |
@@ -41,13 +55,13 @@ Run the sync command below before making changes to ensure you're on the newest 
 
 ### Sync local → repo
 ```bash
-cd ~/Documents/theintgen-web
-cp ~/Documents/TIGLancers\ Website/index.html tiggigs/index.html
-cp ~/Documents/TIGLancers\ Website/dashboard.html tiggigs/dashboard.html
-cp ~/Documents/TIGLancers\ Website/team-dashboard.html tiggigs/team-dashboard.html
-cp ~/Documents/TIGLancers\ Website/tig-os.html index.html   # TIG OS = root landing page
-cp ~/Documents/TIGLancers\ Website/tigpods.html tigpods/tigpods-full.html
-cp ~/Documents/TIGLancers\ Website/tigpods-admin.html tigpods/admin.html
+cd ~/Documents/TIG/theintgen-web
+cp ~/Documents/TIG/TIGLancers\ Website/index.html tiggigs/index.html
+cp ~/Documents/TIG/TIGLancers\ Website/dashboard.html tiggigs/dashboard.html
+cp ~/Documents/TIG/TIGLancers\ Website/team-dashboard.html tiggigs/team-dashboard.html
+cp ~/Documents/TIG/TIGLancers\ Website/tig-os.html index.html   # TIG OS = root landing page
+cp ~/Documents/TIG/TIGLancers\ Website/tigpods.html tigpods/tigpods-full.html
+cp ~/Documents/TIG/TIGLancers\ Website/tigpods-admin.html tigpods/admin.html
 git add -A && git commit -m "sync: update from local source" && git push
 ```
 
@@ -100,15 +114,10 @@ Create a new folder (e.g. `tighq/`) with an `index.html`, push to main.
 ### Update _redirects routing
 Edit `_redirects` — CF Pages reads this for path routing rules.
 
-## Other Repos on This Machine
+## Other Repos (all under ~/Documents/TIG/)
 | Repo | Local path | Notes |
 |---|---|---|
-| `The-Internet-Generation/theintgen-os` | `~/Documents/theintgen-os/` | Legacy Worker-based TIG OS — do not use as source of truth |
+| `The-Internet-Generation/theintgen-os` | `theintgen-os/` | Legacy Worker-based TIG OS — do not use as source of truth |
+| `The-Internet-Generation/tigital` | `tigital/` | Standalone tigital site |
+| `The-Internet-Generation/tigpods` | `tigpods/` | Standalone tigpods site |
 | `jaytesh-stack/tigos` | *(deleted)* | Old TigGigs — fully superseded |
-
-## Legacy Repos (secondary — do not use as source of truth)
-| Repo | Status |
-|---|---|
-| `The-Internet-Generation/tigital` | Separate standalone — may diverge |
-| `The-Internet-Generation/tigpods` | Separate standalone — may diverge |
-| `jaytesh-stack/tigos` | Old TigGigs — superseded by `tiggigs/` folder here |
