@@ -8,10 +8,6 @@
 
 /tigital/blog     /tigital/blog/    301
 
-# Kill old mobile portal — redirect to root
-/m/                    /    301
-/m/index.html          /    301
-
 # Short URLs → tiggigs subpages
 /dashboard             /tiggigs/dashboard.html         301
 /dashboard.html        /tiggigs/dashboard.html         301

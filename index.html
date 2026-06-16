@@ -12,6 +12,14 @@
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://theintgen.com/">
 <link rel="canonical" href="https://theintgen.com/">
+<link rel="alternate" media="only screen and (max-width: 640px)" href="https://theintgen.com/m/">
+<script>
+(function(){
+  var isPhone = /Android.*Mobile|iPhone|iPod/i.test(navigator.userAgent);
+  var isRoot = location.pathname === '/' || location.pathname === '/index.html';
+  if(isPhone && isRoot && !/[?&]desktop=1/.test(location.search)) location.replace('/m/');
+})();
+</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"Organization","name":"The Internet Generation","alternateName":"TIG","url":"https://theintgen.com","email":"hi@theintgen.com","description":"Chennai-based creative and digital agency: digital marketing, video production, influencer marketing, podcasts, open mic events, and the TigGigs freelance job board.","address":{"@type":"PostalAddress","addressLocality":"Chennai","addressCountry":"IN"},"sameAs":["https://theintgen.com/tiggigs/","https://theintgen.com/tigital/","https://theintgen.com/tigpods/"]}</script>
 <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;700;800&family=JetBrains+Mono:wght@400;700&family=Press+Start+2P&display=swap" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet">
