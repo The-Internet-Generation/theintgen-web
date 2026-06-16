@@ -4,8 +4,8 @@
 ## What This Repo Is
 The ONE repo for all TIG web properties. All subsites live as subfolders here.
 - **GitHub:** `The-Internet-Generation/theintgen-web`
-- **Local clone:** `/Users/jaytesh/Downloads/theintgen-web/`
-- **Canonical local source (newest files):** `/Users/jaytesh/TIGLancers Website/`
+- **Local clone:** `/Users/jaytesh/Documents/theintgen-web/`
+- **Canonical local source (newest files):** `/Users/jaytesh/Documents/TIGLancers Website/`
 - **CI/CD:** `.github/workflows/deploy.yml` → pushes to Cloudflare Pages project `theintgen-web`
 
 ## Repo Structure
@@ -28,7 +28,7 @@ theintgen-web/
 ```
 
 ## ⚠️ File Sync Status
-Canonical latest versions live at `/Users/jaytesh/TIGLancers Website/`.
+Canonical latest versions live at `/Users/jaytesh/Documents/TIGLancers Website/`.
 Run the sync command below before making changes to ensure you're on the newest code.
 
 | File | Notes |
@@ -41,13 +41,13 @@ Run the sync command below before making changes to ensure you're on the newest 
 
 ### Sync local → repo
 ```bash
-cd /Users/jaytesh/Downloads/theintgen-web
-cp "/Users/jaytesh/TIGLancers Website/index.html" tiggigs/index.html
-cp "/Users/jaytesh/TIGLancers Website/dashboard.html" tiggigs/dashboard.html
-cp "/Users/jaytesh/TIGLancers Website/team-dashboard.html" tiggigs/team-dashboard.html
-cp "/Users/jaytesh/TIGLancers Website/tig-os.html" index.html   # TIG OS = root landing page
-cp "/Users/jaytesh/TIGLancers Website/tigpods.html" tigpods/tigpods-full.html
-cp "/Users/jaytesh/TIGLancers Website/tigpods-admin.html" tigpods/admin.html
+cd ~/Documents/theintgen-web
+cp ~/Documents/TIGLancers\ Website/index.html tiggigs/index.html
+cp ~/Documents/TIGLancers\ Website/dashboard.html tiggigs/dashboard.html
+cp ~/Documents/TIGLancers\ Website/team-dashboard.html tiggigs/team-dashboard.html
+cp ~/Documents/TIGLancers\ Website/tig-os.html index.html   # TIG OS = root landing page
+cp ~/Documents/TIGLancers\ Website/tigpods.html tigpods/tigpods-full.html
+cp ~/Documents/TIGLancers\ Website/tigpods-admin.html tigpods/admin.html
 git add -A && git commit -m "sync: update from local source" && git push
 ```
 
@@ -100,9 +100,11 @@ Create a new folder (e.g. `tighq/`) with an `index.html`, push to main.
 ### Update _redirects routing
 Edit `_redirects` — CF Pages reads this for path routing rules.
 
-## Scattered Old Copies (IGNORE)
-- `/Users/jaytesh/Desktop/TIG/TIGJobBoard-Deploy 13 may/`
-- `/Users/jaytesh/Desktop/tiggigs devmode/`
+## Other Repos on This Machine
+| Repo | Local path | Notes |
+|---|---|---|
+| `The-Internet-Generation/theintgen-os` | `~/Documents/theintgen-os/` | Legacy Worker-based TIG OS — do not use as source of truth |
+| `jaytesh-stack/tigos` | *(deleted)* | Old TigGigs — fully superseded |
 
 ## Legacy Repos (secondary — do not use as source of truth)
 | Repo | Status |
