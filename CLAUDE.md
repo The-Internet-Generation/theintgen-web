@@ -5,14 +5,14 @@
 The ONE repo for all TIG web properties. All subsites live as subfolders here.
 - **GitHub:** `The-Internet-Generation/theintgen-web`
 - **Local clone:** `~/Documents/TIG/theintgen-web/`
-- **Canonical local source (newest files):** `~/Documents/TIG/TIGLancers Website/`
+- **Canonical local source (newest files):** `~/Documents/TIG/TIG Website files/`
 - **CI/CD:** `.github/workflows/deploy.yml` → pushes to Cloudflare Pages project `theintgen-web`
 
 ## Mother Folder
 All TIG codebases live under one parent:
 ```
 ~/Documents/TIG/
-├── TIGLancers Website/     ← canonical working files (source of truth for edits)
+├── TIG Website files/      ← canonical working files (source of truth for edits)
 ├── theintgen-web/          ← THIS REPO — live site, all subsites
 ├── theintgen-os/           ← legacy Worker-based TIG OS (do not use as source of truth)
 ├── tigital/                ← standalone tigital repo
@@ -42,32 +42,19 @@ theintgen-web/
 ```
 
 ## ⚠️ File Sync Status
-Canonical latest versions live at `~/Documents/TIG/TIGLancers Website/`.
-Run the sync command below before making changes to ensure you're on the newest code.
-
-| File | Notes |
-|---|---|
-| `tiggigs/index.html` | Local may be newer — check before editing |
-| `tiggigs/dashboard.html` | Local may be newer — check before editing |
-| `tig-os.html` | IS the root landing page — synced to repo `index.html` |
-| `tigpods.html` (full version) | Lives locally as `tigpods.html` |
-| `tigpods-admin.html` | Lives locally, not yet in repo |
+Canonical latest versions live at `~/Documents/TIG/TIG Website files/`.
 
 ### Sync local → repo
 ```bash
 cd ~/Documents/TIG/theintgen-web
-cp ~/Documents/TIG/TIGLancers\ Website/index.html tiggigs/index.html
-cp ~/Documents/TIG/TIGLancers\ Website/dashboard.html tiggigs/dashboard.html
-cp ~/Documents/TIG/TIGLancers\ Website/team-dashboard.html tiggigs/team-dashboard.html
-cp ~/Documents/TIG/TIGLancers\ Website/tig-os.html index.html   # TIG OS = root landing page
-cp ~/Documents/TIG/TIGLancers\ Website/tigpods.html tigpods/tigpods-full.html
-cp ~/Documents/TIG/TIGLancers\ Website/tigpods-admin.html tigpods/admin.html
+cp ~/Documents/TIG/TIG\ Website\ files/tig-os.html index.html
+cp ~/Documents/TIG/TIG\ Website\ files/index.html tiggigs/index.html
+cp ~/Documents/TIG/TIG\ Website\ files/dashboard.html tiggigs/dashboard.html
+cp ~/Documents/TIG/TIG\ Website\ files/team-dashboard.html tiggigs/team-dashboard.html
 git add -A && git commit -m "sync: update from local source" && git push
 ```
 
 ## Live Architecture
-
-### What's serving theintgen.com
 ```
 User → theintgen.com → Cloudflare Pages (theintgen-web)
                         → deployed by GitHub Actions on push to main
@@ -77,7 +64,6 @@ User → theintgen.com → Cloudflare Pages (theintgen-web)
 - **URL:** `https://snlcskmszhbipinffwpy.supabase.co`
 - **Anon key:** publishable — safe for browser use (stored in env or inline in HTML)
 - All HTML pages query Supabase directly from browser — no backend needed
-- **108 total jobs**, 47 in June
 
 ### `jobs` table columns
 `job_id`, `job_title`, `month`, `board_status`, `internal_deadline`, `publish_date`,
@@ -85,28 +71,21 @@ User → theintgen.com → Cloudflare Pages (theintgen-web)
 `submission_folder_url`, `file_format`, `production_category`, `complexity`
 
 ### `v_jobs` view
-Same as `jobs` + `rate_auto` (computed: `base_rate × complexity_multiplier × deadline_multiplier`, capped per asset type). Used in `team-dashboard.html`.
+Same as `jobs` + `rate_auto` (computed: `base_rate × complexity_multiplier × deadline_multiplier`). Used in `team-dashboard.html`.
 
 ## Deploy
 ```bash
-# Just push — GitHub Actions handles the rest
 git add -A && git commit -m "your message" && git push
-# CI deploys to Cloudflare Pages project: theintgen-web
 ```
 
 ### Credentials (never commit)
-- Stored locally in `.env` at repo root (gitignored — safe)
-- `CLOUDFLARE_API_TOKEN` — also in GitHub Actions secrets
-- `CLOUDFLARE_ACCOUNT_ID` — also in GitHub Actions secrets
-- `CLOUDFLARE_ZONE_ID` — theintgen.com zone
+- `.env` at repo root (gitignored)
+- `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID`, `CLOUDFLARE_ZONE_ID`
 
 ## Common Tasks
 
 ### Edit the job board
-```bash
-# Edit tiggigs/index.html or tiggigs/dashboard.html
-git add -A && git commit -m "feat: ..." && git push
-```
+Edit `tiggigs/index.html` or `tiggigs/dashboard.html`, then push.
 
 ### Add a new subsite
 Create a new folder (e.g. `tighq/`) with an `index.html`, push to main.
@@ -117,7 +96,7 @@ Edit `_redirects` — CF Pages reads this for path routing rules.
 ## Other Repos (all under ~/Documents/TIG/)
 | Repo | Local path | Notes |
 |---|---|---|
-| `The-Internet-Generation/theintgen-os` | `theintgen-os/` | Legacy Worker-based TIG OS — do not use as source of truth |
+| `The-Internet-Generation/theintgen-os` | `theintgen-os/` | Legacy Worker-based TIG OS |
 | `The-Internet-Generation/tigital` | `tigital/` | Standalone tigital site |
 | `The-Internet-Generation/tigpods` | `tigpods/` | Standalone tigpods site |
 | `jaytesh-stack/tigos` | *(deleted)* | Old TigGigs — fully superseded |
