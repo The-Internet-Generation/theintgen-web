@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
+<meta name="robots" content="noindex, nofollow"/>
+<title>TIG — Sample Work CMS</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:wght@400;500&display=swap');
+
+*{box-sizing:border-box;margin:0;padding:0}
+
+:root{
+  --black:#0A0A0A;
+  --yellow:#FFD600;
+  --white:#FAFAFA;
+  --gray:#888;
+  --off:#141414;
+  --card:#181818;
+  --border:#2A2A2A;
+  --red:#E24040;
+  --green:#1DB954;
+}
+
+body{ font-family:'DM Sans',sans-serif; background:var(--black); color:var(--white); min-height:100vh; }
+
+/* ── AUTH ── */
+.auth-screen{ display:flex; align-items:center; justify-content:center; min-height:100vh; padding:20px; }
+.auth-card{ width:min(440px,100%); background:var(--card); border:1px solid var(--border); border-radius:20px; padding:48px 40px; }
+.auth-logo{ font-family:'Syne',sans-serif; font-size:32px; font-weight:800; color:var(--yellow); letter-spacing:-1px; margin-bottom:4px; }
+.auth-sub{ font-size:13px; color:var(--gray); margin-bottom:36px; }
+.auth-label{ font-size:11px; font-weight:500; color:var(--gray); letter-spacing:1px; text-transform:uppercase; margin-bottom:8px; display:block; }
+.auth-input{ width:100%; background:var(--off); border:1px solid var(--border); border-radius:10px; padding:14px 16px; font-size:14px; color:var(--white); outline:none; font-family:'DM Sans',sans-serif; transition:border-color 0.2s; }
+.auth-input:focus{ border-color:var(--yellow); }
+.auth-btn{ width:100%; margin-top:16px; background:var(--yellow); color:var(--black); border:none; border-radius:10px; padding:14px; font-size:14px; font-weight:600; font-family:'DM Sans',sans-serif; cursor:pointer; transition:opacity 0.2s; }
+.auth-btn:hover{ opacity:0.88; }
+.auth-status{ font-size:12px; margin-top:10px; min-height:16px; }
+.auth-status.err{ color:var(--red); }
+
+/* ── DASHBOARD ── */
+.dashboard{ display:none; }
+.dashboard.visible{ display:block; }
+
+.topnav{ display:flex; align-items:center; justify-content:space-between; padding:18px 28px; border-bottom:1px solid var(--border); }
+.nav-left{ display:flex; align-items:center; gap:14px; }
+.nav-logo{ font-family:'Syne',sans-serif; font-size:20px; font-weight:800; color:var(--yellow); text-decoration:none; }
+.nav-subtitle{ font-size:12px; color:var(--gray); letter-spacing:0.5px; }
+.nav-right{ display:flex; align-items:center; gap:8px; }
+.nav-link{ font-size:12px; font-weight:600; color:var(--white); text-decoration:none; border:1px solid var(--border); border-radius:8px; padding:8px 14px; transition:all 0.15s; }
+.nav-link:hover{ background:var(--yellow); color:var(--black); }
+.nav-signout{ font-size:12px; font-weight:600; background:none; color:var(--gray); border:1px solid var(--border); border-radius:8px; padding:8px 14px; cursor:pointer; transition:all 0.15s; }
+.nav-signout:hover{ border-color:var(--red); color:var(--red); }
+
+.main{ padding:28px 28px 64px; max-width:1100px; margin:0 auto; }
+
+.panel{ background:var(--card); border:1px solid var(--border); border-radius:16px; padding:24px; margin-bottom:24px; }
+.panel h2{ font-family:'Syne',sans-serif; font-size:16px; font-weight:700; margin-bottom:18px; }
+
+.form-grid{ display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+@media(max-width:700px){ .form-grid{ grid-template-columns:1fr; } }
+.field{ display:flex; flex-direction:column; gap:6px; }
+.field.full{ grid-column:1/-1; }
+.field label{ font-size:11px; font-weight:500; color:var(--gray); letter-spacing:0.5px; text-transform:uppercase; }
+.field input, .field select{ background:var(--off); border:1px solid var(--border); border-radius:8px; padding:11px 13px; font-size:13px; color:var(--white); outline:none; font-family:'DM Sans',sans-serif; }
+.field input:focus, .field select:focus{ border-color:var(--yellow); }
+
+.form-actions{ display:flex; gap:10px; margin-top:18px; }
+.btn{ font-size:13px; font-weight:600; border-radius:8px; padding:11px 20px; cursor:pointer; font-family:'DM Sans',sans-serif; transition:opacity 0.15s; }
+.btn-primary{ background:var(--yellow); color:var(--black); border:none; }
+.btn-primary:hover{ opacity:0.88; }
+.btn-ghost{ background:none; color:var(--gray); border:1px solid var(--border); }
+.btn-ghost:hover{ color:var(--white); border-color:#444; }
+
+.form-status{ font-size:12px; margin-top:10px; min-height:16px; }
+.form-status.ok{ color:var(--green); }
+.form-status.err{ color:var(--red); }
+
+.entry-row{ display:flex; align-items:center; gap:14px; padding:12px; border:1px solid var(--border); border-radius:10px; margin-bottom:10px; }
+.entry-thumb{ width:56px; height:56px; border-radius:8px; object-fit:cover; background:var(--off); flex-shrink:0; }
+.entry-info{ flex:1; min-width:0; }
+.entry-title{ font-size:13px; font-weight:600; }
+.entry-meta{ font-size:11px; color:var(--gray); margin-top:2px; }
+.entry-actions{ display:flex; gap:6px; flex-shrink:0; }
+.entry-btn{ font-size:11px; font-weight:600; border-radius:6px; padding:7px 11px; cursor:pointer; border:1px solid var(--border); background:none; color:var(--gray); font-family:'DM Sans',sans-serif; }
+.entry-btn:hover{ color:var(--white); border-color:#444; }
+.entry-btn.danger:hover{ color:var(--red); border-color:var(--red); }
+
+.empty-state{ text-align:center; padding:32px; color:var(--gray); font-size:13px; }
+</style>
+</head>
+<body>
+
+<!-- ── AUTH SCREEN ── -->
+<div class="auth-screen" id="authScreen">
+  <div class="auth-card">
+    <div class="auth-logo">TIG.</div>
+    <div class="auth-sub">Sample Work CMS</div>
+    <form id="authForm" onsubmit="doAuth();return false;" autocomplete="off">
+      <label class="auth-label" for="authPwd">Team Password</label>
+      <input class="auth-input" id="authPwd" type="password" placeholder="Enter team password" autofocus/>
+      <button class="auth-btn" type="submit">Access CMS</button>
+      <div class="auth-status err" id="authStatus"></div>
+    </form>
+  </div>
+</div>
+
+<!-- ── DASHBOARD ── -->
+<div class="dashboard" id="dashboard">
+  <nav class="topnav">
+    <div class="nav-left">
+      <a href="https://theintgen.com" target="_blank" class="nav-logo">TIG.</a>
+      <span class="nav-subtitle">Sample Work CMS</span>
+    </div>
+    <div class="nav-right">
+      <a class="nav-link" href="./" target="_blank">Job Board</a>
+      <a class="nav-link" href="team-dashboard" target="_blank">Mission Control</a>
+      <button class="nav-signout" onclick="signOut()">Sign Out</button>
+    </div>
+  </nav>
+
+  <div class="main">
+
+    <div class="panel">
+      <h2 id="formHeading">Add sample work</h2>
+      <form id="entryForm" onsubmit="saveEntry();return false;">
+        <div class="form-grid">
+          <div class="field full">
+            <label for="fTitle">Title</label>
+            <input id="fTitle" type="text" placeholder="e.g. Ramajeyam Rice — Festival Carousel" required/>
+          </div>
+          <div class="field">
+            <label for="fClient">Client</label>
+            <input id="fClient" type="text" placeholder="e.g. Ramajeyam Rice"/>
+          </div>
+          <div class="field">
+            <label for="fAssetType">Asset Type</label>
+            <select id="fAssetType">
+              <option value="">—</option>
+              <option>Static Post</option>
+              <option>Reel</option>
+              <option>Carousel</option>
+              <option>Story</option>
+              <option>Production</option>
+            </select>
+          </div>
+          <div class="field full">
+            <label for="fImage">Image URL</label>
+            <input id="fImage" type="url" placeholder="https://…" required/>
+          </div>
+          <div class="field full">
+            <label for="fLink">Link URL <span style="text-transform:none">(optional — full post / drive link)</span></label>
+            <input id="fLink" type="url" placeholder="https://…"/>
+          </div>
+          <div class="field">
+            <label for="fSort">Sort Order <span style="text-transform:none">(lower shows first)</span></label>
+            <input id="fSort" type="number" value="0"/>
+          </div>
+        </div>
+        <div class="form-actions">
+          <button class="btn btn-primary" type="submit" id="saveBtn">Add entry</button>
+          <button class="btn btn-ghost" type="button" id="cancelEditBtn" style="display:none" onclick="resetForm()">Cancel edit</button>
+        </div>
+        <div class="form-status" id="formStatus"></div>
+      </form>
+    </div>
+
+    <div class="panel">
+      <h2>Current entries</h2>
+      <div id="entryList"><div class="empty-state">Loading…</div></div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+const SB_URL   = 'https://snlcskmszhbipinffwpy.supabase.co/rest/v1';
+const SB_KEY   = 'sb_publishable_8_Fj46gQBqoA4HgidRKP6g_1uDbhWPM';
+const SB_HDRS  = { 'apikey': SB_KEY, 'Authorization': `Bearer ${SB_KEY}`, 'Content-Type': 'application/json' };
+const AUTH_KEY = 'tig_team_auth';
+const PASS_KEY = 'tig_team_pass';
+
+let entries = [];
+let editingId = null;
+
+const sbRpc = async (fn, args = {}) => {
+  const r = await fetch(`${SB_URL}/rpc/${fn}`, { method: 'POST', headers: SB_HDRS, body: JSON.stringify(args) });
+  if (!r.ok) throw new Error(`rpc ${fn} ${r.status}`);
+  return r.json();
+};
+
+// ── AUTH ──
+async function doAuth() {
+  const val = document.getElementById('authPwd').value.trim();
+  const status = document.getElementById('authStatus');
+  status.textContent = 'Checking…';
+  try {
+    const ok = await sbRpc('team_auth', { p_pass: val });
+    if (ok === true) {
+      localStorage.setItem(AUTH_KEY, '1');
+      localStorage.setItem(PASS_KEY, val);
+      showDashboard();
+    } else {
+      status.textContent = 'Incorrect password. Try again.';
+    }
+  } catch(e) {
+    status.textContent = 'Auth error. Try again.';
+  }
+}
+
+function showDashboard() {
+  document.getElementById('authScreen').style.display = 'none';
+  document.getElementById('dashboard').classList.add('visible');
+  loadEntries();
+}
+
+function signOut() {
+  localStorage.removeItem(AUTH_KEY);
+  localStorage.removeItem(PASS_KEY);
+  location.reload();
+}
+
+// ── ENTRIES ──
+async function loadEntries() {
+  const list = document.getElementById('entryList');
+  try {
+    const resp = await fetch(`${SB_URL}/sample_work?order=sort_order.asc,created_at.desc`, { headers: SB_HDRS });
+    if (!resp.ok) throw new Error(`status ${resp.status}`);
+    entries = await resp.json();
+    renderEntries();
+  } catch(e) {
+    list.innerHTML = `<div class="empty-state">Could not load entries — ${e.message}</div>`;
+  }
+}
+
+function renderEntries() {
+  const list = document.getElementById('entryList');
+  if (!entries.length) {
+    list.innerHTML = '<div class="empty-state">No sample work yet — add your first entry above.</div>';
+    return;
+  }
+  list.innerHTML = entries.map(r => `
+    <div class="entry-row">
+      <img class="entry-thumb" src="${r.image_url}" alt=""/>
+      <div class="entry-info">
+        <div class="entry-title">${r.title || 'Untitled'}</div>
+        <div class="entry-meta">${[r.client_name, r.asset_type, 'order '+r.sort_order].filter(Boolean).join(' · ')}</div>
+      </div>
+      <div class="entry-actions">
+        <button class="entry-btn" onclick="editEntry('${r.id}')">Edit</button>
+        <button class="entry-btn danger" onclick="deleteEntry('${r.id}')">Delete</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function editEntry(id) {
+  const r = entries.find(e => e.id === id);
+  if (!r) return;
+  editingId = id;
+  document.getElementById('fTitle').value = r.title || '';
+  document.getElementById('fClient').value = r.client_name || '';
+  document.getElementById('fAssetType').value = r.asset_type || '';
+  document.getElementById('fImage').value = r.image_url || '';
+  document.getElementById('fLink').value = r.link_url || '';
+  document.getElementById('fSort').value = r.sort_order ?? 0;
+  document.getElementById('formHeading').textContent = 'Edit sample work';
+  document.getElementById('saveBtn').textContent = 'Save changes';
+  document.getElementById('cancelEditBtn').style.display = 'inline-block';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function resetForm() {
+  editingId = null;
+  document.getElementById('entryForm').reset();
+  document.getElementById('fSort').value = 0;
+  document.getElementById('formHeading').textContent = 'Add sample work';
+  document.getElementById('saveBtn').textContent = 'Add entry';
+  document.getElementById('cancelEditBtn').style.display = 'none';
+  document.getElementById('formStatus').textContent = '';
+}
+
+async function saveEntry() {
+  const status = document.getElementById('formStatus');
+  const payload = {
+    title:       document.getElementById('fTitle').value.trim(),
+    client_name: document.getElementById('fClient').value.trim() || null,
+    asset_type:  document.getElementById('fAssetType').value || null,
+    image_url:   document.getElementById('fImage').value.trim(),
+    link_url:    document.getElementById('fLink').value.trim() || null,
+    sort_order:  parseInt(document.getElementById('fSort').value, 10) || 0,
+  };
+  status.className = 'form-status';
+  status.textContent = 'Saving…';
+  try {
+    const url    = editingId ? `${SB_URL}/sample_work?id=eq.${editingId}` : `${SB_URL}/sample_work`;
+    const method = editingId ? 'PATCH' : 'POST';
+    const resp = await fetch(url, { method, headers: SB_HDRS, body: JSON.stringify(payload) });
+    if (!resp.ok) throw new Error(`status ${resp.status}`);
+    status.className = 'form-status ok';
+    status.textContent = editingId ? 'Updated.' : 'Added.';
+    resetForm();
+    loadEntries();
+  } catch(e) {
+    status.className = 'form-status err';
+    status.textContent = `Could not save — ${e.message}`;
+  }
+}
+
+async function deleteEntry(id) {
+  if (!confirm('Delete this sample work entry?')) return;
+  try {
+    const resp = await fetch(`${SB_URL}/sample_work?id=eq.${id}`, { method: 'DELETE', headers: SB_HDRS });
+    if (!resp.ok) throw new Error(`status ${resp.status}`);
+    loadEntries();
+  } catch(e) {
+    alert(`Could not delete — ${e.message}`);
+  }
+}
+
+// ── RESTORE SESSION ──
+if (localStorage.getItem(AUTH_KEY) === '1') {
+  showDashboard();
+}
+</script>
+</body>
+</html>

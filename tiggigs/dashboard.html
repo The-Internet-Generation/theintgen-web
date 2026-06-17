@@ -707,7 +707,7 @@ function cdClass(days) {
 
 function cdText(days) {
   if (days === null) return '—';
-  if (days < 0)  return 'Overdue';
+  if (days < 0)  return ''; // overdue is tracked internally (sort/colour) but not shown to clients
   if (days === 0) return 'Due today';
   if (days === 1) return '1 day left';
   return `${days}d left`;
