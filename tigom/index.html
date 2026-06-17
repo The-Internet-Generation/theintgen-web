@@ -10,6 +10,10 @@
   :root { --navy:#1A0A3C; --yellow:#FFD600; --crimson:#9B1C3A; --white:#FFFFFF; }
   *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
   body{font-family:'DM Sans',sans-serif;background:var(--crimson);color:var(--white);min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:2rem;}
+  .site-nav{position:fixed;top:0;left:0;right:0;height:52px;display:flex;align-items:center;justify-content:space-between;padding:0 24px;background:rgba(155,28,58,0.7);backdrop-filter:blur(12px);border-bottom:1px solid rgba(255,255,255,0.1);z-index:100;}
+  .site-nav .site-logo{font-family:'Syne',sans-serif;font-size:18px;font-weight:800;color:var(--white);text-decoration:none;letter-spacing:-0.5px;}
+  .site-nav .tig-logo{font-family:'Syne',sans-serif;font-size:13px;font-weight:700;color:var(--white);text-decoration:none;opacity:0.5;transition:opacity 0.2s;letter-spacing:-0.3px;}
+  .site-nav .tig-logo:hover{opacity:1;}
   .eyebrow{font-family:'Syne',sans-serif;font-size:0.65rem;font-weight:700;letter-spacing:0.25em;text-transform:uppercase;color:var(--yellow);margin-bottom:1.5rem;}
   h1{font-family:'Syne',sans-serif;font-size:clamp(3rem,10vw,7rem);font-weight:800;line-height:0.95;letter-spacing:-0.03em;margin-bottom:1.5rem;}
   p{font-size:1rem;font-weight:300;color:rgba(255,255,255,0.65);max-width:400px;line-height:1.7;margin-bottom:2.5rem;}
@@ -18,6 +22,10 @@
 </style>
 </head>
 <body>
+  <nav class="site-nav">
+    <a href="/tigom/" class="site-logo">TigOM.</a>
+    <a href="https://theintgen.com" target="_blank" class="tig-logo">TIG.</a>
+  </nav>
   <p class="eyebrow">The Internet Generation</p>
   <h1>Tigom</h1>
   <p>Chennai's original open mic. 42+ editions and counting. Homepage coming soon.</p>

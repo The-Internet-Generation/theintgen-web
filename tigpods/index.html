@@ -836,16 +836,26 @@ function Welcome() {
   glow.style.cssText = 'position:absolute;top:38%;left:50%;transform:translate(-50%,-50%);width:460px;height:460px;border-radius:50%;background:radial-gradient(circle,rgba(29,185,84,0.10) 0%,rgba(29,185,84,0.04) 35%,transparent 70%);filter:blur(10px);pointer-events:none;opacity:1;transition:opacity 500ms ease;';
   el.appendChild(glow);
 
-  /* Header: logo only (no speaker button) */
+  /* Header: site logo left, TIG logo right */
   const header = document.createElement('div');
   header.style.cssText = 'position:absolute;top:56px;left:0;right:0;padding:0 20px;display:flex;align-items:center;justify-content:space-between;z-index:10;';
 
-  /* Top-left: theintgen logo, back to the TIG homepage */
+  /* Top-left: TigPods site logo */
+  const tigpodsLogoLink = document.createElement('a');
+  tigpodsLogoLink.href = '/tigpods/';
+  tigpodsLogoLink.style.cssText = 'text-decoration:none;color:var(--fg);display:inline-flex;align-items:center;';
+  tigpodsLogoLink.setAttribute('aria-label', 'TigPods home');
+  tigpodsLogoLink.appendChild(logoEl(22, true));
+  header.appendChild(tigpodsLogoLink);
+
+  /* Top-right: theintgen logo, back to the TIG homepage */
   const logoLink = document.createElement('a');
   logoLink.href = 'https://theintgen.com/';
-  logoLink.style.cssText = 'text-decoration:none;display:inline-flex;align-items:center;gap:8px;';
+  logoLink.style.cssText = 'text-decoration:none;display:inline-flex;align-items:center;gap:8px;opacity:0.7;transition:opacity 0.2s;';
   logoLink.setAttribute('aria-label', 'Back to The Internet Generation homepage');
-  logoLink.innerHTML = `<span style="background:#fff;border-radius:7px;padding:3px;display:inline-flex;box-shadow:0 2px 8px rgba(0,0,0,0.35);"><img src="/public/assets/logo-theintgen.png" alt="The Internet Generation" style="width:24px;height:24px;display:block;" onerror="this.onerror=null;this.src='logo-theintgen.png'"/></span><span style="font-family:var(--body);font-size:10px;color:var(--fg-dim);letter-spacing:0.08em;text-transform:uppercase;">theintgen.com</span>`;
+  logoLink.addEventListener('mouseover', () => logoLink.style.opacity = '1');
+  logoLink.addEventListener('mouseout',  () => logoLink.style.opacity = '0.7');
+  logoLink.innerHTML = `<span style="background:#fff;border-radius:7px;padding:3px;display:inline-flex;box-shadow:0 2px 8px rgba(0,0,0,0.35);"><img src="/public/assets/logo-theintgen.png" alt="The Internet Generation" style="width:22px;height:22px;display:block;" onerror="this.onerror=null;this.src='logo-theintgen.png'"/></span><span style="font-family:var(--body);font-size:10px;color:var(--fg-dim);letter-spacing:0.08em;text-transform:uppercase;">theintgen.com</span>`;
   header.appendChild(logoLink);
   el.appendChild(header);
 

@@ -103,7 +103,15 @@ body{
   font-family:'Syne',sans-serif;
   font-size:20px;font-weight:800;
   color:var(--yellow);letter-spacing:-0.5px;
+  text-decoration:none;
 }
+.nav-tig{
+  font-family:'Syne',sans-serif;
+  font-size:13px;font-weight:700;
+  color:var(--white);letter-spacing:-0.3px;
+  text-decoration:none;opacity:0.45;transition:opacity 0.15s;
+}
+.nav-tig:hover{opacity:1;}
 .nav-user{
   display:flex;align-items:center;gap:10px;
 }
@@ -412,12 +420,13 @@ body{
 <div class="dashboard" id="dashboard">
   <!-- Nav -->
   <nav class="topnav">
-    <div class="nav-logo">TIG.</div>
+    <a class="nav-logo" href="./">TigGigs.</a>
     <div class="nav-user">
       <a href="./" target="_blank" class="nav-job-link">Job Board</a>
       <div class="nav-avatar" id="navAvatar">??</div>
       <div class="nav-name" id="navName">Loading...</div>
       <button class="nav-signout" onclick="signOut()">Sign out</button>
+      <a href="https://theintgen.com" target="_blank" class="nav-tig">TIG.</a>
     </div>
   </nav>
 
