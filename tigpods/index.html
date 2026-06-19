@@ -1384,11 +1384,23 @@ function Reel() {
     pauseIconEl.style.cssText = 'position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:72px;height:72px;border-radius:50%;background:rgba(0,0,0,0.55);backdrop-filter:blur(12px);display:none;align-items:center;justify-content:center;border:1px solid var(--line-2);color:#fff;';
     pauseIconEl.innerHTML = Icons.play;
     tapOverlay.appendChild(pauseIconEl);
+    /* Track whether this touch was a swipe (dy > 8px) — prevents swipe-to-next
+       from triggering a spurious pause on the new card */
+    let _tMoved = false;
+    tapOverlay.addEventListener('touchstart', () => { _tMoved = false; }, { passive: true });
+    tapOverlay.addEventListener('touchmove', () => { _tMoved = true; }, { passive: true });
     tapOverlay.addEventListener('click', () => {
+      if (_tMoved) { _tMoved = false; return; } // swipe, not a tap — ignore
       paused = !paused;
       pauseIconEl.style.display = paused ? 'flex' : 'none';
-      if (!paused) restartProgress();
-      else stopProgress();
+      if (!paused) {
+        restartProgress();
+        /* Tell the live YouTube player to resume */
+        [0, 150, 400].forEach(d => setTimeout(() => postYT('playVideo'), d));
+      } else {
+        stopProgress();
+        [0, 150].forEach(d => setTimeout(() => postYT('pauseVideo'), d));
+      }
     });
     card.appendChild(tapOverlay);
 
@@ -1456,7 +1468,10 @@ function Reel() {
       /* Called when this card scrolls into the active slot */
       setActive(active) {
         if (active) {
-          if (!paused) restartProgress();
+          /* Always start fresh — clear any stale paused state from a previous visit */
+          paused = false;
+          pauseIconEl.style.display = 'none';
+          restartProgress();
           syncMuteBtn(); // reflect the session-wide sound choice on this card
           if (videoId && !ytIframe) {
             /* Always create a FRESH iframe whose first load IS the autoplay URL.
@@ -1576,9 +1591,14 @@ function Library() {
   el.appendChild(statusBarEl());
   el.appendChild(backBtnEl(() => navigate(Welcome, {}, 'left')));
 
+  /* One scroll container — header, categories, chips, search, grid all move together */
+  const scrollWrap = document.createElement('div');
+  scrollWrap.className = 'no-scrollbar';
+  scrollWrap.style.cssText = 'flex:1;overflow-y:auto;';
+
   /* Header */
   const header = document.createElement('div');
-  header.style.cssText = 'padding:56px 20px 12px;display:flex;flex-direction:column;gap:10px;flex-shrink:0;';
+  header.style.cssText = 'padding:56px 20px 12px;display:flex;flex-direction:column;gap:10px;';
   header.innerHTML = `
     <div style="display:flex;justify-content:space-between;align-items:center;">
       <h1 style="margin:0;font-family:var(--display);font-size:30px;font-weight:800;letter-spacing:-0.03em;line-height:1;">Hall of Fame</h1>
@@ -1610,13 +1630,13 @@ function Library() {
   searchWrap.appendChild(searchIcon);
   searchWrap.appendChild(searchInput);
   searchWrap.appendChild(clearBtn);
-  el.appendChild(header);
+  scrollWrap.appendChild(header);
 
   /* "Where the Left meets Right" */
   const lrLabel = document.createElement('div');
   lrLabel.style.cssText = 'padding:0 20px 10px;font-size:10px;color:var(--fg-dim);letter-spacing:0.16em;text-transform:uppercase;text-align:center;';
   lrLabel.textContent = 'Where the Left meets Right';
-  el.appendChild(lrLabel);
+  scrollWrap.appendChild(lrLabel);
 
   /* ── Category tabs: Business | Creative ── */
   const catTabs = document.createElement('div');
@@ -1646,26 +1666,26 @@ function Library() {
       catTabs.appendChild(btn);
     });
   }
-  el.appendChild(catTabs);
+  scrollWrap.appendChild(catTabs);
 
   /* Topic chips */
   const chipsRow = document.createElement('div');
   chipsRow.className = 'hrow no-scrollbar';
-  chipsRow.style.cssText = 'padding-top:2px;padding-bottom:12px;flex-shrink:0;';
-  el.appendChild(chipsRow);
+  chipsRow.style.cssText = 'padding-top:2px;padding-bottom:12px;';
+  scrollWrap.appendChild(chipsRow);
 
   /* Search — below chips */
-  searchWrap.style.cssText = 'position:relative;margin:0 20px 10px;flex-shrink:0;';
-  el.appendChild(searchWrap);
+  searchWrap.style.cssText = 'position:relative;margin:0 20px 10px;';
+  scrollWrap.appendChild(searchWrap);
 
   /* Grid container */
   const gridWrap = document.createElement('div');
-  gridWrap.className = 'no-scrollbar';
-  gridWrap.style.cssText = 'flex:1;overflow-y:auto;padding:4px 20px 40px;';
+  gridWrap.style.cssText = 'padding:4px 20px 80px;';
   const grid = document.createElement('div');
   grid.className = 'episode-grid';
   gridWrap.appendChild(grid);
-  el.appendChild(gridWrap);
+  scrollWrap.appendChild(gridWrap);
+  el.appendChild(scrollWrap);
 
   /* Render chips */
   /* Tag frequency map */
