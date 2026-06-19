@@ -547,6 +547,13 @@ function epThumb(ep) {
   return vid ? `https://img.youtube.com/vi/${vid}/hqdefault.jpg` : null;
 }
 
+/* YouTube-only thumbnail — wide shot for desktop hero */
+function epYtThumb(ep) {
+  if (ep.thumbnail_url) return ep.thumbnail_url;
+  const vid = ytVideoId(ep.youtube_url);
+  return vid ? `https://img.youtube.com/vi/${vid}/maxresdefault.jpg` : null;
+}
+
 /* Extract Spotify episode ID from episode URL */
 function spotifyEpId(url) {
   if (!url) return null;
@@ -741,13 +748,13 @@ function navigate(screenFn, params = {}, dir = 'instant') {
    ignored so it never competes with taps or vertical scroll-snap.
    ============================================================ */
 function attachSwipe(target, handlers = {}) {
-  const threshold = 48;
+  const threshold = 72;
   let sx = 0, sy = 0, st = 0, tracking = false;
   function onStart(e) {
     if (e.touches.length !== 1) { tracking = false; return; }
     /* Don't hijack swipes that begin inside a horizontal scroller (chip rows,
        shorts rows) — those gestures belong to that row's own scrolling. */
-    const hScroll = e.target.closest && e.target.closest('.hrow');
+    const hScroll = e.target.closest && (e.target.closest('.hrow') || e.target.closest('[data-hscroll]'));
     if (hScroll && hScroll.scrollWidth > hScroll.clientWidth + 4) { tracking = false; return; }
     sx = e.touches[0].clientX; sy = e.touches[0].clientY; st = Date.now();
     tracking = true;
@@ -799,6 +806,125 @@ async function shareContent({ title, text, url }) {
     toast('Link copied to clipboard');
   } catch (e) {
     window.open(url, '_blank', 'noopener');
+  }
+}
+
+/* ============================================================
+   QUOTE SHARE — canvas → native share sheet or PNG download
+   ============================================================ */
+async function generateQuoteImage(quoteText, guestName, role) {
+  await document.fonts.ready;
+  const S = 1080;
+  const cv = document.createElement('canvas');
+  cv.width = S; cv.height = S;
+  const ctx = cv.getContext('2d');
+
+  /* Background */
+  ctx.fillStyle = '#0a0a0a';
+  ctx.fillRect(0, 0, S, S);
+  const vg = ctx.createRadialGradient(S*.5, S*.38, 0, S*.5, S*.38, S*.65);
+  vg.addColorStop(0, 'rgba(26,26,36,0.8)');
+  vg.addColorStop(1, 'rgba(0,0,0,0)');
+  ctx.fillStyle = vg;
+  ctx.fillRect(0, 0, S, S);
+
+  /* Subtle border */
+  ctx.strokeStyle = 'rgba(255,255,255,0.05)';
+  ctx.lineWidth = 2;
+  ctx.strokeRect(1, 1, S-2, S-2);
+
+  /* Green left accent bar */
+  ctx.fillStyle = '#1DB954';
+  ctx.fillRect(72, 190, 5, S - 380);
+
+  /* Decorative big quote mark */
+  ctx.font = '900 300px "Bricolage Grotesque", serif';
+  ctx.fillStyle = 'rgba(29,185,84,0.07)';
+  ctx.fillText('“', 50, 390);
+
+  /* Word-wrap helper */
+  function wrap(text, maxW) {
+    const words = text.split(' ');
+    const lines = [];
+    let line = '';
+    for (const w of words) {
+      const t = line ? line + ' ' + w : w;
+      if (ctx.measureText(t).width > maxW && line) { lines.push(line); line = w; }
+      else line = t;
+    }
+    if (line) lines.push(line);
+    return lines;
+  }
+
+  /* Auto-fit font size */
+  let fs = 58; const maxW = S - 220;
+  let lines;
+  while (fs > 26) {
+    ctx.font = `500 ${fs}px "Space Grotesk","Helvetica Neue",sans-serif`;
+    lines = wrap(quoteText, maxW);
+    if (lines.length <= 8) break;
+    fs -= 4;
+  }
+  const lh = fs * 1.5;
+  const totalH = lines.length * lh;
+  const startY = (S - totalH) / 2 + 30;
+
+  /* Quote text */
+  ctx.font = `500 ${fs}px "Space Grotesk","Helvetica Neue",sans-serif`;
+  ctx.fillStyle = '#f0f0f0';
+  lines.forEach((line, i) => ctx.fillText(line, 112, startY + i * lh));
+
+  /* Divider */
+  ctx.fillStyle = '#1DB954';
+  ctx.fillRect(112, S - 256, 52, 4);
+
+  /* Guest name */
+  ctx.font = `800 46px "Bricolage Grotesque","Arial",sans-serif`;
+  ctx.fillStyle = '#ffffff';
+  ctx.fillText(guestName, 112, S - 192);
+
+  /* Role */
+  const roleStr = (role || '').split('·')[0].trim();
+  if (roleStr) {
+    ctx.font = `500 30px "Space Grotesk","Helvetica Neue",sans-serif`;
+    ctx.fillStyle = '#1DB954';
+    ctx.fillText(roleStr, 112, S - 144);
+  }
+
+  /* TigPods wordmark */
+  ctx.font = `800 30px "Bricolage Grotesque","Arial",sans-serif`;
+  ctx.fillStyle = 'rgba(245,245,245,0.28)';
+  ctx.fillText('tigpods', 112, S - 66);
+  const twW = ctx.measureText('tigpods').width;
+  ctx.beginPath();
+  ctx.arc(112 + twW + 14, S - 78, 5.5, 0, Math.PI * 2);
+  ctx.fillStyle = '#1DB954';
+  ctx.fill();
+
+  return cv;
+}
+
+async function shareQuote(quoteText, guestName, role) {
+  try {
+    const cv = await generateQuoteImage(quoteText, guestName, role);
+    cv.toBlob(async blob => {
+      if (!blob) { toast('Could not generate image'); return; }
+      const fname = (guestName || 'quote').toLowerCase().replace(/\s+/g, '-') + '-tigpods.png';
+      const file = new File([blob], fname, { type: 'image/png' });
+      if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
+        await navigator.share({ title: `${guestName} on TigPods`, files: [file] });
+      } else {
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url; a.download = fname;
+        document.body.appendChild(a); a.click(); a.remove();
+        setTimeout(() => URL.revokeObjectURL(url), 2000);
+        toast('Quote card downloaded!');
+      }
+    }, 'image/png');
+  } catch(e) {
+    console.warn('shareQuote:', e);
+    toast('Share not available on this browser');
   }
 }
 
@@ -1441,7 +1567,7 @@ function Library() {
   let activeTag = null;
   let activeCat = null; // 'business' | 'creative' | null
 
-  const epsTagged = EPISODES.map(e => ({ ...e, tags: tagsFor(e) }));
+  const epsTagged = EPISODES.filter(e => e.no !== 0).map(e => ({ ...e, tags: tagsFor(e) }));
 
   const el = document.createElement('div');
   el.className = 'screen screen-enter';
@@ -1598,7 +1724,7 @@ function Library() {
           : 'box-shadow:0 2px 12px rgba(0,0,0,0.4),inset 0 0 0 1px rgba(255,255,255,0.05);',
       ].join('');
       const imgHtml = epT
-        ? `<img src="${epT}" alt="${ep.guest}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:top center;${isPortrait ? 'filter:grayscale(1) contrast(1.1) brightness(0.88);' : ''}">`
+        ? `<img src="${epT}" alt="${ep.guest}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:top center;">`
         : `<div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:var(--display);font-weight:900;font-size:60px;color:rgba(255,255,255,0.18);letter-spacing:-0.04em;">${initials(ep.guest)}</div>`;
       const roleLine = (ep.role || ep.cat || '').split('·')[0].trim();
       thumb.innerHTML = `
@@ -1665,6 +1791,7 @@ function Wiki({ epNo }) {
   const ep = EPISODES.find(e => e.no === epNo) || EPISODES[14];
   const w = WIKI_DATA[epNo] || defaultWiki(ep);
   const season = epNo > 11 ? 'S2' : 'S1';
+  const useWideHero = window.innerWidth > 600;
 
   const el = document.createElement('div');
   el.className = 'screen screen-enter';
@@ -1680,18 +1807,19 @@ function Wiki({ epNo }) {
 
   /* Hero */
   const hero = document.createElement('div');
-  hero.style.cssText = 'position:relative;height:min(520px,58vh);background:#0a0a0a;';
+  hero.style.cssText = useWideHero ? 'position:relative;height:min(400px,38vw);background:#0a0a0a;' : 'position:relative;height:min(520px,58vh);background:#0a0a0a;';
 
   /* Portrait — real image (BW fade on img) or gradient placeholder */
   const portrait = document.createElement('div');
   portrait.style.cssText = 'position:absolute;inset:0;';
 
-  if (ep.portrait_url) {
+  const heroImgSrc = useWideHero ? (epYtThumb(ep) || ep.portrait_url) : ep.portrait_url;
+  if (heroImgSrc) {
     const img = document.createElement('img');
-    img.src = ep.portrait_url;
+    img.src = heroImgSrc;
     img.alt = ep.guest;
-    img.className = 'bw-fade';
-    img.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:top 5%;';
+    if (!useWideHero) img.className = 'bw-fade';
+    img.style.cssText = `position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:${useWideHero ? 'center 30%' : 'top 5%'};`;
     portrait.appendChild(img);
   } else {
     /* Gradient placeholder */
@@ -1797,6 +1925,12 @@ function Wiki({ epNo }) {
         <div style="font-family:var(--display);font-style:italic;font-weight:500;font-size:17px;line-height:1.55;color:var(--fg);letter-spacing:-0.015em;position:relative;z-index:1;padding-top:10px;">${allQuotes[0]}</div>
         <div style="margin-top:18px;width:32px;height:2px;background:var(--green);border-radius:99px;opacity:0.7;"></div>
       `;
+      const qShr = document.createElement('button');
+      qShr.setAttribute('aria-label','Share quote');
+      qShr.style.cssText = 'position:absolute;top:14px;right:14px;width:32px;height:32px;border-radius:50%;background:rgba(29,185,84,0.1);border:1px solid rgba(29,185,84,0.25);color:var(--green);display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:3;';
+      qShr.innerHTML = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v7a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-7M16 6l-4-4-4 4M12 2v14"/></svg>`;
+      qShr.addEventListener('click', (ev) => { ev.stopPropagation(); shareQuote(allQuotes[0], ep.guest, ep.role || ep.cat); });
+      block.appendChild(qShr);
       quotesSection.appendChild(block);
     } else {
       /* Scrollable carousel */
@@ -1805,6 +1939,7 @@ function Wiki({ epNo }) {
 
       const track = document.createElement('div');
       track.className = 'no-scrollbar';
+      track.dataset.hscroll = '1';
       track.style.cssText = 'display:flex;gap:12px;overflow-x:auto;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;padding-right:20px;';
 
       allQuotes.forEach((q, i) => {
@@ -1817,6 +1952,12 @@ function Wiki({ epNo }) {
           <div style="font-family:var(--display);font-style:italic;font-weight:500;font-size:15.5px;line-height:1.55;color:var(--fg);letter-spacing:-0.01em;position:relative;z-index:1;padding-top:${isBest ? '28' : '10'}px;">${q}</div>
           <div style="margin-top:16px;width:28px;height:2px;background:var(--green);border-radius:99px;opacity:${isBest ? '0.8' : '0.35'};"></div>
         `;
+        const qShrC = document.createElement('button');
+        qShrC.setAttribute('aria-label','Share quote');
+        qShrC.style.cssText = 'position:absolute;top:14px;right:14px;width:32px;height:32px;border-radius:50%;background:rgba(29,185,84,0.1);border:1px solid rgba(29,185,84,0.25);color:var(--green);display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:3;';
+        qShrC.innerHTML = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v7a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-7M16 6l-4-4-4 4M12 2v14"/></svg>`;
+        qShrC.addEventListener('click', (ev) => { ev.stopPropagation(); shareQuote(q, ep.guest, ep.role || ep.cat); });
+        card.appendChild(qShrC);
         track.appendChild(card);
       });
 
@@ -1854,18 +1995,7 @@ function Wiki({ epNo }) {
     <a href="${ep.spotify_url || '#'}" ${ep.spotify_url ? 'target="_blank" rel="noopener"' : 'onclick="return false"'} style="flex:1;display:flex;align-items:center;justify-content:center;gap:8px;padding:14px 18px;background:var(--green);color:#000;border-radius:999px;font-weight:700;font-size:14.5px;text-decoration:none;box-shadow:0 4px 14px rgba(29,185,84,0.25);${!ep.spotify_url ? 'opacity:0.5;' : ''}">${Icons.spotifyBlack} Listen on Spotify</a>
     <a href="${ep.youtube_url || '#'}" ${ep.youtube_url ? 'target="_blank" rel="noopener"' : 'onclick="return false"'} style="flex:1;display:flex;align-items:center;justify-content:center;gap:8px;padding:14px 18px;background:transparent;color:var(--fg);border:1px solid var(--line-2);border-radius:999px;font-weight:700;font-size:14.5px;text-decoration:none;${!ep.youtube_url ? 'opacity:0.5;' : ''}">${Icons.youtube} YouTube</a>
   `;
-  const epShareBtn = document.createElement('button');
-  epShareBtn.setAttribute('aria-label', 'Share this episode');
-  epShareBtn.style.cssText = 'flex:0 0 auto;width:52px;display:flex;align-items:center;justify-content:center;background:transparent;color:var(--fg);border:1px solid var(--line-2);border-radius:999px;cursor:pointer;';
-  epShareBtn.innerHTML = Icons.share;
-  epShareBtn.querySelector('svg')?.setAttribute('width', '20');
-  epShareBtn.querySelector('svg')?.setAttribute('height', '20');
-  epShareBtn.addEventListener('click', () => shareContent({
-    title: `TigPods — ${ep.guest}`,
-    text: `${ep.guest} on TigPods — ${ep.title}`,
-    url: ep.youtube_url || ep.spotify_url || null,
-  }));
-  listenRow.appendChild(epShareBtn);
+
   scroll.appendChild(listenRow);
 
   /* Social links */
