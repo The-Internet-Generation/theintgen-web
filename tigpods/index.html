@@ -388,7 +388,7 @@ button, a {
 .search-input:focus { border-color: var(--green); }
 
 /* Episode grid: 2 cols on mobile, 3 on desktop */
-.episode-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.episode-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
 @media (min-width: 769px) {
   .episode-grid { grid-template-columns: 1fr 1fr 1fr; }
 }
@@ -407,9 +407,9 @@ button, a {
    WIKI SCREEN
    ============================================================ */
 .bw-fade {
-  filter: grayscale(1) contrast(1.05) brightness(0.85);
-  mask-image: linear-gradient(180deg, #000 35%, rgba(0,0,0,0.85) 60%, transparent 100%);
-  -webkit-mask-image: linear-gradient(180deg, #000 35%, rgba(0,0,0,0.85) 60%, transparent 100%);
+  filter: grayscale(1) contrast(1.1) brightness(0.9);
+  mask-image: linear-gradient(180deg, #000 50%, rgba(0,0,0,0.9) 72%, transparent 100%);
+  -webkit-mask-image: linear-gradient(180deg, #000 50%, rgba(0,0,0,0.9) 72%, transparent 100%);
 }
 </style>
 </head>
@@ -539,8 +539,9 @@ function ytVideoId(url) {
   return null;
 }
 
-/* Compute best available thumbnail for an episode */
+/* Compute best available thumbnail for an episode — portrait first */
 function epThumb(ep) {
+  if (ep.portrait_url) return ep.portrait_url;
   if (ep.thumbnail_url) return ep.thumbnail_url;
   const vid = ytVideoId(ep.youtube_url);
   return vid ? `https://img.youtube.com/vi/${vid}/hqdefault.jpg` : null;
@@ -613,6 +614,8 @@ const Icons = {
   youtube: `<svg width="22" height="22" viewBox="0 0 24 24"><path fill="rgba(255,255,255,0.95)" d="M23 7.2c-.3-1.1-1.1-1.9-2.2-2.2C18.7 4.4 12 4.4 12 4.4s-6.7 0-8.8.6C2.1 5.3 1.3 6.1 1 7.2.4 9.3.4 12 .4 12s0 2.7.6 4.8c.3 1.1 1.1 1.9 2.2 2.2 2.1.6 8.8.6 8.8.6s6.7 0 8.8-.6c1.1-.3 1.9-1.1 2.2-2.2.6-2.1.6-4.8.6-4.8s0-2.7-.6-4.8zM9.8 15.6V8.4l5.9 3.6-5.9 3.6z"/></svg>`,
   share: `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v7a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-7M16 6l-4-4-4 4M12 2v14"/></svg>`,
   play: `<svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5l12 7-12 7V5z"/></svg>`,
+  instagram: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>`,
+  linkedin: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>`,
 };
 
 /* ============================================================
@@ -1452,8 +1455,8 @@ function Library() {
   header.innerHTML = `
     <div style="display:flex;justify-content:space-between;align-items:flex-end;">
       <div>
-        <div style="font-size:12px;color:var(--fg-dim);letter-spacing:0.18em;text-transform:uppercase;">library</div>
-        <h1 style="margin:4px 0 0;font-family:var(--display);font-size:32px;font-weight:800;letter-spacing:-0.03em;line-height:1;">all episodes</h1>
+        <div style="font-size:12px;color:var(--fg-dim);letter-spacing:0.18em;text-transform:uppercase;">hall of fame</div>
+        <h1 style="margin:4px 0 0;font-family:var(--display);font-size:32px;font-weight:800;letter-spacing:-0.03em;line-height:1;">speakers</h1>
       </div>
       <div style="font-size:12px;color:var(--fg-dim);text-align:right;">
         <div style="color:var(--green);font-weight:600;font-size:14px;">${epsTagged.length}</div>
@@ -1582,29 +1585,47 @@ function Library() {
       const card = document.createElement('button');
       card.style.cssText = 'text-align:left;display:flex;flex-direction:column;gap:8px;';
 
-      const thumb = document.createElement('div');
       const epT = epThumb(ep);
+      const isPortrait = !!ep.portrait_url;
+      const thumb = document.createElement('div');
       thumb.className = epT ? '' : thumbBg(ep.no);
-      thumb.style.cssText = 'position:relative;aspect-ratio:3/4;border-radius:14px;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,0.4),inset 0 0 0 1px rgba(255,255,255,0.05);';
+      /* taller ratio on mobile so the full portrait shows */
+      thumb.style.cssText = [
+        'position:relative;border-radius:14px;overflow:hidden;',
+        'aspect-ratio:3/4;',
+        isPortrait
+          ? 'box-shadow:0 4px 20px rgba(0,0,0,0.55),0 0 0 1px rgba(29,185,84,0.22);'
+          : 'box-shadow:0 2px 12px rgba(0,0,0,0.4),inset 0 0 0 1px rgba(255,255,255,0.05);',
+      ].join('');
+      const imgHtml = epT
+        ? `<img src="${epT}" alt="${ep.guest}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:top center;${isPortrait ? 'filter:grayscale(1) contrast(1.1) brightness(0.88);' : ''}">`
+        : `<div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:var(--display);font-weight:900;font-size:60px;color:rgba(255,255,255,0.18);letter-spacing:-0.04em;">${initials(ep.guest)}</div>`;
+      const roleLine = (ep.role || ep.cat || '').split('·')[0].trim();
       thumb.innerHTML = `
-        ${epT
-          ? `<img src="${epT}" alt="${ep.guest}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;">`
-          : `<div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:var(--display);font-weight:900;font-size:60px;color:rgba(255,255,255,0.18);letter-spacing:-0.04em;">${initials(ep.guest)}</div>`
-        }
-        <div style="position:absolute;left:0;right:0;bottom:0;height:60%;background:linear-gradient(180deg,transparent,rgba(0,0,0,0.85));"></div>
-        <div style="position:absolute;top:10px;left:10px;font-family:var(--display);font-weight:800;font-size:13px;color:var(--green);letter-spacing:0.05em;">EP ${String(ep.no).padStart(2,'0')}</div>
-        <div style="position:absolute;left:12px;right:12px;bottom:10px;">
-          <div style="font-family:var(--display);font-weight:700;font-size:16px;letter-spacing:-0.02em;line-height:1.05;color:#fff;">${ep.guest}</div>
-          <div style="font-size:10.5px;color:rgba(255,255,255,0.7);margin-top:2px;">${ep.cat}</div>
+        ${imgHtml}
+        <div style="position:absolute;left:0;right:0;bottom:0;height:55%;background:linear-gradient(180deg,transparent,rgba(0,0,0,0.92));pointer-events:none;"></div>
+        <div style="position:absolute;top:10px;left:10px;background:rgba(0,0,0,0.55);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border:1px solid rgba(29,185,84,0.4);border-radius:6px;padding:3px 8px;font-family:var(--display);font-weight:800;font-size:11px;color:var(--green);letter-spacing:0.06em;">EP ${String(ep.no).padStart(2,'0')}</div>
+        <div style="position:absolute;left:12px;right:12px;bottom:12px;">
+          <div style="font-family:var(--display);font-weight:800;font-size:15px;letter-spacing:-0.02em;line-height:1.1;color:#fff;">${ep.guest}</div>
+          <div style="font-size:10px;color:var(--green);margin-top:4px;font-weight:600;letter-spacing:0.01em;">${roleLine}</div>
         </div>
       `;
-      const titleEl = document.createElement('div');
-      titleEl.className = 'clamp-2';
-      titleEl.style.cssText = 'font-size:12px;color:var(--fg-muted);line-height:1.35;padding:0 2px;';
-      titleEl.textContent = ep.title;
+
+      /* Quote snippet or category fallback */
+      const firstQuote = ep.quotes?.[0] || ep.quote || null;
+      const quoteEl = document.createElement('div');
+      quoteEl.className = 'clamp-2';
+      if (firstQuote) {
+        quoteEl.style.cssText = 'font-size:11.5px;color:var(--fg-muted);line-height:1.4;padding:0 2px;font-style:italic;';
+        const trimmed = firstQuote.length > 80 ? firstQuote.slice(0, 77) + '…' : firstQuote;
+        quoteEl.textContent = '“' + trimmed + '”';
+      } else {
+        quoteEl.style.cssText = 'font-size:11px;color:var(--fg-dim);line-height:1.35;padding:0 2px;';
+        quoteEl.textContent = ep.cat;
+      }
 
       card.appendChild(thumb);
-      card.appendChild(titleEl);
+      card.appendChild(quoteEl);
       card.addEventListener('click', () => navigate(Wiki, { epNo: ep.no }, 'right'));
       grid.appendChild(card);
     });
@@ -1659,7 +1680,7 @@ function Wiki({ epNo }) {
 
   /* Hero */
   const hero = document.createElement('div');
-  hero.style.cssText = 'position:relative;height:460px;background:#0a0a0a;';
+  hero.style.cssText = 'position:relative;height:min(520px,58vh);background:#0a0a0a;';
 
   /* Portrait — real image (BW fade on img) or gradient placeholder */
   const portrait = document.createElement('div');
@@ -1670,7 +1691,7 @@ function Wiki({ epNo }) {
     img.src = ep.portrait_url;
     img.alt = ep.guest;
     img.className = 'bw-fade';
-    img.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:top center;';
+    img.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:top 5%;';
     portrait.appendChild(img);
   } else {
     /* Gradient placeholder */
@@ -1698,12 +1719,49 @@ function Wiki({ epNo }) {
   const heroLabel = document.createElement('div');
   heroLabel.style.cssText = 'position:absolute;bottom:16px;left:20px;right:20px;z-index:5;';
   heroLabel.innerHTML = `
-    <div style="font-size:12px;color:var(--fg-dim);letter-spacing:0.18em;text-transform:uppercase;">Ep ${String(ep.no).padStart(2,'0')} · ${season}</div>
-    <h1 style="margin:6px 0 8px;font-family:var(--display);font-weight:900;font-size:44px;letter-spacing:-0.035em;line-height:0.95;">${ep.guest}</h1>
-    <span class="pill green">${ep.cat}</span>
+    <div style="font-size:11px;color:var(--fg-dim);letter-spacing:0.16em;text-transform:uppercase;display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+      <span>Ep ${String(ep.no).padStart(2,'0')}</span>
+      <span style="opacity:0.35">·</span>
+      <span>${season}</span>
+      <span style="opacity:0.35">·</span>
+      <span class="pill green" style="font-size:10.5px;padding:3px 9px;">${ep.cat}</span>
+    </div>
+    <h1 style="margin:8px 0 4px;font-family:var(--display);font-weight:900;font-size:clamp(36px,9vw,48px);letter-spacing:-0.035em;line-height:0.95;">${ep.guest}</h1>
+    ${ep.role ? `<div style="font-size:13px;color:var(--green);font-weight:600;margin-top:6px;letter-spacing:0.01em;">${ep.role}</div>` : ''}
   `;
   hero.appendChild(heroLabel);
   scroll.appendChild(hero);
+
+  /* Stat strip — EP / Season / Share */
+  const statStrip = document.createElement('div');
+  statStrip.style.cssText = 'display:grid;grid-template-columns:1fr 1fr 1fr;border-bottom:1px solid var(--line);margin:0 0;';
+  const mkStat = (val, lbl, clickable) => {
+    const d = document.createElement('div');
+    d.style.cssText = `padding:14px 0;text-align:center;${clickable ? 'cursor:pointer;' : ''}`;
+    d.innerHTML = `<div style="font-family:var(--display);font-weight:800;font-size:18px;color:var(--fg);">${val}</div><div style="font-size:9.5px;color:var(--fg-dim);margin-top:2px;text-transform:uppercase;letter-spacing:0.12em;">${lbl}</div>`;
+    return d;
+  };
+  const epStat = mkStat(`EP ${String(ep.no).padStart(2,'0')}`, 'Episode', false);
+  epStat.style.borderRight = '1px solid var(--line)';
+  const seasonStat = mkStat(season, 'Season', false);
+  seasonStat.style.borderRight = '1px solid var(--line)';
+  const shareStat = mkStat(Icons.share.replace('width="22" height="22"','width="16" height="16"').replace('stroke-width="1.6"','stroke-width="1.8"'), 'Share', true);
+  shareStat.addEventListener('click', () => shareContent({ title: `TigPods — ${ep.guest}`, text: `${ep.guest} on TigPods`, url: ep.youtube_url || ep.spotify_url || null }));
+  statStrip.appendChild(epStat);
+  statStrip.appendChild(seasonStat);
+  statStrip.appendChild(shareStat);
+  scroll.appendChild(statStrip);
+
+  /* Bio section */
+  if (ep.bio) {
+    const bioSec = document.createElement('div');
+    bioSec.style.cssText = 'padding:28px 20px 0;';
+    bioSec.innerHTML = `
+      <div style="font-size:11px;color:var(--fg-dim);letter-spacing:0.18em;text-transform:uppercase;margin-bottom:12px;">about</div>
+      <p style="margin:0;font-size:14.5px;line-height:1.72;color:var(--fg-muted);">${ep.bio}</p>
+    `;
+    scroll.appendChild(bioSec);
+  }
 
   /* Topics block — full width */
   const info = document.createElement('div');
@@ -1809,6 +1867,27 @@ function Wiki({ epNo }) {
   }));
   listenRow.appendChild(epShareBtn);
   scroll.appendChild(listenRow);
+
+  /* Social links */
+  if (ep.instagram_url || ep.linkedin_url) {
+    const socialRow = document.createElement('div');
+    socialRow.style.cssText = 'padding:14px 20px 0;display:flex;gap:10px;flex-wrap:wrap;';
+    if (ep.instagram_url) {
+      const igA = document.createElement('a');
+      igA.href = ep.instagram_url; igA.target = '_blank'; igA.rel = 'noopener';
+      igA.style.cssText = 'display:inline-flex;align-items:center;gap:8px;padding:10px 18px;border:1px solid var(--line-2);border-radius:999px;font-size:13px;font-weight:600;color:var(--fg);text-decoration:none;';
+      igA.innerHTML = Icons.instagram + ' Instagram';
+      socialRow.appendChild(igA);
+    }
+    if (ep.linkedin_url) {
+      const liA = document.createElement('a');
+      liA.href = ep.linkedin_url; liA.target = '_blank'; liA.rel = 'noopener';
+      liA.style.cssText = 'display:inline-flex;align-items:center;gap:8px;padding:10px 18px;border:1px solid var(--line-2);border-radius:999px;font-size:13px;font-weight:600;color:var(--fg);text-decoration:none;';
+      liA.innerHTML = Icons.linkedin + ' LinkedIn';
+      socialRow.appendChild(liA);
+    }
+    scroll.appendChild(socialRow);
+  }
 
   /* Shorts strip */
   if (w.shorts.length > 0) {
