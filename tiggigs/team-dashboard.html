@@ -1882,7 +1882,7 @@ function renderOpsFL() {
   el.innerHTML = `<div class="ops-table-wrap"><table class="ops-table">
     <thead><tr>
       <th>Name</th><th>Email</th><th>Phone</th><th>Role</th><th>Status</th>
-      <th>NDA</th><th>Agreement</th><th>Trial</th><th>Jobs</th><th>Score</th><th>Actions</th>
+      <th>NDA</th><th>Agreement</th><th>Jobs</th><th>Score</th><th>Actions</th>
     </tr></thead>
     <tbody>${opsFlData.map((fl,i) => {
       const em   = esc(fl.email||'');
@@ -1897,7 +1897,6 @@ function renderOpsFL() {
         <td><select class="inline-sel" onchange="opsFlStatus('${em}',this.value)">${opts}</select></td>
         <td style="text-align:center"><button class="bool-btn" id="opsFLnda_${i}"   onclick="opsFlBool('${em}','nda_signed',${!!fl.nda_signed},${i})">${fl.nda_signed?'✅':'⬜'}</button></td>
         <td style="text-align:center"><button class="bool-btn" id="opsFLagr_${i}"   onclick="opsFlBool('${em}','agreement_signed',${!!fl.agreement_signed},${i})">${fl.agreement_signed?'✅':'⬜'}</button></td>
-        <td style="text-align:center"><button class="bool-btn" id="opsFLtrial_${i}" onclick="opsFlBool('${em}','trial_passed',${!!fl.trial_passed},${i})">${fl.trial_passed?'✅':'⬜'}</button></td>
         <td style="font-family:'Syne',sans-serif;font-size:13px;font-weight:700;color:var(--yellow);text-align:center">${fl.total_jobs_done??'—'}</td>
         <td style="font-family:'Syne',sans-serif;font-size:13px;font-weight:700;color:${scoreCol};text-align:center">${score?score.toFixed(1):'—'}</td>
         <td><div style="display:flex;gap:5px;align-items:center;flex-wrap:wrap">
@@ -1924,7 +1923,7 @@ async function opsFlBool(email, field, cur, idx) {
     await sbRpc('team_fl_update', { p_pass: teamPass(), p_email: email, p_patch: { [field]: newVal } });
     const fl = opsFlData.find(x => x.email===email); if (fl) fl[field] = newVal;
     // Update button in-place
-    const btnId = { nda_signed:`opsFLnda_${idx}`, agreement_signed:`opsFLagr_${idx}`, trial_passed:`opsFLtrial_${idx}` }[field];
+    const btnId = { nda_signed:`opsFLnda_${idx}`, agreement_signed:`opsFLagr_${idx}` }[field];
     const btn = document.getElementById(btnId);
     if (btn) {
       btn.textContent = newVal ? '✅' : '⬜';
