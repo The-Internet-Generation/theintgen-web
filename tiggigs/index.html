@@ -95,6 +95,7 @@
     <span class="font-headline font-extrabold text-xl tracking-tight text-[#1c1b1b]">TigGigs.</span>
   </a>
 
+<<<<<<< Updated upstream
   <!-- Centre: page nav — desktop only -->
   <div class="hidden md:flex gap-7 items-center font-headline font-semibold tracking-tight text-sm">
     <a href="#top" class="top-nav-link">Home</a>
@@ -103,6 +104,8 @@
     <a href="#sample-work" class="top-nav-link">Sample Work</a>
   </div>
 
+=======
+>>>>>>> Stashed changes
   <!-- Right: Dashboard button + extras -->
   <div class="flex items-center gap-2 shrink-0">
     <!-- Post a Job — desktop only -->
@@ -199,6 +202,7 @@
   </section>
 
   <!-- Filter & Sort controls -->
+<<<<<<< Updated upstream
   <div class="mb-4 px-1" id="sortFilterBar">
     <div class="flex flex-wrap items-center gap-3">
       <select id="filterClient" onchange="render()" class="text-xs font-bold bg-surface-container-low border border-[#c8c4d8]/30 rounded-xl px-3 py-2 text-on-surface outline-none cursor-pointer">
@@ -212,11 +216,27 @@
       </select>
     </div>
     <div class="hidden md:flex gap-6 items-center font-headline font-semibold tracking-tight text-sm mt-3">
+=======
+  <div class="flex flex-wrap items-center gap-3 mb-4 px-1" id="sortFilterBar">
+    <div class="hidden md:flex gap-6 items-center font-headline font-semibold tracking-tight text-sm mr-2">
+>>>>>>> Stashed changes
       <button class="nav-pill text-[#000000] border-b-2 border-[#fddf29] pb-0.5 transition-all duration-200" data-type="all">All Jobs</button>
       <button class="nav-pill text-[#1c1b1b]/50 hover:text-[#000000] transition-colors duration-200 pb-0.5 border-b-2 border-transparent" data-type="Design">Design</button>
       <button class="nav-pill text-[#1c1b1b]/50 hover:text-[#000000] transition-colors duration-200 pb-0.5 border-b-2 border-transparent" data-type="Edit">Edit</button>
       <button class="nav-pill text-[#1c1b1b]/50 hover:text-[#000000] transition-colors duration-200 pb-0.5 border-b-2 border-transparent" data-type="Production">Production</button>
     </div>
+<<<<<<< Updated upstream
+=======
+    <select id="filterClient" onchange="render()" class="text-xs font-bold bg-surface-container-low border border-[#c8c4d8]/30 rounded-xl px-3 py-2 text-on-surface outline-none cursor-pointer">
+      <option value="">All Clients</option>
+    </select>
+    <select id="sortBy" onchange="render()" class="text-xs font-bold bg-surface-container-low border border-[#c8c4d8]/30 rounded-xl px-3 py-2 text-on-surface outline-none cursor-pointer">
+      <option value="deadline">Deadline ↑</option>
+      <option value="payout_asc">Payout: Low → High</option>
+      <option value="payout_desc">Payout: High → Low</option>
+      <option value="rush">Rush First</option>
+    </select>
+>>>>>>> Stashed changes
   </div>
 
   <!-- Count bar -->
@@ -791,6 +811,7 @@ async function loadJobs(silent = false) {
 
       // Production / Shoot detection
       const prodCat  = row.production_category || '';
+      const isAI     = prodCat === 'AI Vids';
       const shootType = (prodCat.toLowerCase().includes('shoot') ||
                          prodCat.toLowerCase() === 'external' ||
                          prodCat.toLowerCase() === 'internal')
@@ -828,6 +849,7 @@ async function loadJobs(silent = false) {
         submitUrl:      row.submission_folder_url || '',
         sourceFilesUrl: '',
         deadline,
+        isAI,
         status:         row.board_status || 'Open',
         claimEmail:     row.claimed_by_email || '',
         stdRate,
@@ -1001,6 +1023,7 @@ function render() {
       <div class="flex flex-wrap gap-2 mb-5">
         <span class="px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider" style="background:${theme.chipBg};color:${theme.chipColor || theme.chipText}">${theme.label}</span>
         <span class="bg-[#f0edec] text-[#464555] px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider">${cat}</span>
+        ${j.isAI ? `<span class="px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider" style="background:#ede9fe;color:#6d28d9">✦ AI Gen</span>` : ''}
       </div>
       <p class="font-body text-sm text-[#464555]/70 line-clamp-3 mb-6 flex-grow leading-relaxed">${j.description || j.topic || 'No description available.'}</p>
       <div class="bg-surface-container-low rounded-xl p-4 flex justify-between items-center mb-5">
