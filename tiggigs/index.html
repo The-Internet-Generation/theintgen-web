@@ -1193,7 +1193,7 @@ async function verifyEmail() {
     if (recs && recs.length) {
       const rec = recs[0];
       const fullName = rec.full_name || '';
-      const isActive = rec.status === 'Active' && rec.trial_passed === true
+      const isActive = rec.status === 'Active'
                        && rec.nda_signed === true && rec.agreement_signed === true;
       const isWhitelisted = rec.status === 'Whitelisted';
 
