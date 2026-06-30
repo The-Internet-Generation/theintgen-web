@@ -901,13 +901,7 @@ async function loadSampleWork() {
 function render() {
   const clientFilter = document.getElementById('filterClient')?.value || '';
   const sortBy = document.getElementById('sortBy')?.value || 'deadline';
-  // Role-based filtering — logged-in freelancers only see jobs matching their role
-  const allowedCategory = email && userRole ? ROLE_CATEGORY_MAP[userRole] : null;
-  let list = jobs;
-  if (allowedCategory) {
-    list = list.filter(j => j.jobCategory === allowedCategory);
-  }
-  if (filter !== 'all') list = list.filter(j => j.jobCategory === filter);
+  let list = filter === 'all' ? jobs : jobs.filter(j => j.jobCategory === filter);
   if (clientFilter) list = list.filter(j => j.client === clientFilter);
   // Sort — Open → Claimed → Submitted → Revision Needed → Approved → Posted, then sub-sort
   const STATUS_ORDER = { 'Open':0, 'Claimed':1, 'Submitted':2, 'Revision Needed':3, 'Approved':4, 'Posted':5 };
@@ -988,6 +982,14 @@ function render() {
       claimBtn = `<button class="py-3 px-4 rounded-xl font-bold text-sm cursor-default flex items-center justify-center gap-1.5" style="background:#f3f4f6;color:#6b7280" disabled>
         <span class="text-[10px] uppercase tracking-wider font-bold">Posted ✓</span>
       </button>`;
+    } else if (email && userRole && ROLE_CATEGORY_MAP[userRole] && j.jobCategory !== ROLE_CATEGORY_MAP[userRole]) {
+      claimBtn = `<div class="relative group/tip">
+        <button class="w-full py-3 px-4 rounded-xl bg-[#f0edec] text-[#464555]/40 font-bold text-sm cursor-default">Not Your Role</button>
+        <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-56 bg-[#1c1b1b] text-white text-xs rounded-xl px-3 py-2.5 opacity-0 group-hover/tip:opacity-100 transition-opacity pointer-events-none text-center leading-relaxed z-10 shadow-lg">
+          This job is for ${j.jobCategory} roles. You're registered as a ${userRole}.
+          <div class="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-[#1c1b1b]"></div>
+        </div>
+      </div>`;
     } else if (email && monthlyClaimCount >= 5) {
       claimBtn = `<div class="relative group/tip">
         <button class="w-full py-3 px-4 rounded-xl bg-[#fef3c7] text-[#92400e] font-bold text-sm cursor-default">Limit Reached</button>
