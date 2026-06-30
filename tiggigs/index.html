@@ -183,6 +183,10 @@
       <div class="flex-1 text-left">
         <p class="text-xs font-bold text-[#1a9e75] uppercase tracking-wide">Unlocked</p>
         <p id="gateUnlockedEmail" class="text-sm font-semibold text-[#1c1b1b]"></p>
+        <div class="flex items-center gap-2 mt-1">
+          <span id="gateRoleBadge" class="hidden px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-[#1a9e75]/10 text-[#1a9e75]"></span>
+          <span id="gateClaimCount" class="text-[10px] font-semibold text-[#464555]/60"></span>
+        </div>
       </div>
       <button onclick="signOutGate()" class="text-xs font-bold text-[#464555]/50 hover:text-[#1c1b1b] transition-colors px-2 py-1 rounded-lg">Sign out</button>
     </div>
@@ -643,6 +647,9 @@ const SB_HDRS = { 'apikey': SB_KEY, 'Authorization': `Bearer ${SB_KEY}`, 'Conten
 const OPS_CONTACT_WA = 'https://wa.me/919940237330';
 let jobs = [], filter = 'all', email = null, target = null;
 let savedName = null, savedCode = null;
+let userRole = null, monthlyClaimCount = 0;
+
+const ROLE_CATEGORY_MAP = { 'Designer': 'Design', 'Editor': 'Edit', 'Video Producer': 'Production' };
 let briefCurrentId = null;
 
 // ── RATE CARD ──────────────────────────────────────────────────────────────
@@ -894,7 +901,13 @@ async function loadSampleWork() {
 function render() {
   const clientFilter = document.getElementById('filterClient')?.value || '';
   const sortBy = document.getElementById('sortBy')?.value || 'deadline';
-  let list = filter === 'all' ? jobs : jobs.filter(j => j.jobCategory === filter);
+  // Role-based filtering — logged-in freelancers only see jobs matching their role
+  const allowedCategory = email && userRole ? ROLE_CATEGORY_MAP[userRole] : null;
+  let list = jobs;
+  if (allowedCategory) {
+    list = list.filter(j => j.jobCategory === allowedCategory);
+  }
+  if (filter !== 'all') list = list.filter(j => j.jobCategory === filter);
   if (clientFilter) list = list.filter(j => j.client === clientFilter);
   // Sort — Open → Claimed → Submitted → Revision Needed → Approved → Posted, then sub-sort
   const STATUS_ORDER = { 'Open':0, 'Claimed':1, 'Submitted':2, 'Revision Needed':3, 'Approved':4, 'Posted':5 };
@@ -975,6 +988,14 @@ function render() {
       claimBtn = `<button class="py-3 px-4 rounded-xl font-bold text-sm cursor-default flex items-center justify-center gap-1.5" style="background:#f3f4f6;color:#6b7280" disabled>
         <span class="text-[10px] uppercase tracking-wider font-bold">Posted ✓</span>
       </button>`;
+    } else if (email && monthlyClaimCount >= 5) {
+      claimBtn = `<div class="relative group/tip">
+        <button class="w-full py-3 px-4 rounded-xl bg-[#fef3c7] text-[#92400e] font-bold text-sm cursor-default">Limit Reached</button>
+        <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-60 bg-[#1c1b1b] text-white text-xs rounded-xl px-3 py-2.5 opacity-0 group-hover/tip:opacity-100 transition-opacity pointer-events-none text-center leading-relaxed z-10 shadow-lg">
+          You've claimed 5 jobs this month. Reach out to the team for clearance to take on more.
+          <div class="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-[#1c1b1b]"></div>
+        </div>
+      </div>`;
     } else if (email) {
       claimBtn = `<button onclick="openClaim('${j.id}')" class="py-3 px-4 rounded-xl bg-primary text-on-primary font-bold text-sm shadow-md active:scale-95 transition-all">Claim Now</button>`;
     } else {
@@ -1158,6 +1179,16 @@ function claimFromBrief() {
   openClaim(briefCurrentId);
 }
 
+// ── MONTHLY CLAIM COUNT ────────────────────────────────────────────────────
+async function fetchMonthlyClaimCount(emailAddr) {
+  const monthName = new Date().toLocaleString('en-US', { month: 'long' });
+  try {
+    const resp = await fetch(`${SB_URL}/rest/v1/jobs?select=job_id&claimed_by_email=eq.${encodeURIComponent(emailAddr)}&month=eq.${monthName}&board_status=in.(Claimed,Submitted,In Review,Revision Needed,Approved,Scheduled,Posted)`, { headers: SB_HDRS });
+    const data = await resp.json();
+    monthlyClaimCount = Array.isArray(data) ? data.length : 0;
+  } catch(e) { monthlyClaimCount = 0; }
+}
+
 // ── GATE UI HELPERS ────────────────────────────────────────────────────────
 function showUnlockedGate(emailAddr, fullName) {
   document.getElementById('gateLocked').classList.add('hidden');
@@ -1166,13 +1197,25 @@ function showUnlockedGate(emailAddr, fullName) {
   const first = (fullName || '').split(' ')[0];
   document.getElementById('gateUnlockedEmail').textContent =
     first ? `${first} · ${emailAddr}` : emailAddr;
+  // Role badge
+  const roleBadge = document.getElementById('gateRoleBadge');
+  if (userRole && ROLE_CATEGORY_MAP[userRole]) {
+    roleBadge.textContent = userRole;
+    roleBadge.classList.remove('hidden');
+  } else { roleBadge.classList.add('hidden'); }
+  // Monthly claim count
+  const cap = 5;
+  const countEl = document.getElementById('gateClaimCount');
+  countEl.textContent = `${monthlyClaimCount}/${cap} jobs this month`;
+  countEl.style.color = monthlyClaimCount >= cap ? '#b45309' : '';
 }
 
 function signOutGate() {
-  email = null; savedName = null; savedCode = null;
+  email = null; savedName = null; savedCode = null; userRole = null; monthlyClaimCount = 0;
   localStorage.removeItem('tig_email');
   localStorage.removeItem('tig_name');
   localStorage.removeItem('tig_access_code');
+  localStorage.removeItem('tig_role');
   document.getElementById('gateUnlocked').classList.add('hidden');
   document.getElementById('gateLocked').classList.remove('hidden');
   document.getElementById('emailInput').value = '';
@@ -1199,8 +1242,11 @@ async function verifyEmail() {
 
       if (isActive) {
         email = v;
+        userRole = rec.role || null;
         localStorage.setItem('tig_email', v);
         if (fullName) localStorage.setItem('tig_name', fullName);
+        if (userRole) localStorage.setItem('tig_role', userRole);
+        await fetchMonthlyClaimCount(v);
         st.textContent = '';
         showUnlockedGate(v, fullName);
       } else if (isWhitelisted) {
@@ -1553,7 +1599,7 @@ function showTutStep(idx) {
 
 // Restore session on page load from localStorage (persists across tabs)
 // Named so visibilitychange can call it too
-function restoreSession() {
+async function restoreSession() {
   const storedEmail = localStorage.getItem('tig_email');
   if (storedEmail) {
     email = storedEmail;
@@ -1561,6 +1607,8 @@ function restoreSession() {
     const storedCode = localStorage.getItem('tig_access_code') || '';
     if (storedCode) savedCode = storedCode;
     if (storedName) savedName = storedName;
+    userRole = localStorage.getItem('tig_role') || null;
+    await fetchMonthlyClaimCount(storedEmail);
     showUnlockedGate(storedEmail, storedName);
     render();
   }
