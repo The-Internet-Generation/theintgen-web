@@ -917,6 +917,7 @@ body{
               <option value="desc">Deadline ↓</option>
             </select>
             <input class="ops-search" id="ojSearch" placeholder="Search ID or title…" oninput="renderOpsJobs()"/>
+            <button onclick="bulkMarkPosted()" style="margin-left:auto;padding:6px 14px;background:#1a1a1a;color:#ff6b6b;border:1px solid #ff6b6b33;border-radius:8px;font-size:11px;font-weight:700;cursor:pointer;letter-spacing:0.05em;white-space:nowrap" title="Mark all non-Open, non-July jobs as Posted">⚡ Clear Old Jobs</button>
           </div>
           <div id="opsJobsBody"><div class="ops-loading">Loading…</div></div>
         </div>
@@ -1415,6 +1416,7 @@ async function handleQC(recordId, action) {
 
     const payload = { board_status: newStatus };
     if (fullNotes) payload.notes = fullNotes;
+    if (rating) payload.quality_rating = rating;
 
     const r = await fetch(`${SB_URL}/jobs?job_id=eq.${encodeURIComponent(recordId)}`, {
       method: 'PATCH',
@@ -1473,7 +1475,7 @@ async function handleApproveClaim(recordId, email) {
     const r = await fetch(`${SB_URL}/jobs?job_id=eq.${encodeURIComponent(recordId)}`, {
       method: 'PATCH',
       headers: { ...SB_HDRS, 'Prefer': 'return=representation' },
-      body: JSON.stringify({ board_status: 'Approved' }),
+      body: JSON.stringify({ board_status: 'In Review' }),
     });
     if (!r.ok) {
       const err = await r.json().catch(() => ({}));
@@ -1481,18 +1483,7 @@ async function handleApproveClaim(recordId, email) {
     }
 
     msgEl.className = 'qc-success';
-    msgEl.textContent = '✓ Claim approved!';
-
-    // Send confirmation email to freelancer
-    if (email) {
-      const record = allJobRecords.find(x => x.id === recordId);
-      const jobTitle = record ? (record.fields['Job Title'] || 'your job') : 'your job';
-      const subject  = encodeURIComponent(`Your TIG claim has been approved — ${jobTitle}`);
-      const body     = encodeURIComponent(
-        `Hi,\n\nYour claim for "${jobTitle}" has been approved by the TIG team.\n\nYou're good to go! Please check your brief and get started.\n\nGood luck!\n— TIG Ops`
-      );
-      window.open(`mailto:${email}?subject=${subject}&body=${body}`, '_blank');
-    }
+    msgEl.textContent = '✓ Confirmed! Email sent to freelancer.';
 
     setTimeout(() => loadAll(), 1500);
   } catch(e) {
@@ -1861,6 +1852,25 @@ async function opsJobDelete(jobId) {
     renderOpsJobs();
     loadAll();
   } catch(e) { showToast('Error: '+e.message, true); }
+}
+
+// ── BULK CLEAR ───────────────────────────────────────────────────────────
+async function bulkMarkPosted() {
+  const currentMonth = new Date().toLocaleString('en-US', { month: 'long' });
+  const toMark = opsJobsData.filter(r =>
+    r.month !== currentMonth && !['Open','Posted'].includes(r.board_status)
+  );
+  if (!toMark.length) { showToast('Nothing to clear — all old jobs already done ✓'); return; }
+  if (!confirm(`Mark ${toMark.length} old jobs as Posted? This cannot be undone.`)) return;
+  try {
+    await fetch(`${SB_URL}/jobs?month=neq.${encodeURIComponent(currentMonth)}&board_status=not.in.(Open,Posted)`, {
+      method: 'PATCH',
+      headers: { ...SB_HDRS, 'Prefer': 'return=minimal' },
+      body: JSON.stringify({ board_status: 'Posted' }),
+    });
+    showToast(`✓ ${toMark.length} jobs marked as Posted`);
+    loadAll();
+  } catch(e) { showToast('Error: ' + e.message, true); }
 }
 
 // ── TAB 2 — FREELANCERS ──────────────────────────────────────────────────
