@@ -834,7 +834,7 @@ async function loadJobs(silent = false) {
         refUrl:         '',
         refImageUrl:    row.reference_image_url || '',
         submitUrl:      row.submission_folder_url || '',
-        sourceFilesUrl: '',
+        sourceFilesUrl: row.source_files_folder || '',
         deadline,
         isAI,
         status:         row.board_status || 'Open',
