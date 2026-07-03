@@ -1114,8 +1114,9 @@ function openBrief(id) {
        <span class="material-symbols-outlined text-[14px] opacity-40">open_in_new</span>
      </a>`;
 
-  // ── 1. ASSETS & REFERENCES (images first) ──────────────────────────────
+  // ── 1. ASSETS & REFERENCES ──────────────────────────────────────────────
   const assetBtns = [];
+  if (j.visualBrief)    assetBtns.push(rowBtn(j.visualBrief,    'description',   'Visual Brief'));
   if (j.refImageUrl)    assetBtns.push(rowBtn(j.refImageUrl,    'photo_library', 'Reference Images'));
   if (j.refUrl)         assetBtns.push(rowBtn(j.refUrl,         'folder_open',   'Reference Folder'));
   if (j.brandUrl)       assetBtns.push(rowBtn(j.brandUrl,       'palette',       'Brand Guidelines'));
@@ -1123,11 +1124,10 @@ function openBrief(id) {
   if (assetBtns.length) h += box('Assets & References', `<div class="flex flex-col gap-2">${assetBtns.join('')}</div>`);
 
   // ── 2. TEXT SECTIONS (each in its own distinct box) ─────────────────────
-  if (j.description) h += box('Description',      `<p class="font-body text-sm text-on-surface leading-relaxed whitespace-pre-line">${j.description}</p>`,  '#ffffff', '#e5e2e1');
-  if (j.topic)       h += box('Brief / Topic',    `<p class="font-body text-sm text-on-surface leading-relaxed whitespace-pre-line">${j.topic}</p>`,         '#ffffff', '#e5e2e1');
-  if (j.visualBrief) h += box('Visual Direction', `<p class="font-body text-sm text-on-surface leading-relaxed whitespace-pre-line">${j.visualBrief}</p>`,   '#ffffff', '#e5e2e1');
-  if (j.copy)        h += box('Copy',              `<p class="font-body text-sm text-on-surface leading-relaxed whitespace-pre-line">${j.copy}</p>`,         '#fffbe6', '#f59e0b33');
-  if (j.dimensions)  h += box('Dimensions',       `<p class="font-body text-sm font-semibold text-on-surface">${j.dimensions}</p>`,                          '#ffffff', '#e5e2e1');
+  if (j.description) h += box('Description',   `<p class="font-body text-sm text-on-surface leading-relaxed whitespace-pre-line">${j.description}</p>`,  '#ffffff', '#e5e2e1');
+  if (j.topic)       h += box('Brief / Topic', `<p class="font-body text-sm text-on-surface leading-relaxed whitespace-pre-line">${j.topic}</p>`,         '#ffffff', '#e5e2e1');
+  if (j.copy)        h += box('Copy',          `<p class="font-body text-sm text-on-surface leading-relaxed whitespace-pre-line">${j.copy}</p>`,         '#fffbe6', '#f59e0b33');
+  if (j.dimensions)  h += box('Dimensions',    `<p class="font-body text-sm font-semibold text-on-surface">${j.dimensions}</p>`,                          '#ffffff', '#e5e2e1');
 
   // ── 3. DELIVERY FOLDERS (source files above submission) ─────────────────
   const deliverBtns = [];
