@@ -847,6 +847,7 @@ function openBrief(jobId) {
 
   const links = [
     j.reference_image_url   ? `<a class="brief-link" href="${j.reference_image_url}"   target="_blank">📌 Reference</a>`  : '',
+    j.source_files_folder   ? `<a class="brief-link" href="${j.source_files_folder}"   target="_blank">🎬 Source Files</a>` : '',
     j.brand_social_page_url ? `<a class="brief-link" href="${j.brand_social_page_url}" target="_blank">📱 Brand Page</a>` : '',
     j.submission_folder_url ? `<a class="brief-link" href="${j.submission_folder_url}" target="_blank">📁 Submit Here</a>` : '',
   ].filter(Boolean).join('');
