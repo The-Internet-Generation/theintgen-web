@@ -588,8 +588,12 @@ var APPS = {
   tiggigs:  {name:'TigGigs',  sub:'Gigs that pay',            wordmark:'₹', fill:'fill-logo', ext:true, url:'/tiggigs/'},
   tigpods:  {name:'Tigpods',  sub:'Podcast network',          logo:'icons/tigpods.png', fill:'fill-logo', ext:true, url:'/tigpods/'},
   tigom:    {name:'TIGOM',    sub:'Open mic · live',      logo:'icons/tigom.png', fill:'fill-logo', ext:true, url:'/tigom/'},
-  ourwork:  {name:'Our Work', sub:'Hall of Fame',             icon:'trophy', fill:'fill-logo', glyph:'#17266b', interior:'ourwork', headFrom:'#3a2030', headTo:'#15140f',
-             blurb:'The campaigns, brand worlds and live moments our community is proudest of.'}
+  ourwork:  {name:'Our Work', sub:'TVCs, events & more',      icon:'trophy', fill:'fill-logo', glyph:'#17266b', interior:'ourwork', headFrom:'#3a2030', headTo:'#15140f',
+             blurb:'Brands, government clients and culture — TVCs, TIGvents, digital marketing and more.'},
+  portfolio:{name:'Portfolio', sub:'Decks & documents',       icon:'book', fill:'fill-logo', glyph:'#17266b', interior:'portfolio', headFrom:'#3a2010', headTo:'#15140f',
+             blurb:'Two decks, ready to open — no download required.'},
+  sandbox:  {name:'TIG Sandbox', sub:'Internship programme',  icon:'compass', fill:'fill-logo', glyph:'#17266b', interior:'sandbox', headFrom:'#1c2a1c', headTo:'#15140f',
+             blurb:"Real briefs, real clients, real deadlines. No coffee-fetching."}
 };
 
 /* ===== state + navigation ===== */
@@ -661,7 +665,7 @@ function Lock(){
 
 /* ===== HOME ===== */
 function HomePage1(){
-  var ids = ['tigital','hq','tiggigs','tigpods','tigom','ourwork'];
+  var ids = ['tigital','hq','tiggigs','tigpods','tigom','ourwork','portfolio','sandbox'];
   return h("div", {className:"home-scroll"},
     h("div", {className:"home-head"},
       h("div", {className:"home-greet"},
@@ -757,21 +761,21 @@ function HQBody(app){
   ];
 }
 
-/* ===== Our Work — Hall of Fame ===== */
+/* ===== Our Work ===== */
 function fillColor(f){
   return ({red:'var(--red)',orange:'var(--orange-deep)',teal:'var(--teal)',plum:'var(--plum)',ink:'var(--ink)'})[f] || 'var(--red)';
 }
+function WorkThumb(src, label, url){
+  return h("a", {className:"card", href:url, target:"_blank", rel:"noopener", style:{display:'block',textDecoration:'none',color:'inherit',cursor:'pointer'}},
+    h("img", {src:src, alt:label, loading:"lazy", style:{width:'100%',height:96,objectFit:'cover',display:'block'}}),
+    h("div", {style:{padding:'8px 10px',display:'flex',alignItems:'center',justifyContent:'space-between',gap:6}},
+      h("div", {style:{fontFamily:'var(--ui)',fontWeight:600,fontSize:11.5,color:'var(--tx)',lineHeight:1.15}}, label),
+      glyph("play", {stroke:'var(--red-deep)', style:{width:13,height:13,flex:'none'}})
+    ));
+}
 function OurWorkBody(app){
-  var filters = ['All','Campaigns','Events','Branding','Press'];
+  var filters = ['All','TVCs','Events','Digital','Government'];
   var active = 0;
-  var work = [
-    ['Event','TIGOM open mic · live','plum'],
-    ['Branding','Madras label identity','teal'],
-    ['Campaign','Pongal heritage film','orange'],
-    ['Press','Featured in YourStory','ink'],
-    ['Branding','Indie studio rework','red'],
-    ['Campaign','Chennai street drop','red']
-  ];
   var chipRow, selLabel;
   function selectFilter(i){
     active = i;
@@ -788,40 +792,144 @@ function OurWorkBody(app){
   return [
     h("div", {className:"hof-banner"},
       glyph("trophy", {stroke:'#17266b', style:{width:18,height:18}}),
-      h("span", null, "Hall of Fame"),
-      h("small", null, "Work the community is proudest of")
+      h("span", null, "Our Work"),
+      h("small", null, "TVCs, events, digital & govt. clients")
     ),
     chipRow,
     h("div", {className:"card hof-card", style:{marginBottom:18}},
       h("div", {className:"hof-medal"}, glyph("trophy", {stroke:'#17266b', style:{width:20,height:20}})),
-      Ph(158, "Featured · case film", true),
+      h("img", {src:"/public/assets/work/cavins_lassi.jpg", alt:"Cavin's Lassi TVC", style:{width:'100%',height:158,objectFit:'cover',display:'block'}}),
       h("div", {className:"card-pad"},
-        h("div", {style:{fontFamily:'var(--mono)',fontSize:9,letterSpacing:'.14em',textTransform:'uppercase',color:'var(--red-deep)'}}, "Going viral now"),
-        h("div", {style:{fontFamily:'var(--ui)',fontWeight:600,fontSize:17,color:'var(--tx)',marginTop:7,lineHeight:1.1}}, "DoorDash’s delivery bags started a podcast"),
-        h("div", {style:{fontFamily:'var(--ui)',fontSize:12,color:'var(--tx-soft)',marginTop:7,lineHeight:1.4}}, "“Bag Chat” by Clemenger BBDO — animatronic delivery bags riff like a bro-podcast about everything they’ve carried. DoorDash Australia’s scroll-stopping hit."),
+        h("div", {style:{fontFamily:'var(--mono)',fontSize:9,letterSpacing:'.14em',textTransform:'uppercase',color:'var(--red-deep)'}}, "Featured TVC"),
+        h("div", {style:{fontFamily:'var(--ui)',fontWeight:600,fontSize:17,color:'var(--tx)',marginTop:7,lineHeight:1.1}}, "Cavin's Lassi — 15 Sec Hindi TVC"),
+        h("div", {style:{fontFamily:'var(--ui)',fontSize:12,color:'var(--tx-soft)',marginTop:7,lineHeight:1.4}}, "One of eight TVCs and ad films TIG has produced for brands like CavinKare, Swarna Sarees, Abi Estates, Oro Safe and Sepoy & Co."),
         h("div", {style:{display:'flex',gap:7,marginTop:12,flexWrap:'wrap'}},
-          h("span", {className:"tag accent"}, "DoorDash AU"),
-          h("span", {className:"tag"}, "Clemenger BBDO"),
-          h("span", {className:"tag"}, "Bag Chat")),
-        h("button", {className:"btn solid full", style:{marginTop:14}, onClick:function(){ openWeb({name:'Bag Chat', url:'lbbonline.com'}); }}, "Watch the case film"))
+          h("span", {className:"tag accent"}, "CavinKare"),
+          h("span", {className:"tag"}, "TVC"),
+          h("span", {className:"tag"}, "Video Production")),
+        h("a", {className:"btn solid full", style:{marginTop:14,textDecoration:'none',textAlign:'center'}, href:"https://www.youtube.com/watch?v=1DAJitYusVg&ab_channel=CavinKare", target:"_blank", rel:"noopener"}, "Watch the case film"))
     ),
-    h("div", {className:"isec"}, "Selected work", selLabel),
+    h("div", {className:"isec"}, "TVCs & ad films", selLabel),
     h("div", {className:"grid2"},
-      work.map(function(item){
-        var cat = item[0], title = item[1], fill = item[2];
-        return h("div", {className:"card", style:{cursor:'pointer'}},
-          Ph(96, cat, fill === 'ink', {}),
-          h("div", {style:{padding:'11px 12px 13px'}},
-            h("div", {style:{width:18,height:3,borderRadius:3,background:fillColor(fill),marginBottom:8}}),
-            h("div", {style:{fontFamily:'var(--ui)',fontWeight:600,fontSize:12.5,color:'var(--tx)',lineHeight:1.15}}, title),
-            h("div", {style:{fontFamily:'var(--mono)',fontSize:8.5,letterSpacing:'.06em',textTransform:'uppercase',color:'var(--tx-faint)',marginTop:6}}, cat)));
-      })
+      WorkThumb("/public/assets/work/cavins_rabdi.jpg", "Cavin's Rabdi Milkshake", "https://www.youtube.com/watch?list=PL0t5Yw_UGzuX8p7TFnfl8BeGsHn_2_NoV&v=jEBMJ6aPPbM&feature=youtu.be&ab_channel=ProjectPakoda"),
+      WorkThumb("/public/assets/work/cavins_paneer.jpg", "Cavin's Paneer", "https://www.youtube.com/watch?v=_ob7f5Na2rg&list=PL0t5Yw_UGzuX8p7TFnfl8BeGsHn_2_NoV&index=6&ab_channel=ProjectPakoda"),
+      WorkThumb("/public/assets/work/swarna_sarees_1.jpg", "Swarna Sarees — Winter", "https://www.youtube.com/watch?list=PL0t5Yw_UGzuX8p7TFnfl8BeGsHn_2_NoV&v=uInLEci4A2A&feature=youtu.be&ab_channel=ProjectPakoda"),
+      WorkThumb("/public/assets/work/swarna_sarees_2.jpg", "Swarna Sarees — Purple", "https://www.youtube.com/watch?v=r4z6T5Rky4I&list=PL0t5Yw_UGzuX8p7TFnfl8BeGsHn_2_NoV&ab_channel=ProjectPakoda"),
+      WorkThumb("/public/assets/work/abi_estates.jpg", "Abi Estates", "https://www.youtube.com/watch?v=Zq7X0NkWZA0&list=PL0t5Yw_UGzuX8p7TFnfl8BeGsHn_2_NoV&ab_channel=ProjectPakoda"),
+      WorkThumb("/public/assets/work/oro_safe.jpg", "Oro Safe", "https://www.youtube.com/watch?v=iB9ClDEs9fc&list=PL0t5Yw_UGzuX8p7TFnfl8BeGsHn_2_NoV&ab_channel=ProjectPakoda"),
+      WorkThumb("/public/assets/work/sepoy_co.jpg", "Sepoy & Co", "https://www.youtube.com/watch?v=_ly-S_VlwwQ&list=PL0t5Yw_UGzuX8p7TFnfl8BeGsHn_2_NoV")
     ),
-    h("button", {className:"btn ghost full", style:{marginTop:16}, onClick:function(){ openWeb(app); }}, "See all 60+ projects ↗")
+    h("div", {className:"isec"}, "Tigital — digital marketing"),
+    h("div", {className:"statcard"},
+      h("div", {style:{display:'flex',justifyContent:'space-between',flexWrap:'wrap',gap:14}},
+        h("div", null, h("div", {className:"bignum"}, "1000+"), h("div", {style:{fontFamily:'var(--mono)',fontSize:9,color:'var(--on-ink-soft)',marginTop:4,textTransform:'uppercase',letterSpacing:'.06em'}}, "Static creatives")),
+        h("div", null, h("div", {className:"bignum"}, "5000+"), h("div", {style:{fontFamily:'var(--mono)',fontSize:9,color:'var(--on-ink-soft)',marginTop:4,textTransform:'uppercase',letterSpacing:'.06em'}}, "Influencers engaged")),
+        h("div", null, h("div", {className:"bignum"}, "2M+"), h("div", {style:{fontFamily:'var(--mono)',fontSize:9,color:'var(--on-ink-soft)',marginTop:4,textTransform:'uppercase',letterSpacing:'.06em'}}, "People reached"))
+      ),
+      h("div", {style:{marginTop:14,display:'flex',gap:7,flexWrap:'wrap'}},
+        h("a", {className:"tag accent", href:"https://drive.google.com/drive/folders/1kiWrMXudxPNMOVgQ1J16Sa57PdCnCcVi?usp=drive_link", target:"_blank", rel:"noopener", style:{textDecoration:'none'}}, "Statics ↗"),
+        h("a", {className:"tag accent", href:"https://drive.google.com/drive/folders/1Nq-T39R9it8LOSK4OF4WYG-vLx5J6h-F?usp=drive_link", target:"_blank", rel:"noopener", style:{textDecoration:'none'}}, "Carousels ↗"),
+        h("a", {className:"tag accent", href:"https://drive.google.com/drive/folders/1qEkePD0D4bJUHVHOaVN0WH9GIJjkPr-E?usp=drive_link", target:"_blank", rel:"noopener", style:{textDecoration:'none'}}, "Reels ↗"))
+    ),
+    h("div", {className:"isec"}, "Events, government & press"),
+    h("div", {className:"stack"},
+      EventRow('mic', 'TIGOM — our open mic', '45+ editions', 'Recurring'),
+      EventRow('ticket', 'Chennai Open — SDAT Women’s Tennis', "'19 & '21", 'Event'),
+      EventRow('building', 'TN Enforcement Bureau', 'Featured in Chennai Express', 'Govt.', true),
+      EventRow('building', 'Sports Development Authority of TN', 'Government client', 'Govt.'),
+      EventRow('building', 'Greater Chennai Traffic Police', 'Government client', 'Govt.')
+    ),
+    h("a", {className:"btn ghost full", style:{marginTop:16,textDecoration:'none',textAlign:'center'}, href:"https://drive.google.com/file/d/1ad_kCphu9Lj2Xd-4sYpG4Hq1bzCPlOIn/view", target:"_blank", rel:"noopener"}, "Open the full Body of Work ↗")
   ];
 }
 
-var INTERIOR_BODY = {hq:HQBody, ourwork:OurWorkBody};
+/* ===== Portfolio ===== */
+function DeckCard(opts){
+  return h("div", {className:"card", style:{marginBottom:14}},
+    h("div", {className:"card-pad"},
+      h("div", {style:{display:'flex',alignItems:'center',gap:10,marginBottom:10}},
+        h("div", {style:{width:40,height:40,borderRadius:10,background:opts.badgeBg,display:'flex',alignItems:'center',justifyContent:'center',flex:'none'}},
+          h("span", {style:{fontFamily:'var(--ui)',fontWeight:800,fontSize:11,color:opts.badgeColor||'#fff'}}, "PDF")),
+        h("div", null,
+          h("div", {style:{fontFamily:'var(--ui)',fontWeight:600,fontSize:15,color:'var(--tx)'}}, opts.title),
+          h("div", {style:{fontFamily:'var(--mono)',fontSize:9,color:'var(--tx-soft)',marginTop:3}}, opts.meta))
+      ),
+      h("div", {style:{fontFamily:'var(--ui)',fontSize:12.5,color:'var(--tx-soft)',lineHeight:1.45}}, opts.desc),
+      h("a", {className:"btn ink full", style:{marginTop:12,textDecoration:'none',textAlign:'center'}, href:opts.url, target:"_blank", rel:"noopener"}, "Open Full PDF ↗")
+    )
+  );
+}
+function PortfolioBody(app){
+  return [
+    DeckCard({
+      title:"TIG Body of Work 2023",
+      meta:"TIG_Body_of_Work_2023.pdf · 3.9 MB · 28 slides",
+      desc:"Video production, digital marketing, live events and subtitling — for brands, three Tamil Nadu government bodies, and a growing creator community.",
+      badgeBg:'#c0392b',
+      url:"https://drive.google.com/file/d/1ad_kCphu9Lj2Xd-4sYpG4Hq1bzCPlOIn/view"
+    }),
+    DeckCard({
+      title:"Tigital Brand Deck 2025",
+      meta:"TIGITAL_Brand_Deck_2025.pdf · 1.5 MB · 19 slides",
+      desc:"Services, process, brandfolio and stats for TIG's digital marketing wing — Meta & Google Ads, content and influencer marketing.",
+      badgeBg:'#ffab40', badgeColor:'#1b1c1c',
+      url:"https://drive.google.com/file/d/1WNm7a0CV7mXyXb2Sh9F_-QfpLF_VZ-lT/view"
+    })
+  ];
+}
+
+/* ===== TIG Sandbox ===== */
+function SandboxCard(name, track, batch){
+  return h("div", {className:"card"},
+    h("div", {className:"card-pad"},
+      h("div", {style:{fontFamily:'var(--ui)',fontWeight:600,fontSize:12.5,color:'var(--tx)'}}, "👤 " + name),
+      h("div", {style:{fontFamily:'var(--ui)',fontSize:11,color:'var(--tx-soft)',marginTop:5}}, "Track: " + track),
+      h("div", {style:{fontFamily:'var(--mono)',fontSize:9,color:'var(--tx-faint)',marginTop:4,textTransform:'uppercase',letterSpacing:'.04em'}}, "Batch: " + batch)
+    )
+  );
+}
+function QuoteCard(quote, author){
+  return h("div", {className:"card"},
+    h("div", {className:"card-pad"},
+      h("div", {style:{fontFamily:'var(--ui)',fontSize:12.5,color:'var(--tx)',fontStyle:'italic',lineHeight:1.45}}, '"' + quote + '"'),
+      h("div", {style:{fontFamily:'var(--mono)',fontSize:9.5,color:'var(--tx-soft)',marginTop:8,textTransform:'uppercase',letterSpacing:'.04em'}}, "— " + author)
+    )
+  );
+}
+function SandboxBody(app){
+  return [
+    h("div", {style:{display:'flex',justifyContent:'flex-end',marginBottom:14}},
+      h("span", {className:"tag accent"}, "🚧 Sample content — swap in real details")),
+    h("div", {className:"isec"}, "The programme"),
+    h("div", {className:"stack"},
+      EventRow('clock', '[Duration]', 'e.g. 8–12 weeks, rolling batches', 'Duration'),
+      EventRow('compass', '[Tracks]', 'Video, Digital, Events, Content', 'Tracks'),
+      EventRow('people', '[Eligibility]', 'Students & recent grads, Chennai preferred', 'Eligibility'),
+      EventRow('briefcase', '[Stipend]', 'Paid stipend + certificate', 'Stipend')
+    ),
+    h("div", {className:"isec"}, "Currently enrolled", h("small", null, "Sample entries")),
+    h("div", {className:"grid2"},
+      SandboxCard('[Intern Name]', 'Video Production', '[Month Year]'),
+      SandboxCard('[Intern Name]', 'Digital Marketing', '[Month Year]'),
+      SandboxCard('[Intern Name]', 'Events (TIGvents)', '[Month Year]'),
+      SandboxCard('[Intern Name]', 'Content & Social', '[Month Year]')
+    ),
+    h("div", {className:"isec"}, "Success stories", h("small", null, "Sample entries")),
+    h("div", {className:"stack"},
+      QuoteCard("Went from intern to full-time Video Editor in 3 months.", "[Intern Name], now [Role] at TIG"),
+      QuoteCard("Ran their first client shoot solo by week 6.", "[Intern Name], now [Role] at TIG")
+    ),
+    h("div", {className:"card", style:{marginTop:18}},
+      h("div", {className:"card-pad"},
+        h("div", {style:{fontFamily:'var(--ui)',fontSize:13,color:'var(--tx-soft)',lineHeight:1.5}}, "Think you've got what it takes? We're always looking for people who ship."),
+        h("a", {className:"btn solid full", style:{marginTop:12,textDecoration:'none',textAlign:'center'}, href:"https://forms.gle/REPLACE-WITH-YOUR-FORM-LINK", target:"_blank", rel:"noopener"}, "📝 Apply to TIG Sandbox"),
+        h("div", {style:{marginTop:8,textAlign:'center'}}, h("span", {className:"tag accent"}, "🚧 Add your real Google Form link"))
+      )
+    )
+  ];
+}
+
+var INTERIOR_BODY = {hq:HQBody, ourwork:OurWorkBody, portfolio:PortfolioBody, sandbox:SandboxBody};
 
 function Interior(app){
   var Body = INTERIOR_BODY[app.interior];

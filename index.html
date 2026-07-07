@@ -269,6 +269,14 @@ html,body{width:100%;height:100%;font-family:var(--font-ui);font-size:12px;
 .ppt-slide .ppt-bar{width:60%;height:6px;background:#006565;margin:2px 0}
 .ppt-slide .ppt-bar.s{width:40%;background:#474eb7}
 .ppt-slide .ppt-bar.xs{width:25%;background:#bdc9c8}
+.work-thumb-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;padding:8px 14px}
+.work-thumb{display:block;text-decoration:none;color:inherit;background:#fff;cursor:pointer;
+  border-top:1px solid #fff;border-left:1px solid #fff;border-right:1px solid #000;border-bottom:1px solid #000;
+  box-shadow:inset -1px -1px 0 #808080,inset 1px 1px 0 #dfdfdf,2px 2px 0 #bdc9c8;overflow:hidden}
+.work-thumb img{display:block;width:100%;height:auto;aspect-ratio:16/9;object-fit:cover;background:#000}
+.work-thumb-label{padding:5px 7px;font-family:var(--font-ui);font-size:10px;font-weight:700;color:#1b1c1c;
+  display:flex;align-items:center;justify-content:space-between;gap:4px;background:#efeded;border-top:1px solid #e3e2e2}
+.work-thumb-label .ms{font-size:13px;color:#c0392b;flex-shrink:0}
 
 /* === BOOT DIALOG === */
 #boot-overlay{position:fixed;inset:0;z-index:999;display:flex;align-items:center;
@@ -479,6 +487,19 @@ html,body{width:100%;height:100%;font-family:var(--font-ui);font-size:12px;
       </svg>
       <span class="di-lbl">Portfolio</span>
     </div>
+
+    <div class="dicon" data-win="sandbox" tabindex="0" role="button" aria-label="TIG Sandbox">
+      <svg class="di-img" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+        <rect x="2" y="8" width="28" height="21" fill="#ffab40" stroke="#000" stroke-width="1"/>
+        <rect x="2" y="5" width="11" height="5" fill="#ffab40" stroke="#000" stroke-width="1"/>
+        <rect x="3" y="9" width="26" height="19" fill="#ffd9a0"/>
+        <polygon points="16,13 26,17 16,21 6,17" fill="#1b1c1c"/>
+        <rect x="12" y="17" width="8" height="6" rx="1" fill="#3e4949"/>
+        <line x1="26" y1="17" x2="26" y2="23" stroke="#1b1c1c" stroke-width="1"/>
+        <circle cx="26" cy="24" r="1.3" fill="#c0392b"/>
+      </svg>
+      <span class="di-lbl">TIG Sandbox</span>
+    </div>
   </div>
 
   <!-- Recycle Bin — bottom right, above Bane -->
@@ -543,6 +564,7 @@ html,body{width:100%;height:100%;font-family:var(--font-ui);font-size:12px;
     <div class="sm-item" data-win="ourwork"><span class="ms">folder_open</span>Our Work</div>
     <div class="sm-item" data-win="findus"><span class="ms">location_on</span>Find Us</div>
     <div class="sm-item" data-win="portfolio"><span class="ms">slideshow</span>Portfolio</div>
+    <div class="sm-item" data-win="sandbox"><span class="ms">school</span>TIG Sandbox</div>
     <div class="sm-item" data-win="recycle"><span class="ms">delete</span>Recycle Bin</div>
   </div>
 </div>
@@ -908,23 +930,97 @@ html,body{width:100%;height:100%;font-family:var(--font-ui);font-size:12px;
   </div>
   <div class="wcontent">
     <div class="wc" style="padding:8px 14px">
-      <div class="wc-h1" style="font-size:13px">10 Years. Countless Campaigns.</div>
-      <div class="wc-body">This is what we've built — brands, content, culture.</div>
+      <div class="wc-h1" style="font-size:13px">Brands, Government &amp; Culture.</div>
+      <div class="wc-body">Digital marketing, TVCs, web-series, subtitling and live events — plus work for three Tamil Nadu government bodies. This is what we've built.</div>
     </div>
-    <div style="padding:2px 14px 4px;font-family:var(--font-mono);font-size:10px;color:#5d5e5f;border-bottom:1px solid #e3e2e2;display:flex;gap:16px">
-      <span style="flex:1">Name</span><span style="width:80px">Type</span><span style="width:60px;text-align:right">Size</span>
+
+    <div style="padding:5px 14px 3px;font-family:var(--font-ui);font-size:11px;color:#5d5e5f;border-top:1px solid #e3e2e2;border-bottom:1px solid #e3e2e2;background:#efeded"><span class="ms" style="font-size:13px;vertical-align:-2px;color:#006565">play_circle</span> <strong>TVCs &amp; Ad Films</strong> <span style="font-weight:400">— click to watch</span></div>
+    <div class="work-thumb-grid">
+      <a class="work-thumb" href="https://www.youtube.com/watch?list=PL0t5Yw_UGzuX8p7TFnfl8BeGsHn_2_NoV&amp;v=jEBMJ6aPPbM&amp;feature=youtu.be&amp;ab_channel=ProjectPakoda" target="_blank" rel="noopener">
+        <img src="/public/assets/work/cavins_rabdi.jpg" alt="Cavin's Rabdi Milkshake TVC" loading="lazy">
+        <div class="work-thumb-label"><span>Cavin's Rabdi Milkshake</span><span class="ms">smart_display</span></div>
+      </a>
+      <a class="work-thumb" href="https://www.youtube.com/watch?v=_ob7f5Na2rg&amp;list=PL0t5Yw_UGzuX8p7TFnfl8BeGsHn_2_NoV&amp;index=6&amp;ab_channel=ProjectPakoda" target="_blank" rel="noopener">
+        <img src="/public/assets/work/cavins_paneer.jpg" alt="Cavin's Paneer TVC" loading="lazy">
+        <div class="work-thumb-label"><span>Cavin's Paneer</span><span class="ms">smart_display</span></div>
+      </a>
+      <a class="work-thumb" href="https://www.youtube.com/watch?v=1DAJitYusVg&amp;ab_channel=CavinKare" target="_blank" rel="noopener">
+        <img src="/public/assets/work/cavins_lassi.jpg" alt="Cavin's Lassi TVC" loading="lazy">
+        <div class="work-thumb-label"><span>Cavin's Lassi</span><span class="ms">smart_display</span></div>
+      </a>
+      <a class="work-thumb" href="https://www.youtube.com/watch?list=PL0t5Yw_UGzuX8p7TFnfl8BeGsHn_2_NoV&amp;v=uInLEci4A2A&amp;feature=youtu.be&amp;ab_channel=ProjectPakoda" target="_blank" rel="noopener">
+        <img src="/public/assets/work/swarna_sarees_1.jpg" alt="Swarna Sarees Winter Collection TVC" loading="lazy">
+        <div class="work-thumb-label"><span>Swarna Sarees — Winter</span><span class="ms">smart_display</span></div>
+      </a>
+      <a class="work-thumb" href="https://www.youtube.com/watch?v=r4z6T5Rky4I&amp;list=PL0t5Yw_UGzuX8p7TFnfl8BeGsHn_2_NoV&amp;ab_channel=ProjectPakoda" target="_blank" rel="noopener">
+        <img src="/public/assets/work/swarna_sarees_2.jpg" alt="Swarna Sarees Purple Deciduous TVC" loading="lazy">
+        <div class="work-thumb-label"><span>Swarna Sarees — Purple</span><span class="ms">smart_display</span></div>
+      </a>
+      <a class="work-thumb" href="https://www.youtube.com/watch?v=Zq7X0NkWZA0&amp;list=PL0t5Yw_UGzuX8p7TFnfl8BeGsHn_2_NoV&amp;ab_channel=ProjectPakoda" target="_blank" rel="noopener">
+        <img src="/public/assets/work/abi_estates.jpg" alt="Abi Estates TVC" loading="lazy">
+        <div class="work-thumb-label"><span>Abi Estates</span><span class="ms">smart_display</span></div>
+      </a>
+      <a class="work-thumb" href="https://www.youtube.com/watch?v=iB9ClDEs9fc&amp;list=PL0t5Yw_UGzuX8p7TFnfl8BeGsHn_2_NoV&amp;ab_channel=ProjectPakoda" target="_blank" rel="noopener">
+        <img src="/public/assets/work/oro_safe.jpg" alt="Oro Safe TVC" loading="lazy">
+        <div class="work-thumb-label"><span>Oro Safe</span><span class="ms">smart_display</span></div>
+      </a>
+      <a class="work-thumb" href="https://www.youtube.com/watch?v=_ly-S_VlwwQ&amp;list=PL0t5Yw_UGzuX8p7TFnfl8BeGsHn_2_NoV" target="_blank" rel="noopener">
+        <img src="/public/assets/work/sepoy_co.jpg" alt="Sepoy & Co product shoot" loading="lazy">
+        <div class="work-thumb-label"><span>Sepoy &amp; Co</span><span class="ms">smart_display</span></div>
+      </a>
     </div>
-    <div class="wc-row"><span class="ms">folder</span><span class="wc-row-name">Brand_Campaigns_2023</span><span class="wc-row-type">Folder</span><span class="wc-row-size">—</span></div>
-    <div class="wc-row"><span class="ms">folder</span><span class="wc-row-name">Social_Content_Archive</span><span class="wc-row-type">Folder</span><span class="wc-row-size">—</span></div>
-    <div class="wc-row"><span class="ms">description</span><span class="wc-row-name">TIG_Manifesto_v3.docx</span><span class="wc-row-type">Document</span><span class="wc-row-size">2.4 MB</span></div>
-    <div class="wc-row"><span class="ms">image</span><span class="wc-row-name">Campaign_Kodambakkam.psd</span><span class="wc-row-type">Photoshop</span><span class="wc-row-size">48 MB</span></div>
-    <div class="wc-row"><span class="ms">movie</span><span class="wc-row-name">TIGOM_Reel_2024.mp4</span><span class="wc-row-type">Video</span><span class="wc-row-size">1.2 GB</span></div>
-    <div class="wc-row"><span class="ms">image</span><span class="wc-row-name">Brand_Identity_Final.ai</span><span class="wc-row-type">Illustrator</span><span class="wc-row-size">18 MB</span></div>
-    <div class="wc-row"><span class="ms">bar_chart</span><span class="wc-row-name">Client_Results_2024.xlsx</span><span class="wc-row-type">Spreadsheet</span><span class="wc-row-size">890 KB</span></div>
-    <div class="wc-row"><span class="ms">image</span><span class="wc-row-name">Retro_Launch_Deck.pptx</span><span class="wc-row-type">Presentation</span><span class="wc-row-size">24 MB</span></div>
-    <div style="text-align:center;padding:10px"><a href="#" class="wc-btn">View Archive</a></div>
+
+    <div style="padding:5px 14px 3px;font-family:var(--font-ui);font-size:11px;color:#5d5e5f;border-top:1px solid #e3e2e2;border-bottom:1px solid #e3e2e2;background:#efeded"><span class="ms" style="font-size:13px;vertical-align:-2px;color:#006565">campaign</span> <strong>Tigital — Digital Marketing</strong></div>
+    <div class="wc-row"><span class="ms">bar_chart</span><span class="wc-row-name">1000+ static creatives · 500+ carousel sets · 1500+ videos</span><span class="wc-row-type">Assets</span><span class="wc-row-size">—</span></div>
+    <div class="wc-row"><span class="ms">groups</span><span class="wc-row-name">5000+ influencers engaged · 50+ clients served · 8+ years in digital</span><span class="wc-row-type">Experience</span><span class="wc-row-size">—</span></div>
+    <div class="wc-row"><span class="ms">trending_up</span><span class="wc-row-name">2M+ people reached · 45M+ interactions · 322K+ clicks generated</span><span class="wc-row-type">Impact</span><span class="wc-row-size">—</span></div>
+    <a class="wc-row" href="https://drive.google.com/drive/folders/1kiWrMXudxPNMOVgQ1J16Sa57PdCnCcVi?usp=drive_link" target="_blank" rel="noopener" style="text-decoration:none;color:inherit"><span class="ms" style="color:#474eb7">folder_open</span><span class="wc-row-name">Statics — creative gallery</span><span class="wc-row-type">Drive</span><span class="wc-row-size">↗ Open</span></a>
+    <a class="wc-row" href="https://drive.google.com/drive/folders/1Nq-T39R9it8LOSK4OF4WYG-vLx5J6h-F?usp=drive_link" target="_blank" rel="noopener" style="text-decoration:none;color:inherit"><span class="ms" style="color:#474eb7">folder_open</span><span class="wc-row-name">Carousels — creative gallery</span><span class="wc-row-type">Drive</span><span class="wc-row-size">↗ Open</span></a>
+    <a class="wc-row" href="https://drive.google.com/drive/folders/1qEkePD0D4bJUHVHOaVN0WH9GIJjkPr-E?usp=drive_link" target="_blank" rel="noopener" style="text-decoration:none;color:inherit"><span class="ms" style="color:#474eb7">folder_open</span><span class="wc-row-name">Reels — creative gallery</span><span class="wc-row-type">Drive</span><span class="wc-row-size">↗ Open</span></a>
+    <div class="wc" style="padding:8px 14px">
+      <div class="wc-card">
+        <div class="wc-card-desc" style="font-style:italic">"Partnering with this team has been a game-changer for our awareness campaigns. Their strategic digital and on-ground efforts helped us reach the right audience across Tamil Nadu."</div>
+        <div class="wc-card-meta">— Rohitnathan, IPS · Tamil Nadu Narcotics Department</div>
+      </div>
+    </div>
+
+    <div style="padding:5px 14px 3px;font-family:var(--font-ui);font-size:11px;color:#5d5e5f;border-top:1px solid #e3e2e2;border-bottom:1px solid #e3e2e2;background:#efeded"><span class="ms" style="font-size:13px;vertical-align:-2px;color:#006565">movie</span> <strong>Video Production</strong></div>
+    <div class="wc-row"><span class="ms">smart_display</span><span class="wc-row-name">F Buddies — Season 1 &amp; 2</span><span class="wc-row-type">Web-Series</span><span class="wc-row-size">—</span></div>
+    <div class="wc-row"><span class="ms">smart_display</span><span class="wc-row-name">"Yuv" for Silicon Sandhu Pvt Ltd</span><span class="wc-row-type">11 episodes</span><span class="wc-row-size">—</span></div>
+    <div class="wc-row"><span class="ms">smart_display</span><span class="wc-row-name">Single Singam for Ondraga — India's first vertical web-series</span><span class="wc-row-type">7 episodes</span><span class="wc-row-size">—</span></div>
+    <div class="wc-row"><span class="ms">smart_display</span><span class="wc-row-name">Paracetamol Paniyaram — Tamil Nadu's 3rd YouTube channel</span><span class="wc-row-type">100+ videos</span><span class="wc-row-size">1L+ subs</span></div>
+
+    <div style="padding:5px 14px 3px;font-family:var(--font-ui);font-size:11px;color:#5d5e5f;border-top:1px solid #e3e2e2;border-bottom:1px solid #e3e2e2;background:#efeded"><span class="ms" style="font-size:13px;vertical-align:-2px;color:#006565">celebration</span> <strong>TIGvents — Curating Experiences</strong></div>
+    <div class="wc-row"><span class="ms">beach_access</span><span class="wc-row-name">Chennai Day '22 — Besant Nagar Beach, w/ Govt. of Tamil Nadu</span><span class="wc-row-type">Event</span><span class="wc-row-size">—</span></div>
+    <div class="wc-row"><span class="ms">campaign</span><span class="wc-row-name">World's Largest Pledge Against Drugs — NIBCID &amp; TN Govt.</span><span class="wc-row-type">Event</span><span class="wc-row-size">—</span></div>
+    <div class="wc-row"><span class="ms">music_note</span><span class="wc-row-name">Pradeep Kumar's concert — Music Academy, w/ LiveAlive</span><span class="wc-row-type">Event</span><span class="wc-row-size">—</span></div>
+    <div class="wc-row"><span class="ms">festival</span><span class="wc-row-name">Loka Fest V1 &amp; V2 — Auroville</span><span class="wc-row-type">Event</span><span class="wc-row-size">—</span></div>
+    <div class="wc-row"><span class="ms">campaign</span><span class="wc-row-name">Nivaran 90 — influencer campaign for a social cause</span><span class="wc-row-type">Campaign</span><span class="wc-row-size">—</span></div>
+    <div class="wc-row"><span class="ms">sports_tennis</span><span class="wc-row-name">Chennai Open — SDAT Women's Tennis, Nungambakkam ('19 &amp; '21)</span><span class="wc-row-type">Event</span><span class="wc-row-size">—</span></div>
+    <div class="wc-row"><span class="ms">mic</span><span class="wc-row-name">TIGOM — our open mic, 45 editions and counting</span><span class="wc-row-type">Recurring</span><span class="wc-row-size">45+</span></div>
+    <div class="wc-row"><span class="ms">mic</span><span class="wc-row-name">TIGOM PRO I &amp; II — Phoenix Marketcity, Velachery</span><span class="wc-row-type">Event</span><span class="wc-row-size">—</span></div>
+    <div class="wc-row"><span class="ms">groups</span><span class="wc-row-name">Cypher TIG Jam — dance &amp; rap/beatbox battles at OG MottaMaadi</span><span class="wc-row-type">Recurring</span><span class="wc-row-size">—</span></div>
+    <div class="wc-row"><span class="ms">nightlife</span><span class="wc-row-name">Karaoke Nights @ The Leather Bar</span><span class="wc-row-type">Recurring</span><span class="wc-row-size">—</span></div>
+
+    <div style="padding:5px 14px 3px;font-family:var(--font-ui);font-size:11px;color:#5d5e5f;border-top:1px solid #e3e2e2;border-bottom:1px solid #e3e2e2;background:#efeded"><span class="ms" style="font-size:13px;vertical-align:-2px;color:#006565">gavel</span> <strong>Government Clientele</strong></div>
+    <div class="wc-row"><span class="ms">verified</span><span class="wc-row-name">TN Enforcement Bureau — featured in the Chennai Express</span><span class="wc-row-type">Govt.</span><span class="wc-row-size">—</span></div>
+    <div class="wc-row"><span class="ms">verified</span><span class="wc-row-name">Sports Development Authority of Tamil Nadu (SDAT)</span><span class="wc-row-type">Govt.</span><span class="wc-row-size">—</span></div>
+    <div class="wc-row"><span class="ms">verified</span><span class="wc-row-name">Greater Chennai Traffic Police</span><span class="wc-row-type">Govt.</span><span class="wc-row-size">—</span></div>
+
+    <div style="padding:5px 14px 3px;font-family:var(--font-ui);font-size:11px;color:#5d5e5f;border-top:1px solid #e3e2e2;border-bottom:1px solid #e3e2e2;background:#efeded"><span class="ms" style="font-size:13px;vertical-align:-2px;color:#006565">closed_caption</span> <strong>Subtitling-as-a-Service</strong></div>
+    <div class="wc-row"><span class="ms">subtitles</span><span class="wc-row-name">Comedy sketches — Paracetamol Paniyaram &amp; Madras Meter</span><span class="wc-row-type">Subtitles</span><span class="wc-row-size">—</span></div>
+    <div class="wc-row"><span class="ms">subtitles</span><span class="wc-row-name">"Blood Money" — Zee5 Original</span><span class="wc-row-type">Subtitles</span><span class="wc-row-size">—</span></div>
+    <div class="wc-row"><span class="ms">subtitles</span><span class="wc-row-name">Select videos for the NETFLIX YouTube channel</span><span class="wc-row-type">Subtitles</span><span class="wc-row-size">—</span></div>
+
+    <div style="padding:5px 14px 3px;font-family:var(--font-ui);font-size:11px;color:#5d5e5f;border-top:1px solid #e3e2e2;border-bottom:1px solid #e3e2e2;background:#efeded"><span class="ms" style="font-size:13px;vertical-align:-2px;color:#006565">newspaper</span> <strong>In The Press</strong></div>
+    <div class="wc-row"><span class="ms">newspaper</span><span class="wc-row-name">Chennai Times · Deccan Chronicle · The Hindu · Chennai Express · Metroplus</span><span class="wc-row-type">Press</span><span class="wc-row-size">—</span></div>
+
+    <div style="text-align:center;padding:10px">
+      <a href="https://drive.google.com/file/d/1ad_kCphu9Lj2Xd-4sYpG4Hq1bzCPlOIn/view" class="wc-btn" target="_blank" rel="noopener">Open Body of Work ↗</a>
+      <a href="https://drive.google.com/file/d/1WNm7a0CV7mXyXb2Sh9F_-QfpLF_VZ-lT/view" class="wc-btn" target="_blank" rel="noopener" style="margin-left:6px">Open Tigital Deck ↗</a>
+    </div>
   </div>
-  <div class="wstatus"><div class="wsf">47 objects</div><div class="wsf">10 years of work</div></div>
+  <div class="wstatus"><div class="wsf">Digital · Video · Events · Govt.</div><div class="wsf">2 decks to download</div></div>
 </div>
 </div>
 
@@ -968,7 +1064,7 @@ html,body{width:100%;height:100%;font-family:var(--font-ui);font-size:12px;
 <div class="wframe">
   <div class="wtbar">
     <span class="ms" style="font-size:12px">slideshow</span>
-    <span class="wt">TIG_Portfolio_2024.pptx — PowerPoint Viewer</span>
+    <span class="wt">TIG Portfolio — Document Viewer</span>
     <div class="wbtn" data-close="portfolio">_</div>
     <div class="wbtn" data-close="portfolio" style="font-size:7px">□</div>
     <div class="wbtn" data-close="portfolio">✕</div>
@@ -976,7 +1072,7 @@ html,body{width:100%;height:100%;font-family:var(--font-ui);font-size:12px;
   <div class="wmenu"><span>File</span><span>View</span><span>Slide Show</span><span>Help</span></div>
   <div class="waddr">
     <span class="al">Address</span>
-    <div class="af"><span class="ms" style="font-size:12px;color:#c0392b;margin-right:4px">slideshow</span>C:\TIG\Portfolio\TIG_Portfolio_2024.pptx</div>
+    <div class="af"><span class="ms" style="font-size:12px;color:#c0392b;margin-right:4px">slideshow</span>C:\TIG\Portfolio\</div>
     <div class="ago out btn-press">Go</div>
   </div>
   <div class="wcontent">
@@ -986,11 +1082,10 @@ html,body{width:100%;height:100%;font-family:var(--font-ui);font-size:12px;
           <span style="font-family:var(--font-ui);font-weight:800;font-size:13px;color:#fff">PPT</span>
         </div>
         <div>
-          <div class="wc-h1">TIG Portfolio 2024</div>
-          <div class="wc-body">10 years of work. 200+ campaigns. Brands built from scratch.<br>
-            <span style="font-family:var(--font-mono);font-size:10px;color:#5d5e5f">File: TIG_Portfolio_2024.pptx · 24.5 MB · 48 slides</span>
+          <div class="wc-h1">TIG Body of Work 2023</div>
+          <div class="wc-body">Video production, digital marketing, live events and subtitling — for brands, three Tamil Nadu government bodies, and a growing creator community.<br>
+            <span style="font-family:var(--font-mono);font-size:10px;color:#5d5e5f">File: TIG_Body_of_Work_2023.pdf · 3.9 MB · 28 slides</span>
           </div>
-          <a href="portfolio.pptx" class="wc-btn" download>⬇ Download Portfolio.pptx</a>
         </div>
       </div>
     </div>
@@ -999,7 +1094,7 @@ html,body{width:100%;height:100%;font-family:var(--font-ui);font-size:12px;
       <div class="ppt-slide" style="background:#1b1c1c;color:#fff">
         <div style="font-weight:800;font-size:9px;color:#fff">THE INTERNET<br>GENERATION</div>
         <div class="ppt-bar" style="background:#c0392b"></div>
-        <div style="font-size:7px;color:#bdc9c8">Est. 2014 · Chennai</div>
+        <div style="font-size:7px;color:#bdc9c8">Chennai, India</div>
       </div>
       <div class="ppt-slide">
         <div class="ppt-bar"></div>
@@ -1008,25 +1103,70 @@ html,body{width:100%;height:100%;font-family:var(--font-ui);font-size:12px;
         <div class="ppt-bar xs"></div>
       </div>
       <div class="ppt-slide" style="background:#006565;color:#fff">
-        <div style="font-weight:800;font-size:9px;color:#93f2f2">200+</div>
-        <div style="font-size:7px">Campaigns</div>
+        <div style="font-weight:800;font-size:9px;color:#93f2f2">45+</div>
+        <div style="font-size:7px">TIGOM Editions</div>
         <div class="ppt-bar" style="background:#93f2f2;width:50%"></div>
       </div>
       <div class="ppt-slide">
         <div class="ppt-bar"></div>
         <div class="ppt-bar s"></div>
         <div class="ppt-bar xs"></div>
-        <div style="font-size:7px;color:#5d5e5f">Our Process</div>
+        <div style="font-size:7px;color:#5d5e5f">3 Govt. Clients</div>
       </div>
       <div class="ppt-slide" style="background:#000080;color:#fff">
         <div style="font-weight:800;font-size:9px">TIGITAL<br>TIGGIGS<br>TIGPODS</div>
       </div>
     </div>
     <div style="text-align:center;padding:10px">
-      <a href="portfolio.pptx" class="wc-btn" download>Open in PowerPoint</a>
+      <a href="https://drive.google.com/file/d/1ad_kCphu9Lj2Xd-4sYpG4Hq1bzCPlOIn/view" class="wc-btn" target="_blank" rel="noopener">Open Full PDF ↗</a>
+    </div>
+
+    <div class="wc-sep"></div>
+
+    <div class="wc" style="padding-top:12px">
+      <div class="wc-hero">
+        <div class="wc-iconbox" style="background:#ffab40;border:none">
+          <span style="font-family:var(--font-ui);font-weight:800;font-size:13px;color:#1b1c1c">PPT</span>
+        </div>
+        <div>
+          <div class="wc-h1">Tigital Brand Deck 2025</div>
+          <div class="wc-body">Services, process, brandfolio and stats for TIG's digital marketing wing — Meta &amp; Google Ads, content and influencer marketing.<br>
+            <span style="font-family:var(--font-mono);font-size:10px;color:#5d5e5f">File: TIGITAL_Brand_Deck_2025.pdf · 1.5 MB · 19 slides</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="ppt-preview">
+      <div class="ppt-slide" style="background:#1A0A3C;color:#fff">
+        <div style="font-weight:800;font-size:9px;color:#FFD600">TIGITAL</div>
+        <div class="ppt-bar" style="background:#FFD600"></div>
+        <div style="font-size:7px;color:#bdc9c8">Digital Marketing</div>
+      </div>
+      <div class="ppt-slide" style="background:#006565;color:#fff">
+        <div style="font-weight:800;font-size:9px;color:#93f2f2">1000+</div>
+        <div style="font-size:7px">Static Creatives</div>
+        <div class="ppt-bar" style="background:#93f2f2;width:60%"></div>
+      </div>
+      <div class="ppt-slide" style="background:#006565;color:#fff">
+        <div style="font-weight:800;font-size:9px;color:#93f2f2">5000+</div>
+        <div style="font-size:7px">Influencers Engaged</div>
+        <div class="ppt-bar" style="background:#93f2f2;width:70%"></div>
+      </div>
+      <div class="ppt-slide">
+        <div class="ppt-bar"></div>
+        <div class="ppt-bar s"></div>
+        <div style="font-size:7px;color:#5d5e5f">Testimonials</div>
+        <div class="ppt-bar xs"></div>
+      </div>
+      <div class="ppt-slide" style="background:#9B1C3A;color:#fff">
+        <div style="font-weight:800;font-size:9px">2M+<br>Reached</div>
+      </div>
+    </div>
+    <div style="text-align:center;padding:10px">
+      <a href="https://drive.google.com/file/d/1WNm7a0CV7mXyXb2Sh9F_-QfpLF_VZ-lT/view" class="wc-btn" target="_blank" rel="noopener">Open Full PDF ↗</a>
     </div>
   </div>
-  <div class="wstatus"><div class="wsf">48 slides · 24.5 MB</div><div class="wsf">Read-only mode</div></div>
+  <div class="wstatus"><div class="wsf">2 documents · 47 slides</div><div class="wsf">Read-only mode</div></div>
 </div>
 </div>
 
@@ -1068,6 +1208,84 @@ html,body{width:100%;height:100%;font-family:var(--font-ui);font-size:12px;
     </div>
   </div>
   <div class="wstatus"><div class="wsf">Opening soon</div><div class="wsf">Chennai</div></div>
+</div>
+</div>
+
+<!-- TIG SANDBOX -->
+<div class="woverlay" id="win-sandbox">
+<div class="wframe">
+  <div class="wtbar">
+    <span class="ms" style="font-size:12px">school</span>
+    <span class="wt">Exploring — C:\WINDOWS\Desktop\TIG_Sandbox</span>
+    <div class="wbtn" data-close="sandbox">_</div>
+    <div class="wbtn" data-close="sandbox" style="font-size:7px">□</div>
+    <div class="wbtn" data-close="sandbox">✕</div>
+  </div>
+  <div class="wmenu"><span>File</span><span>Edit</span><span>View</span><span>Go</span><span>Help</span></div>
+  <div class="waddr">
+    <span class="al">Address</span>
+    <div class="af">C:\WINDOWS\Desktop\TIG_Sandbox</div>
+    <div class="ago out btn-press">Go</div>
+  </div>
+  <div class="wcontent">
+    <div class="wc" style="padding:8px 14px">
+      <div class="wc-h1" style="font-size:13px">Learn by Doing.</div>
+      <div class="wc-body">TIG Sandbox is our internship programme — real briefs, real clients, real deadlines. No coffee-fetching.</div>
+      <div style="margin-top:8px"><span class="uc-badge">🚧 SAMPLE CONTENT — Jay, swap in real details before this goes live</span></div>
+    </div>
+
+    <div style="padding:5px 14px 3px;font-family:var(--font-ui);font-size:11px;color:#5d5e5f;border-top:1px solid #e3e2e2;border-bottom:1px solid #e3e2e2;background:#efeded"><span class="ms" style="font-size:13px;vertical-align:-2px;color:#006565">folder_open</span> <strong>The Programme</strong></div>
+    <div class="wc-row"><span class="ms">schedule</span><span class="wc-row-name">[Duration] — e.g. 8–12 weeks, rolling batches</span><span class="wc-row-type">Duration</span><span class="wc-row-size">—</span></div>
+    <div class="wc-row"><span class="ms">alt_route</span><span class="wc-row-name">[Tracks] — e.g. Video Production, Digital Marketing, Events, Content</span><span class="wc-row-type">Tracks</span><span class="wc-row-size">—</span></div>
+    <div class="wc-row"><span class="ms">how_to_reg</span><span class="wc-row-name">[Eligibility] — e.g. open to students &amp; recent grads, Chennai-based preferred</span><span class="wc-row-type">Eligibility</span><span class="wc-row-size">—</span></div>
+    <div class="wc-row"><span class="ms">payments</span><span class="wc-row-name">[Stipend] — e.g. paid stipend + certificate on completion</span><span class="wc-row-type">Stipend</span><span class="wc-row-size">—</span></div>
+
+    <div style="padding:5px 14px 3px;font-family:var(--font-ui);font-size:11px;color:#5d5e5f;border-top:1px solid #e3e2e2;border-bottom:1px solid #e3e2e2;background:#efeded"><span class="ms" style="font-size:13px;vertical-align:-2px;color:#006565">groups</span> <strong>Currently Enrolled</strong> <span style="font-weight:400">— sample entries</span></div>
+    <div class="wc-grid">
+      <div class="wc-card">
+        <div class="wc-card-name">👤 [Intern Name]</div>
+        <div class="wc-card-desc">Track: Video Production</div>
+        <div class="wc-card-meta">Batch: [Month Year]</div>
+      </div>
+      <div class="wc-card">
+        <div class="wc-card-name">👤 [Intern Name]</div>
+        <div class="wc-card-desc">Track: Digital Marketing</div>
+        <div class="wc-card-meta">Batch: [Month Year]</div>
+      </div>
+      <div class="wc-card">
+        <div class="wc-card-name">👤 [Intern Name]</div>
+        <div class="wc-card-desc">Track: Events (TIGvents)</div>
+        <div class="wc-card-meta">Batch: [Month Year]</div>
+      </div>
+      <div class="wc-card">
+        <div class="wc-card-name">👤 [Intern Name]</div>
+        <div class="wc-card-desc">Track: Content &amp; Social</div>
+        <div class="wc-card-meta">Batch: [Month Year]</div>
+      </div>
+    </div>
+
+    <div style="padding:5px 14px 3px;font-family:var(--font-ui);font-size:11px;color:#5d5e5f;border-top:1px solid #e3e2e2;border-bottom:1px solid #e3e2e2;background:#efeded"><span class="ms" style="font-size:13px;vertical-align:-2px;color:#006565">emoji_events</span> <strong>Success Stories</strong> <span style="font-weight:400">— sample entries</span></div>
+    <div class="wc" style="padding:8px 14px;display:flex;flex-direction:column;gap:6px">
+      <div class="wc-card">
+        <div class="wc-card-desc" style="font-style:italic">"[Success story — e.g. Went from intern to full-time Video Editor in 3 months.]"</div>
+        <div class="wc-card-meta">— [Intern Name], now [Role] at TIG</div>
+      </div>
+      <div class="wc-card">
+        <div class="wc-card-desc" style="font-style:italic">"[Success story — e.g. Ran their first client shoot solo by week 6.]"</div>
+        <div class="wc-card-meta">— [Intern Name], now [Role] at TIG</div>
+      </div>
+    </div>
+
+    <div style="padding:5px 14px 3px;font-family:var(--font-ui);font-size:11px;color:#5d5e5f;border-top:1px solid #e3e2e2;border-bottom:1px solid #e3e2e2;background:#efeded"><span class="ms" style="font-size:13px;vertical-align:-2px;color:#006565">edit_square</span> <strong>Apply</strong></div>
+    <div class="wc" style="padding:8px 14px">
+      <div class="wc-body">Think you've got what it takes? We're always looking for people who ship.</div>
+      <div style="margin-top:10px;display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+        <a href="https://forms.gle/REPLACE-WITH-YOUR-FORM-LINK" target="_blank" rel="noopener" class="wc-btn">📝 Apply to TIG Sandbox</a>
+        <span class="uc-badge">🚧 Add your real Google Form link</span>
+      </div>
+    </div>
+  </div>
+  <div class="wstatus"><div class="wsf">Applications open</div><div class="wsf">Rolling batches</div></div>
 </div>
 </div>
 
