@@ -214,6 +214,11 @@
         <option value="payout_desc">Payout: High → Low</option>
         <option value="rush">Rush First</option>
       </select>
+      <div class="relative flex-1 min-w-[160px] max-w-xs">
+        <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[16px] text-[#464555]/40 pointer-events-none">search</span>
+        <input id="searchJobs" type="search" placeholder="Search jobs…" oninput="render()"
+          class="w-full pl-8 pr-3 py-2 text-xs font-bold bg-surface-container-low border border-[#c8c4d8]/30 rounded-xl text-on-surface outline-none placeholder:text-[#464555]/40" />
+      </div>
     </div>
     <div class="hidden md:flex gap-6 items-center font-headline font-semibold tracking-tight text-sm mt-3">
       <button class="nav-pill text-[#000000] border-b-2 border-[#fddf29] pb-0.5 transition-all duration-200" data-type="all">All Jobs</button>
@@ -750,6 +755,14 @@ function daysLeft(d) {
   return Math.ceil((dt - now) / 86400000);
 }
 
+function refThumb(url) {
+  if (!url) return null;
+  // Google Drive file: extract file ID → thumbnail
+  const m = url.match(/\/file\/d\/([\w-]+)/);
+  if (m) return `https://drive.google.com/thumbnail?id=${m[1]}&sz=w600`;
+  return null;
+}
+
 function cdText(days) {
   if (days === null) return '';
   if (days < 0)  return ''; // overdue is tracked internally (sort/colour) but not shown to users
@@ -901,8 +914,14 @@ async function loadSampleWork() {
 function render() {
   const clientFilter = document.getElementById('filterClient')?.value || '';
   const sortBy = document.getElementById('sortBy')?.value || 'deadline';
+  const searchQ = (document.getElementById('searchJobs')?.value || '').toLowerCase().trim();
   let list = filter === 'all' ? jobs : jobs.filter(j => j.jobCategory === filter);
   if (clientFilter) list = list.filter(j => j.client === clientFilter);
+  if (searchQ) list = list.filter(j =>
+    (j.title || '').toLowerCase().includes(searchQ) ||
+    (j.client || '').toLowerCase().includes(searchQ) ||
+    (j.description || '').toLowerCase().includes(searchQ)
+  );
   // Sort — Open → Claimed → Submitted → Revision Needed → Approved → Posted, then sub-sort
   const STATUS_ORDER = { 'Open':0, 'Claimed':1, 'Submitted':2, 'Revision Needed':3, 'Approved':4, 'Posted':5 };
   list = [...list].sort((a, b) => {
@@ -1011,7 +1030,11 @@ function render() {
     }
 
     return `
-    <div class="group bg-white rounded-2xl p-6 editorial-shadow transition-all duration-300 hover:scale-[1.02] flex flex-col border border-[#c8c4d8]/15">
+    <div class="group bg-white rounded-2xl overflow-hidden editorial-shadow transition-all duration-300 hover:scale-[1.02] flex flex-col border border-[#c8c4d8]/15">
+      ${refThumb(j.refImageUrl) ? `<div class="w-full h-36 overflow-hidden flex-shrink-0 bg-[#f0edec]">
+        <img src="${refThumb(j.refImageUrl)}" alt="" loading="lazy" class="w-full h-full object-cover" onerror="this.parentElement.style.display='none'">
+      </div>` : ''}
+      <div class="p-6 flex flex-col flex-1">
       <div class="flex justify-between items-start mb-5">
         <div class="flex items-center gap-2">
           <div class="p-2.5 rounded-xl" style="background:${theme.iconBg};color:${theme.iconColor}">
@@ -1045,6 +1068,7 @@ function render() {
       <div class="grid grid-cols-2 gap-3">
         <button onclick="openBrief('${j.id}')" class="py-3 px-4 rounded-xl border border-[#c8c4d8]/40 text-on-surface font-bold text-sm hover:bg-surface-container-high transition-colors">View Brief</button>
         ${claimBtn}
+      </div>
       </div>
     </div>`;
   }).join('');
