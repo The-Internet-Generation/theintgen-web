@@ -15,7 +15,7 @@
 <meta property="og:description" content="Curated paid creative jobs for approved TIG freelancers. Browse and claim design, edit, and content work."/>
 <meta property="og:type" content="website"/>
 <meta property="og:url" content="https://theintgen.com/tiggigs/"/>
-<meta property="og:image" content="https://theintgen.com/tiggigs/logo-theintgen.png"/>
+<meta property="og:image" content="https://theintgen.com/tiggigs/social-preview.png"/>
 <meta name="twitter:card" content="summary_large_image"/>
 <meta name="twitter:title" content="TIG Job Board | Paid Creative Opportunities"/>
 <meta name="twitter:description" content="Curated paid creative jobs for approved TIG freelancers."/>
@@ -183,6 +183,10 @@
       <div class="flex-1 text-left">
         <p class="text-xs font-bold text-[#1a9e75] uppercase tracking-wide">Unlocked</p>
         <p id="gateUnlockedEmail" class="text-sm font-semibold text-[#1c1b1b]"></p>
+        <div class="flex items-center gap-2 mt-1">
+          <span id="gateRoleBadge" class="hidden px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-[#1a9e75]/10 text-[#1a9e75]"></span>
+          <span id="gateClaimCount" class="text-[10px] font-semibold text-[#464555]/60"></span>
+        </div>
       </div>
       <button onclick="signOutGate()" class="text-xs font-bold text-[#464555]/50 hover:text-[#1c1b1b] transition-colors px-2 py-1 rounded-lg">Sign out</button>
     </div>
@@ -210,6 +214,11 @@
         <option value="payout_desc">Payout: High → Low</option>
         <option value="rush">Rush First</option>
       </select>
+      <div class="relative flex-1 min-w-[160px] max-w-xs">
+        <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[16px] text-[#464555]/40 pointer-events-none">search</span>
+        <input id="searchJobs" type="search" placeholder="Search jobs…" oninput="render()"
+          class="w-full pl-8 pr-3 py-2 text-xs font-bold bg-surface-container-low border border-[#c8c4d8]/30 rounded-xl text-on-surface outline-none placeholder:text-[#464555]/40" />
+      </div>
     </div>
     <div class="hidden md:flex gap-6 items-center font-headline font-semibold tracking-tight text-sm mt-3">
       <button class="nav-pill text-[#000000] border-b-2 border-[#fddf29] pb-0.5 transition-all duration-200" data-type="all">All Jobs</button>
@@ -643,6 +652,9 @@ const SB_HDRS = { 'apikey': SB_KEY, 'Authorization': `Bearer ${SB_KEY}`, 'Conten
 const OPS_CONTACT_WA = 'https://wa.me/919940237330';
 let jobs = [], filter = 'all', email = null, target = null;
 let savedName = null, savedCode = null;
+let userRole = null, monthlyClaimCount = 0;
+
+const ROLE_CATEGORY_MAP = { 'Designer': 'Design', 'Editor': 'Edit', 'Video Producer': 'Production' };
 let briefCurrentId = null;
 
 // ── RATE CARD ──────────────────────────────────────────────────────────────
@@ -743,6 +755,14 @@ function daysLeft(d) {
   return Math.ceil((dt - now) / 86400000);
 }
 
+function refThumb(url) {
+  if (!url) return null;
+  // Google Drive file: extract file ID → thumbnail
+  const m = url.match(/\/file\/d\/([\w-]+)/);
+  if (m) return `https://drive.google.com/thumbnail?id=${m[1]}&sz=w600`;
+  return null;
+}
+
 function cdText(days) {
   if (days === null) return '';
   if (days < 0)  return ''; // overdue is tracked internally (sort/colour) but not shown to users
@@ -791,6 +811,7 @@ async function loadJobs(silent = false) {
 
       // Production / Shoot detection
       const prodCat  = row.production_category || '';
+      const isAI     = prodCat === 'AI Vids';
       const shootType = (prodCat.toLowerCase().includes('shoot') ||
                          prodCat.toLowerCase() === 'external' ||
                          prodCat.toLowerCase() === 'internal')
@@ -826,8 +847,9 @@ async function loadJobs(silent = false) {
         refUrl:         '',
         refImageUrl:    row.reference_image_url || '',
         submitUrl:      row.submission_folder_url || '',
-        sourceFilesUrl: '',
+        sourceFilesUrl: row.source_files_folder || '',
         deadline,
+        isAI,
         status:         row.board_status || 'Open',
         claimEmail:     row.claimed_by_email || '',
         stdRate,
@@ -892,8 +914,14 @@ async function loadSampleWork() {
 function render() {
   const clientFilter = document.getElementById('filterClient')?.value || '';
   const sortBy = document.getElementById('sortBy')?.value || 'deadline';
+  const searchQ = (document.getElementById('searchJobs')?.value || '').toLowerCase().trim();
   let list = filter === 'all' ? jobs : jobs.filter(j => j.jobCategory === filter);
   if (clientFilter) list = list.filter(j => j.client === clientFilter);
+  if (searchQ) list = list.filter(j =>
+    (j.title || '').toLowerCase().includes(searchQ) ||
+    (j.client || '').toLowerCase().includes(searchQ) ||
+    (j.description || '').toLowerCase().includes(searchQ)
+  );
   // Sort — Open → Claimed → Submitted → Revision Needed → Approved → Posted, then sub-sort
   const STATUS_ORDER = { 'Open':0, 'Claimed':1, 'Submitted':2, 'Revision Needed':3, 'Approved':4, 'Posted':5 };
   list = [...list].sort((a, b) => {
@@ -973,6 +1001,22 @@ function render() {
       claimBtn = `<button class="py-3 px-4 rounded-xl font-bold text-sm cursor-default flex items-center justify-center gap-1.5" style="background:#f3f4f6;color:#6b7280" disabled>
         <span class="text-[10px] uppercase tracking-wider font-bold">Posted ✓</span>
       </button>`;
+    } else if (email && userRole && ROLE_CATEGORY_MAP[userRole] && j.jobCategory !== ROLE_CATEGORY_MAP[userRole]) {
+      claimBtn = `<div class="relative group/tip">
+        <button class="w-full py-3 px-4 rounded-xl bg-[#f0edec] text-[#464555]/40 font-bold text-sm cursor-default">Not Your Role</button>
+        <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-56 bg-[#1c1b1b] text-white text-xs rounded-xl px-3 py-2.5 opacity-0 group-hover/tip:opacity-100 transition-opacity pointer-events-none text-center leading-relaxed z-10 shadow-lg">
+          This job is for ${j.jobCategory} roles. You're registered as a ${userRole}.
+          <div class="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-[#1c1b1b]"></div>
+        </div>
+      </div>`;
+    } else if (email && monthlyClaimCount >= 5) {
+      claimBtn = `<div class="relative group/tip">
+        <button class="w-full py-3 px-4 rounded-xl bg-[#fef3c7] text-[#92400e] font-bold text-sm cursor-default">Limit Reached</button>
+        <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-60 bg-[#1c1b1b] text-white text-xs rounded-xl px-3 py-2.5 opacity-0 group-hover/tip:opacity-100 transition-opacity pointer-events-none text-center leading-relaxed z-10 shadow-lg">
+          You've claimed 5 jobs this month. Reach out to the team for clearance to take on more.
+          <div class="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-[#1c1b1b]"></div>
+        </div>
+      </div>`;
     } else if (email) {
       claimBtn = `<button onclick="openClaim('${j.id}')" class="py-3 px-4 rounded-xl bg-primary text-on-primary font-bold text-sm shadow-md active:scale-95 transition-all">Claim Now</button>`;
     } else {
@@ -986,7 +1030,11 @@ function render() {
     }
 
     return `
-    <div class="group bg-white rounded-2xl p-6 editorial-shadow transition-all duration-300 hover:scale-[1.02] flex flex-col border border-[#c8c4d8]/15">
+    <div class="group bg-white rounded-2xl overflow-hidden editorial-shadow transition-all duration-300 hover:scale-[1.02] flex flex-col border border-[#c8c4d8]/15">
+      ${refThumb(j.refImageUrl) ? `<div class="w-full h-36 overflow-hidden flex-shrink-0 bg-[#f0edec]">
+        <img src="${refThumb(j.refImageUrl)}" alt="" loading="lazy" class="w-full h-full object-cover" onerror="this.parentElement.style.display='none'">
+      </div>` : ''}
+      <div class="p-6 flex flex-col flex-1">
       <div class="flex justify-between items-start mb-5">
         <div class="flex items-center gap-2">
           <div class="p-2.5 rounded-xl" style="background:${theme.iconBg};color:${theme.iconColor}">
@@ -1001,6 +1049,7 @@ function render() {
       <div class="flex flex-wrap gap-2 mb-5">
         <span class="px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider" style="background:${theme.chipBg};color:${theme.chipColor || theme.chipText}">${theme.label}</span>
         <span class="bg-[#f0edec] text-[#464555] px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider">${cat}</span>
+        ${j.isAI ? `<span class="px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider" style="background:#ede9fe;color:#6d28d9">✦ AI Gen</span>` : ''}
       </div>
       <p class="font-body text-sm text-[#464555]/70 line-clamp-3 mb-6 flex-grow leading-relaxed">${j.description || j.topic || 'No description available.'}</p>
       <div class="bg-surface-container-low rounded-xl p-4 flex justify-between items-center mb-5">
@@ -1019,6 +1068,7 @@ function render() {
       <div class="grid grid-cols-2 gap-3">
         <button onclick="openBrief('${j.id}')" class="py-3 px-4 rounded-xl border border-[#c8c4d8]/40 text-on-surface font-bold text-sm hover:bg-surface-container-high transition-colors">View Brief</button>
         ${claimBtn}
+      </div>
       </div>
     </div>`;
   }).join('');
@@ -1088,8 +1138,9 @@ function openBrief(id) {
        <span class="material-symbols-outlined text-[14px] opacity-40">open_in_new</span>
      </a>`;
 
-  // ── 1. ASSETS & REFERENCES (images first) ──────────────────────────────
+  // ── 1. ASSETS & REFERENCES ──────────────────────────────────────────────
   const assetBtns = [];
+  if (j.visualBrief)    assetBtns.push(rowBtn(j.visualBrief,    'description',   'Visual Brief'));
   if (j.refImageUrl)    assetBtns.push(rowBtn(j.refImageUrl,    'photo_library', 'Reference Images'));
   if (j.refUrl)         assetBtns.push(rowBtn(j.refUrl,         'folder_open',   'Reference Folder'));
   if (j.brandUrl)       assetBtns.push(rowBtn(j.brandUrl,       'palette',       'Brand Guidelines'));
@@ -1097,11 +1148,10 @@ function openBrief(id) {
   if (assetBtns.length) h += box('Assets & References', `<div class="flex flex-col gap-2">${assetBtns.join('')}</div>`);
 
   // ── 2. TEXT SECTIONS (each in its own distinct box) ─────────────────────
-  if (j.description) h += box('Description',      `<p class="font-body text-sm text-on-surface leading-relaxed whitespace-pre-line">${j.description}</p>`,  '#ffffff', '#e5e2e1');
-  if (j.topic)       h += box('Brief / Topic',    `<p class="font-body text-sm text-on-surface leading-relaxed whitespace-pre-line">${j.topic}</p>`,         '#ffffff', '#e5e2e1');
-  if (j.visualBrief) h += box('Visual Direction', `<p class="font-body text-sm text-on-surface leading-relaxed whitespace-pre-line">${j.visualBrief}</p>`,   '#ffffff', '#e5e2e1');
-  if (j.copy)        h += box('Copy',              `<p class="font-body text-sm text-on-surface leading-relaxed whitespace-pre-line">${j.copy}</p>`,         '#fffbe6', '#f59e0b33');
-  if (j.dimensions)  h += box('Dimensions',       `<p class="font-body text-sm font-semibold text-on-surface">${j.dimensions}</p>`,                          '#ffffff', '#e5e2e1');
+  if (j.description) h += box('Description',   `<p class="font-body text-sm text-on-surface leading-relaxed whitespace-pre-line">${j.description}</p>`,  '#ffffff', '#e5e2e1');
+  if (j.topic)       h += box('Brief / Topic', `<p class="font-body text-sm text-on-surface leading-relaxed whitespace-pre-line">${j.topic}</p>`,         '#ffffff', '#e5e2e1');
+  if (j.copy)        h += box('Copy',          `<p class="font-body text-sm text-on-surface leading-relaxed whitespace-pre-line">${j.copy}</p>`,         '#fffbe6', '#f59e0b33');
+  if (j.dimensions)  h += box('Dimensions',    `<p class="font-body text-sm font-semibold text-on-surface">${j.dimensions}</p>`,                          '#ffffff', '#e5e2e1');
 
   // ── 3. DELIVERY FOLDERS (source files above submission) ─────────────────
   const deliverBtns = [];
@@ -1155,6 +1205,16 @@ function claimFromBrief() {
   openClaim(briefCurrentId);
 }
 
+// ── MONTHLY CLAIM COUNT ────────────────────────────────────────────────────
+async function fetchMonthlyClaimCount(emailAddr) {
+  const monthName = new Date().toLocaleString('en-US', { month: 'long' });
+  try {
+    const resp = await fetch(`${SB_URL}/rest/v1/jobs?select=job_id&claimed_by_email=eq.${encodeURIComponent(emailAddr)}&month=eq.${monthName}&board_status=in.(Claimed,Submitted,In Review,Revision Needed,Approved,Scheduled,Posted)`, { headers: SB_HDRS });
+    const data = await resp.json();
+    monthlyClaimCount = Array.isArray(data) ? data.length : 0;
+  } catch(e) { monthlyClaimCount = 0; }
+}
+
 // ── GATE UI HELPERS ────────────────────────────────────────────────────────
 function showUnlockedGate(emailAddr, fullName) {
   document.getElementById('gateLocked').classList.add('hidden');
@@ -1163,13 +1223,25 @@ function showUnlockedGate(emailAddr, fullName) {
   const first = (fullName || '').split(' ')[0];
   document.getElementById('gateUnlockedEmail').textContent =
     first ? `${first} · ${emailAddr}` : emailAddr;
+  // Role badge
+  const roleBadge = document.getElementById('gateRoleBadge');
+  if (userRole && ROLE_CATEGORY_MAP[userRole]) {
+    roleBadge.textContent = userRole;
+    roleBadge.classList.remove('hidden');
+  } else { roleBadge.classList.add('hidden'); }
+  // Monthly claim count
+  const cap = 5;
+  const countEl = document.getElementById('gateClaimCount');
+  countEl.textContent = `${monthlyClaimCount}/${cap} jobs this month`;
+  countEl.style.color = monthlyClaimCount >= cap ? '#b45309' : '';
 }
 
 function signOutGate() {
-  email = null; savedName = null; savedCode = null;
+  email = null; savedName = null; savedCode = null; userRole = null; monthlyClaimCount = 0;
   localStorage.removeItem('tig_email');
   localStorage.removeItem('tig_name');
   localStorage.removeItem('tig_access_code');
+  localStorage.removeItem('tig_role');
   document.getElementById('gateUnlocked').classList.add('hidden');
   document.getElementById('gateLocked').classList.remove('hidden');
   document.getElementById('emailInput').value = '';
@@ -1190,14 +1262,17 @@ async function verifyEmail() {
     if (recs && recs.length) {
       const rec = recs[0];
       const fullName = rec.full_name || '';
-      const isActive = rec.status === 'Active' && rec.trial_passed === true
+      const isActive = rec.status === 'Active'
                        && rec.nda_signed === true && rec.agreement_signed === true;
       const isWhitelisted = rec.status === 'Whitelisted';
 
       if (isActive) {
         email = v;
+        userRole = rec.role || null;
         localStorage.setItem('tig_email', v);
         if (fullName) localStorage.setItem('tig_name', fullName);
+        if (userRole) localStorage.setItem('tig_role', userRole);
+        await fetchMonthlyClaimCount(v);
         st.textContent = '';
         showUnlockedGate(v, fullName);
       } else if (isWhitelisted) {
@@ -1550,7 +1625,7 @@ function showTutStep(idx) {
 
 // Restore session on page load from localStorage (persists across tabs)
 // Named so visibilitychange can call it too
-function restoreSession() {
+async function restoreSession() {
   const storedEmail = localStorage.getItem('tig_email');
   if (storedEmail) {
     email = storedEmail;
@@ -1558,6 +1633,8 @@ function restoreSession() {
     const storedCode = localStorage.getItem('tig_access_code') || '';
     if (storedCode) savedCode = storedCode;
     if (storedName) savedName = storedName;
+    userRole = localStorage.getItem('tig_role') || null;
+    await fetchMonthlyClaimCount(storedEmail);
     showUnlockedGate(storedEmail, storedName);
     render();
   }

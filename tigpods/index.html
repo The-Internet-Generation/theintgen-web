@@ -388,7 +388,7 @@ button, a {
 .search-input:focus { border-color: var(--green); }
 
 /* Episode grid: 2 cols on mobile, 3 on desktop */
-.episode-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.episode-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
 @media (min-width: 769px) {
   .episode-grid { grid-template-columns: 1fr 1fr 1fr; }
 }
@@ -407,9 +407,9 @@ button, a {
    WIKI SCREEN
    ============================================================ */
 .bw-fade {
-  filter: grayscale(1) contrast(1.05) brightness(0.85);
-  mask-image: linear-gradient(180deg, #000 35%, rgba(0,0,0,0.85) 60%, transparent 100%);
-  -webkit-mask-image: linear-gradient(180deg, #000 35%, rgba(0,0,0,0.85) 60%, transparent 100%);
+  filter: grayscale(1) contrast(1.1) brightness(0.9);
+  mask-image: linear-gradient(180deg, #000 50%, rgba(0,0,0,0.9) 72%, transparent 100%);
+  -webkit-mask-image: linear-gradient(180deg, #000 50%, rgba(0,0,0,0.9) 72%, transparent 100%);
 }
 </style>
 </head>
@@ -450,10 +450,11 @@ async function loadData() {
 
   eps.forEach(ep => {
     const epShorts = shorts.filter(s => s.episode_no === ep.no);
-    if (ep.topics?.length || ep.quote || epShorts.length) {
+    if (ep.topics?.length || ep.quote || ep.quotes?.length || epShorts.length) {
       WIKI_DATA[ep.no] = {
         topics: ep.topics || [],
         quote:  ep.quote  || '',
+        quotes: ep.quotes || [],
         shorts: epShorts.map(s => ({ title: s.title, dur: s.duration || '', youtube_url: s.youtube_url || null, instagram_url: s.instagram_url || null })),
       };
     }
@@ -538,11 +539,19 @@ function ytVideoId(url) {
   return null;
 }
 
-/* Compute best available thumbnail for an episode */
+/* Compute best available thumbnail for an episode — portrait first */
 function epThumb(ep) {
+  if (ep.portrait_url) return ep.portrait_url;
   if (ep.thumbnail_url) return ep.thumbnail_url;
   const vid = ytVideoId(ep.youtube_url);
   return vid ? `https://img.youtube.com/vi/${vid}/hqdefault.jpg` : null;
+}
+
+/* YouTube-only thumbnail — wide shot for desktop hero */
+function epYtThumb(ep) {
+  if (ep.thumbnail_url) return ep.thumbnail_url;
+  const vid = ytVideoId(ep.youtube_url);
+  return vid ? `https://img.youtube.com/vi/${vid}/maxresdefault.jpg` : null;
 }
 
 /* Extract Spotify episode ID from episode URL */
@@ -612,6 +621,8 @@ const Icons = {
   youtube: `<svg width="22" height="22" viewBox="0 0 24 24"><path fill="rgba(255,255,255,0.95)" d="M23 7.2c-.3-1.1-1.1-1.9-2.2-2.2C18.7 4.4 12 4.4 12 4.4s-6.7 0-8.8.6C2.1 5.3 1.3 6.1 1 7.2.4 9.3.4 12 .4 12s0 2.7.6 4.8c.3 1.1 1.1 1.9 2.2 2.2 2.1.6 8.8.6 8.8.6s6.7 0 8.8-.6c1.1-.3 1.9-1.1 2.2-2.2.6-2.1.6-4.8.6-4.8s0-2.7-.6-4.8zM9.8 15.6V8.4l5.9 3.6-5.9 3.6z"/></svg>`,
   share: `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v7a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-7M16 6l-4-4-4 4M12 2v14"/></svg>`,
   play: `<svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5l12 7-12 7V5z"/></svg>`,
+  instagram: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>`,
+  linkedin: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>`,
 };
 
 /* ============================================================
@@ -737,13 +748,13 @@ function navigate(screenFn, params = {}, dir = 'instant') {
    ignored so it never competes with taps or vertical scroll-snap.
    ============================================================ */
 function attachSwipe(target, handlers = {}) {
-  const threshold = 48;
+  const threshold = 72;
   let sx = 0, sy = 0, st = 0, tracking = false;
   function onStart(e) {
     if (e.touches.length !== 1) { tracking = false; return; }
     /* Don't hijack swipes that begin inside a horizontal scroller (chip rows,
        shorts rows) — those gestures belong to that row's own scrolling. */
-    const hScroll = e.target.closest && e.target.closest('.hrow');
+    const hScroll = e.target.closest && (e.target.closest('.hrow') || e.target.closest('[data-hscroll]'));
     if (hScroll && hScroll.scrollWidth > hScroll.clientWidth + 4) { tracking = false; return; }
     sx = e.touches[0].clientX; sy = e.touches[0].clientY; st = Date.now();
     tracking = true;
@@ -799,6 +810,125 @@ async function shareContent({ title, text, url }) {
 }
 
 /* ============================================================
+   QUOTE SHARE — canvas → native share sheet or PNG download
+   ============================================================ */
+async function generateQuoteImage(quoteText, guestName, role) {
+  await document.fonts.ready;
+  const S = 1080;
+  const cv = document.createElement('canvas');
+  cv.width = S; cv.height = S;
+  const ctx = cv.getContext('2d');
+
+  /* Background */
+  ctx.fillStyle = '#0a0a0a';
+  ctx.fillRect(0, 0, S, S);
+  const vg = ctx.createRadialGradient(S*.5, S*.38, 0, S*.5, S*.38, S*.65);
+  vg.addColorStop(0, 'rgba(26,26,36,0.8)');
+  vg.addColorStop(1, 'rgba(0,0,0,0)');
+  ctx.fillStyle = vg;
+  ctx.fillRect(0, 0, S, S);
+
+  /* Subtle border */
+  ctx.strokeStyle = 'rgba(255,255,255,0.05)';
+  ctx.lineWidth = 2;
+  ctx.strokeRect(1, 1, S-2, S-2);
+
+  /* Green left accent bar */
+  ctx.fillStyle = '#1DB954';
+  ctx.fillRect(72, 190, 5, S - 380);
+
+  /* Decorative big quote mark */
+  ctx.font = '900 300px "Bricolage Grotesque", serif';
+  ctx.fillStyle = 'rgba(29,185,84,0.07)';
+  ctx.fillText('“', 50, 390);
+
+  /* Word-wrap helper */
+  function wrap(text, maxW) {
+    const words = text.split(' ');
+    const lines = [];
+    let line = '';
+    for (const w of words) {
+      const t = line ? line + ' ' + w : w;
+      if (ctx.measureText(t).width > maxW && line) { lines.push(line); line = w; }
+      else line = t;
+    }
+    if (line) lines.push(line);
+    return lines;
+  }
+
+  /* Auto-fit font size */
+  let fs = 58; const maxW = S - 220;
+  let lines;
+  while (fs > 26) {
+    ctx.font = `500 ${fs}px "Space Grotesk","Helvetica Neue",sans-serif`;
+    lines = wrap(quoteText, maxW);
+    if (lines.length <= 8) break;
+    fs -= 4;
+  }
+  const lh = fs * 1.5;
+  const totalH = lines.length * lh;
+  const startY = (S - totalH) / 2 + 30;
+
+  /* Quote text */
+  ctx.font = `500 ${fs}px "Space Grotesk","Helvetica Neue",sans-serif`;
+  ctx.fillStyle = '#f0f0f0';
+  lines.forEach((line, i) => ctx.fillText(line, 112, startY + i * lh));
+
+  /* Divider */
+  ctx.fillStyle = '#1DB954';
+  ctx.fillRect(112, S - 256, 52, 4);
+
+  /* Guest name */
+  ctx.font = `800 46px "Bricolage Grotesque","Arial",sans-serif`;
+  ctx.fillStyle = '#ffffff';
+  ctx.fillText(guestName, 112, S - 192);
+
+  /* Role */
+  const roleStr = (role || '').split('·')[0].trim();
+  if (roleStr) {
+    ctx.font = `500 30px "Space Grotesk","Helvetica Neue",sans-serif`;
+    ctx.fillStyle = '#1DB954';
+    ctx.fillText(roleStr, 112, S - 144);
+  }
+
+  /* TigPods wordmark */
+  ctx.font = `800 30px "Bricolage Grotesque","Arial",sans-serif`;
+  ctx.fillStyle = 'rgba(245,245,245,0.28)';
+  ctx.fillText('tigpods', 112, S - 66);
+  const twW = ctx.measureText('tigpods').width;
+  ctx.beginPath();
+  ctx.arc(112 + twW + 14, S - 78, 5.5, 0, Math.PI * 2);
+  ctx.fillStyle = '#1DB954';
+  ctx.fill();
+
+  return cv;
+}
+
+async function shareQuote(quoteText, guestName, role) {
+  try {
+    const cv = await generateQuoteImage(quoteText, guestName, role);
+    cv.toBlob(async blob => {
+      if (!blob) { toast('Could not generate image'); return; }
+      const fname = (guestName || 'quote').toLowerCase().replace(/\s+/g, '-') + '-tigpods.png';
+      const file = new File([blob], fname, { type: 'image/png' });
+      if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
+        await navigator.share({ title: `${guestName} on TigPods`, files: [file] });
+      } else {
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url; a.download = fname;
+        document.body.appendChild(a); a.click(); a.remove();
+        setTimeout(() => URL.revokeObjectURL(url), 2000);
+        toast('Quote card downloaded!');
+      }
+    }, 'image/png');
+  } catch(e) {
+    console.warn('shareQuote:', e);
+    toast('Share not available on this browser');
+  }
+}
+
+/* ============================================================
    SCREEN: WELCOME
    ============================================================ */
 function Welcome() {
@@ -836,26 +966,16 @@ function Welcome() {
   glow.style.cssText = 'position:absolute;top:38%;left:50%;transform:translate(-50%,-50%);width:460px;height:460px;border-radius:50%;background:radial-gradient(circle,rgba(29,185,84,0.10) 0%,rgba(29,185,84,0.04) 35%,transparent 70%);filter:blur(10px);pointer-events:none;opacity:1;transition:opacity 500ms ease;';
   el.appendChild(glow);
 
-  /* Header: site logo left, TIG logo right */
+  /* Header: logo only (no speaker button) */
   const header = document.createElement('div');
   header.style.cssText = 'position:absolute;top:56px;left:0;right:0;padding:0 20px;display:flex;align-items:center;justify-content:space-between;z-index:10;';
 
-  /* Top-left: TigPods site logo */
-  const tigpodsLogoLink = document.createElement('a');
-  tigpodsLogoLink.href = '/tigpods/';
-  tigpodsLogoLink.style.cssText = 'text-decoration:none;color:var(--fg);display:inline-flex;align-items:center;';
-  tigpodsLogoLink.setAttribute('aria-label', 'TigPods home');
-  tigpodsLogoLink.appendChild(logoEl(22, true));
-  header.appendChild(tigpodsLogoLink);
-
-  /* Top-right: theintgen logo, back to the TIG homepage */
+  /* Top-left: theintgen logo, back to the TIG homepage */
   const logoLink = document.createElement('a');
   logoLink.href = 'https://theintgen.com/';
-  logoLink.style.cssText = 'text-decoration:none;display:inline-flex;align-items:center;gap:8px;opacity:0.7;transition:opacity 0.2s;';
+  logoLink.style.cssText = 'text-decoration:none;display:inline-flex;align-items:center;gap:8px;';
   logoLink.setAttribute('aria-label', 'Back to The Internet Generation homepage');
-  logoLink.addEventListener('mouseover', () => logoLink.style.opacity = '1');
-  logoLink.addEventListener('mouseout',  () => logoLink.style.opacity = '0.7');
-  logoLink.innerHTML = `<span style="background:#fff;border-radius:7px;padding:3px;display:inline-flex;box-shadow:0 2px 8px rgba(0,0,0,0.35);"><img src="/public/assets/logo-theintgen.png" alt="The Internet Generation" style="width:22px;height:22px;display:block;" onerror="this.onerror=null;this.src='logo-theintgen.png'"/></span><span style="font-family:var(--body);font-size:10px;color:var(--fg-dim);letter-spacing:0.08em;text-transform:uppercase;">theintgen.com</span>`;
+  logoLink.innerHTML = `<span style="background:#fff;border-radius:7px;padding:3px;display:inline-flex;box-shadow:0 2px 8px rgba(0,0,0,0.35);"><img src="/public/assets/logo-theintgen.png" alt="The Internet Generation" style="width:28px;height:28px;display:block;" onerror="this.onerror=null;this.src='logo-theintgen.png'"/></span>`;
   header.appendChild(logoLink);
   el.appendChild(header);
 
@@ -1035,10 +1155,11 @@ function Welcome() {
 
   /* Hint chip — bottom center (reel) */
   const hintUp = document.createElement('button');
-  hintUp.className = 'hint-chip hint-chip-up';
+  hintUp.className = 'hint-chip';
+  hintUp.style.cssText = 'position:relative;border-color:rgba(29,185,84,0.45);box-shadow:0 4px 14px rgba(0,0,0,0.4),0 0 14px rgba(29,185,84,0.12);';
   hintUp.setAttribute('aria-label', 'Flick up for a random episode');
   hintUp.innerHTML = `<span class="hint-chip-arrow nudge">${Icons.arrowUp}</span><span>flick up · random episode</span>`;
-  el.appendChild(hintUp);
+  bottomGroup.appendChild(hintUp);
 
   /* ----- State + interactivity ----- */
   function computeArcPath(p) {
@@ -1263,11 +1384,23 @@ function Reel() {
     pauseIconEl.style.cssText = 'position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:72px;height:72px;border-radius:50%;background:rgba(0,0,0,0.55);backdrop-filter:blur(12px);display:none;align-items:center;justify-content:center;border:1px solid var(--line-2);color:#fff;';
     pauseIconEl.innerHTML = Icons.play;
     tapOverlay.appendChild(pauseIconEl);
+    /* Track whether this touch was a swipe (dy > 8px) — prevents swipe-to-next
+       from triggering a spurious pause on the new card */
+    let _tMoved = false;
+    tapOverlay.addEventListener('touchstart', () => { _tMoved = false; }, { passive: true });
+    tapOverlay.addEventListener('touchmove', () => { _tMoved = true; }, { passive: true });
     tapOverlay.addEventListener('click', () => {
+      if (_tMoved) { _tMoved = false; return; } // swipe, not a tap — ignore
       paused = !paused;
       pauseIconEl.style.display = paused ? 'flex' : 'none';
-      if (!paused) restartProgress();
-      else stopProgress();
+      if (!paused) {
+        restartProgress();
+        /* Tell the live YouTube player to resume */
+        [0, 150, 400].forEach(d => setTimeout(() => postYT('playVideo'), d));
+      } else {
+        stopProgress();
+        [0, 150].forEach(d => setTimeout(() => postYT('pauseVideo'), d));
+      }
     });
     card.appendChild(tapOverlay);
 
@@ -1335,7 +1468,10 @@ function Reel() {
       /* Called when this card scrolls into the active slot */
       setActive(active) {
         if (active) {
-          if (!paused) restartProgress();
+          /* Always start fresh — clear any stale paused state from a previous visit */
+          paused = false;
+          pauseIconEl.style.display = 'none';
+          restartProgress();
           syncMuteBtn(); // reflect the session-wide sound choice on this card
           if (videoId && !ytIframe) {
             /* Always create a FRESH iframe whose first load IS the autoplay URL.
@@ -1447,7 +1583,7 @@ function Library() {
   let activeTag = null;
   let activeCat = null; // 'business' | 'creative' | null
 
-  const epsTagged = EPISODES.map(e => ({ ...e, tags: tagsFor(e) }));
+  const epsTagged = EPISODES.filter(e => e.no !== 0).map(e => ({ ...e, tags: tagsFor(e) }));
 
   const el = document.createElement('div');
   el.className = 'screen screen-enter';
@@ -1455,18 +1591,23 @@ function Library() {
   el.appendChild(statusBarEl());
   el.appendChild(backBtnEl(() => navigate(Welcome, {}, 'left')));
 
+  /* One scroll container — header, categories, chips, search, grid all move together */
+  const scrollWrap = document.createElement('div');
+  scrollWrap.className = 'no-scrollbar';
+  scrollWrap.style.cssText = 'flex:1;overflow-y:auto;';
+
   /* Header */
   const header = document.createElement('div');
-  header.style.cssText = 'padding:56px 20px 12px;display:flex;flex-direction:column;gap:10px;flex-shrink:0;';
+  header.style.cssText = 'padding:56px 20px 12px;display:flex;flex-direction:column;gap:10px;';
   header.innerHTML = `
-    <div style="display:flex;justify-content:space-between;align-items:flex-end;">
-      <div>
-        <div style="font-size:12px;color:var(--fg-dim);letter-spacing:0.18em;text-transform:uppercase;">library</div>
-        <h1 style="margin:4px 0 0;font-family:var(--display);font-size:32px;font-weight:800;letter-spacing:-0.03em;line-height:1;">all episodes</h1>
-      </div>
-      <div style="font-size:12px;color:var(--fg-dim);text-align:right;">
-        <div style="color:var(--green);font-weight:600;font-size:14px;">${epsTagged.length}</div>
-        <div>episodes</div>
+    <div style="display:flex;justify-content:space-between;align-items:center;">
+      <h1 style="margin:0;font-family:var(--display);font-size:30px;font-weight:800;letter-spacing:-0.03em;line-height:1;">Hall of Fame</h1>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <div style="font-family:var(--display);font-weight:900;font-size:40px;color:var(--green);line-height:1;">${epsTagged.length}</div>
+        <div style="font-size:10px;color:var(--fg-dim);line-height:1.65;text-transform:uppercase;letter-spacing:0.1em;">
+          <div>episodes</div>
+          <div>guests</div>
+        </div>
       </div>
     </div>
   `;
@@ -1489,12 +1630,17 @@ function Library() {
   searchWrap.appendChild(searchIcon);
   searchWrap.appendChild(searchInput);
   searchWrap.appendChild(clearBtn);
-  header.appendChild(searchWrap);
-  el.appendChild(header);
+  scrollWrap.appendChild(header);
+
+  /* "Where the Left meets Right" */
+  const lrLabel = document.createElement('div');
+  lrLabel.style.cssText = 'padding:0 20px 10px;font-size:10px;color:var(--fg-dim);letter-spacing:0.16em;text-transform:uppercase;text-align:center;';
+  lrLabel.textContent = 'Where the Left meets Right';
+  scrollWrap.appendChild(lrLabel);
 
   /* ── Category tabs: Business | Creative ── */
   const catTabs = document.createElement('div');
-  catTabs.style.cssText = 'padding:0 20px 10px;display:flex;gap:10px;flex-shrink:0;';
+  catTabs.style.cssText = 'padding:0 20px 6px;display:flex;gap:10px;flex-shrink:0;';
 
   function renderCatTabs() {
     catTabs.innerHTML = '';
@@ -1509,7 +1655,7 @@ function Library() {
         `background:${isActive ? 'var(--green-dim)' : 'transparent'};`,
         `color:${isActive ? 'var(--green)' : 'var(--fg-muted)'};`,
       ].join('');
-      btn.textContent = label;
+      btn.innerHTML = `<div style="display:flex;flex-direction:column;align-items:center;gap:4px;">${label}<span style="opacity:0.65;">${key === 'business' ? `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4 C8 4 5 7 5 11 C5 14.5 7 17 10 17.5 L12 18"/><line x1="12" y1="4" x2="12" y2="18"/><path d="M7 10 L11 10"/><path d="M6.5 13 L11 13"/><path d="M7.5 16 L11 16"/></svg>` : `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4 C16 4 19 7 19 11 C19 14.5 17 17 14 17.5 L12 18"/><line x1="12" y1="4" x2="12" y2="18"/><path d="M13 9 Q16.5 10 17.5 8.5"/><path d="M13 12.5 Q16 13.5 17.5 12"/><path d="M13 15.5 Q15 16.5 17 15.5"/></svg>`}</span></div>`;
       btn.addEventListener('click', () => {
         activeCat = isActive ? null : key;
         if (!isActive) activeTag = null; // reset tag when switching category
@@ -1520,29 +1666,38 @@ function Library() {
       catTabs.appendChild(btn);
     });
   }
-  el.appendChild(catTabs);
+  scrollWrap.appendChild(catTabs);
 
   /* Topic chips */
   const chipsRow = document.createElement('div');
   chipsRow.className = 'hrow no-scrollbar';
-  chipsRow.style.cssText = 'padding-top:2px;padding-bottom:12px;flex-shrink:0;';
-  el.appendChild(chipsRow);
+  chipsRow.style.cssText = 'padding-top:2px;padding-bottom:12px;';
+  scrollWrap.appendChild(chipsRow);
+
+  /* Search — below chips */
+  searchWrap.style.cssText = 'position:relative;margin:0 20px 10px;';
+  scrollWrap.appendChild(searchWrap);
 
   /* Grid container */
   const gridWrap = document.createElement('div');
-  gridWrap.className = 'no-scrollbar';
-  gridWrap.style.cssText = 'flex:1;overflow-y:auto;padding:4px 20px 40px;';
+  gridWrap.style.cssText = 'padding:4px 20px 80px;';
   const grid = document.createElement('div');
   grid.className = 'episode-grid';
   gridWrap.appendChild(grid);
-  el.appendChild(gridWrap);
+  scrollWrap.appendChild(gridWrap);
+  el.appendChild(scrollWrap);
 
   /* Render chips */
+  /* Tag frequency map */
+  const _tagCounts = {};
+  epsTagged.forEach(ep => ep.tags.forEach(t => { _tagCounts[t] = (_tagCounts[t] || 0) + 1; }));
+  const ALL_TAGS_SORTED = Object.keys(_tagCounts).sort((a,b) => _tagCounts[b] - _tagCounts[a]);
+
   function renderChips() {
     chipsRow.innerHTML = '';
     const visibleTags = activeCat === 'business' ? BUSINESS_TAGS
-      : activeCat === 'creative' ? CREATIVE_TAGS.filter(t => SUGGESTED_TAGS.includes(t) || true)
-      : SUGGESTED_TAGS;
+      : activeCat === 'creative' ? CREATIVE_TAGS
+      : ALL_TAGS_SORTED;
     visibleTags.forEach(tag => {
       const isActive = activeTag === tag;
       const btn = document.createElement('button');
@@ -1591,29 +1746,47 @@ function Library() {
       const card = document.createElement('button');
       card.style.cssText = 'text-align:left;display:flex;flex-direction:column;gap:8px;';
 
-      const thumb = document.createElement('div');
       const epT = epThumb(ep);
+      const isPortrait = !!ep.portrait_url;
+      const thumb = document.createElement('div');
       thumb.className = epT ? '' : thumbBg(ep.no);
-      thumb.style.cssText = 'position:relative;aspect-ratio:3/4;border-radius:14px;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,0.4),inset 0 0 0 1px rgba(255,255,255,0.05);';
+      /* taller ratio on mobile so the full portrait shows */
+      thumb.style.cssText = [
+        'position:relative;border-radius:14px;overflow:hidden;',
+        'aspect-ratio:3/4;',
+        isPortrait
+          ? 'box-shadow:0 4px 20px rgba(0,0,0,0.55),0 0 0 1px rgba(29,185,84,0.22);'
+          : 'box-shadow:0 2px 12px rgba(0,0,0,0.4),inset 0 0 0 1px rgba(255,255,255,0.05);',
+      ].join('');
+      const imgHtml = epT
+        ? `<img src="${epT}" alt="${ep.guest}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:top center;">`
+        : `<div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:var(--display);font-weight:900;font-size:60px;color:rgba(255,255,255,0.18);letter-spacing:-0.04em;">${initials(ep.guest)}</div>`;
+      const roleLine = (ep.role || ep.cat || '').split('·')[0].trim();
       thumb.innerHTML = `
-        ${epT
-          ? `<img src="${epT}" alt="${ep.guest}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;">`
-          : `<div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:var(--display);font-weight:900;font-size:60px;color:rgba(255,255,255,0.18);letter-spacing:-0.04em;">${initials(ep.guest)}</div>`
-        }
-        <div style="position:absolute;left:0;right:0;bottom:0;height:60%;background:linear-gradient(180deg,transparent,rgba(0,0,0,0.85));"></div>
-        <div style="position:absolute;top:10px;left:10px;font-family:var(--display);font-weight:800;font-size:13px;color:var(--green);letter-spacing:0.05em;">EP ${String(ep.no).padStart(2,'0')}</div>
-        <div style="position:absolute;left:12px;right:12px;bottom:10px;">
-          <div style="font-family:var(--display);font-weight:700;font-size:16px;letter-spacing:-0.02em;line-height:1.05;color:#fff;">${ep.guest}</div>
-          <div style="font-size:10.5px;color:rgba(255,255,255,0.7);margin-top:2px;">${ep.cat}</div>
+        ${imgHtml}
+        <div style="position:absolute;left:0;right:0;bottom:0;height:55%;background:linear-gradient(180deg,transparent,rgba(0,0,0,0.92));pointer-events:none;"></div>
+        <div style="position:absolute;top:10px;left:10px;background:rgba(0,0,0,0.55);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border:1px solid rgba(29,185,84,0.4);border-radius:6px;padding:3px 8px;font-family:var(--display);font-weight:800;font-size:11px;color:var(--green);letter-spacing:0.06em;">EP ${String(ep.no).padStart(2,'0')}</div>
+        <div style="position:absolute;left:12px;right:12px;bottom:12px;">
+          <div style="font-family:var(--display);font-weight:800;font-size:15px;letter-spacing:-0.02em;line-height:1.1;color:#fff;">${ep.guest}</div>
+          <div style="font-size:10px;color:var(--green);margin-top:4px;font-weight:600;letter-spacing:0.01em;">${roleLine}</div>
         </div>
       `;
-      const titleEl = document.createElement('div');
-      titleEl.className = 'clamp-2';
-      titleEl.style.cssText = 'font-size:12px;color:var(--fg-muted);line-height:1.35;padding:0 2px;';
-      titleEl.textContent = ep.title;
+
+      /* Quote snippet or category fallback */
+      const firstQuote = ep.quotes?.[0] || ep.quote || null;
+      const quoteEl = document.createElement('div');
+      quoteEl.className = 'clamp-2';
+      if (firstQuote) {
+        quoteEl.style.cssText = 'font-size:11.5px;color:var(--fg-muted);line-height:1.4;padding:0 2px;font-style:italic;';
+        const trimmed = firstQuote.length > 80 ? firstQuote.slice(0, 77) + '…' : firstQuote;
+        quoteEl.textContent = '“' + trimmed + '”';
+      } else {
+        quoteEl.style.cssText = 'font-size:11px;color:var(--fg-dim);line-height:1.35;padding:0 2px;';
+        quoteEl.textContent = ep.cat;
+      }
 
       card.appendChild(thumb);
-      card.appendChild(titleEl);
+      card.appendChild(quoteEl);
       card.addEventListener('click', () => navigate(Wiki, { epNo: ep.no }, 'right'));
       grid.appendChild(card);
     });
@@ -1653,6 +1826,7 @@ function Wiki({ epNo }) {
   const ep = EPISODES.find(e => e.no === epNo) || EPISODES[14];
   const w = WIKI_DATA[epNo] || defaultWiki(ep);
   const season = epNo > 11 ? 'S2' : 'S1';
+  const useWideHero = window.innerWidth > 600;
 
   const el = document.createElement('div');
   el.className = 'screen screen-enter';
@@ -1668,18 +1842,19 @@ function Wiki({ epNo }) {
 
   /* Hero */
   const hero = document.createElement('div');
-  hero.style.cssText = 'position:relative;height:460px;background:#0a0a0a;';
+  hero.style.cssText = useWideHero ? 'position:relative;height:min(400px,38vw);background:#0a0a0a;' : 'position:relative;height:min(520px,58vh);background:#0a0a0a;';
 
   /* Portrait — real image (BW fade on img) or gradient placeholder */
   const portrait = document.createElement('div');
   portrait.style.cssText = 'position:absolute;inset:0;';
 
-  if (ep.portrait_url) {
+  const heroImgSrc = useWideHero ? (epYtThumb(ep) || ep.portrait_url) : ep.portrait_url;
+  if (heroImgSrc) {
     const img = document.createElement('img');
-    img.src = ep.portrait_url;
+    img.src = heroImgSrc;
     img.alt = ep.guest;
-    img.className = 'bw-fade';
-    img.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:top center;';
+    if (!useWideHero) img.className = 'bw-fade';
+    img.style.cssText = `position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:${useWideHero ? 'center 30%' : 'top 5%'};`;
     portrait.appendChild(img);
   } else {
     /* Gradient placeholder */
@@ -1707,40 +1882,145 @@ function Wiki({ epNo }) {
   const heroLabel = document.createElement('div');
   heroLabel.style.cssText = 'position:absolute;bottom:16px;left:20px;right:20px;z-index:5;';
   heroLabel.innerHTML = `
-    <div style="font-size:12px;color:var(--fg-dim);letter-spacing:0.18em;text-transform:uppercase;">Ep ${String(ep.no).padStart(2,'0')} · ${season}</div>
-    <h1 style="margin:6px 0 8px;font-family:var(--display);font-weight:900;font-size:44px;letter-spacing:-0.035em;line-height:0.95;">${ep.guest}</h1>
-    <span class="pill green">${ep.cat}</span>
+    <div style="font-size:11px;color:var(--fg-dim);letter-spacing:0.16em;text-transform:uppercase;display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+      <span>Ep ${String(ep.no).padStart(2,'0')}</span>
+      <span style="opacity:0.35">·</span>
+      <span>${season}</span>
+      <span style="opacity:0.35">·</span>
+      <span class="pill green" style="font-size:10.5px;padding:3px 9px;">${ep.cat}</span>
+    </div>
+    <h1 style="margin:8px 0 4px;font-family:var(--display);font-weight:900;font-size:clamp(36px,9vw,48px);letter-spacing:-0.035em;line-height:0.95;">${ep.guest}</h1>
+    ${ep.role ? `<div style="font-size:13px;color:var(--green);font-weight:600;margin-top:6px;letter-spacing:0.01em;">${ep.role}</div>` : ''}
   `;
   hero.appendChild(heroLabel);
   scroll.appendChild(hero);
 
-  /* Two-col info block */
-  const info = document.createElement('div');
-  info.style.cssText = 'padding:28px 20px 0;display:grid;grid-template-columns:1.05fr 1fr;gap:22px;';
+  /* Stat strip — EP / Season / Share */
+  const statStrip = document.createElement('div');
+  statStrip.style.cssText = 'display:grid;grid-template-columns:1fr 1fr 1fr;border-bottom:1px solid var(--line);margin:0 0;';
+  const mkStat = (val, lbl, clickable) => {
+    const d = document.createElement('div');
+    d.style.cssText = `padding:14px 0;text-align:center;${clickable ? 'cursor:pointer;' : ''}`;
+    d.innerHTML = `<div style="font-family:var(--display);font-weight:800;font-size:18px;color:var(--fg);">${val}</div><div style="font-size:9.5px;color:var(--fg-dim);margin-top:2px;text-transform:uppercase;letter-spacing:0.12em;">${lbl}</div>`;
+    return d;
+  };
+  const epStat = mkStat(`EP ${String(ep.no).padStart(2,'0')}`, 'Episode', false);
+  epStat.style.borderRight = '1px solid var(--line)';
+  const seasonStat = mkStat(season, 'Season', false);
+  seasonStat.style.borderRight = '1px solid var(--line)';
+  const shareStat = mkStat(Icons.share.replace('width="22" height="22"','width="16" height="16"').replace('stroke-width="1.6"','stroke-width="1.8"'), 'Share', true);
+  shareStat.addEventListener('click', () => shareContent({ title: `TigPods — ${ep.guest}`, text: `${ep.guest} on TigPods`, url: ep.youtube_url || ep.spotify_url || null }));
+  statStrip.appendChild(epStat);
+  statStrip.appendChild(seasonStat);
+  statStrip.appendChild(shareStat);
+  scroll.appendChild(statStrip);
 
-  /* Topics */
+  /* Bio section */
+  if (ep.bio) {
+    const bioSec = document.createElement('div');
+    bioSec.style.cssText = 'padding:28px 20px 0;';
+    bioSec.innerHTML = `
+      <div style="font-size:11px;color:var(--fg-dim);letter-spacing:0.18em;text-transform:uppercase;margin-bottom:12px;">about</div>
+      <p style="margin:0;font-size:14.5px;line-height:1.72;color:var(--fg-muted);">${ep.bio}</p>
+    `;
+    scroll.appendChild(bioSec);
+  }
+
+  /* Topics block — full width */
+  const info = document.createElement('div');
+  info.style.cssText = 'padding:28px 20px 0;';
+
   const topicsCol = document.createElement('div');
   topicsCol.innerHTML = `<div style="font-size:11px;color:var(--fg-dim);letter-spacing:0.18em;text-transform:uppercase;margin-bottom:10px;">what we talked about</div>`;
   const topicsList = document.createElement('ul');
-  topicsList.style.cssText = 'list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:9px;';
+  topicsList.style.cssText = 'list-style:none;padding:0;margin:0;display:grid;grid-template-columns:1fr 1fr;gap:8px 16px;';
   w.topics.forEach(t => {
     const li = document.createElement('li');
-    li.style.cssText = 'display:flex;gap:8px;font-size:14px;line-height:1.35;color:var(--fg);';
-    li.innerHTML = `<span style="color:var(--green);flex-shrink:0;font-weight:700;">·</span><span>${t}</span>`;
+    li.style.cssText = 'display:flex;gap:8px;font-size:13.5px;line-height:1.35;color:var(--fg);';
+    li.innerHTML = `<span style="color:var(--green);flex-shrink:0;font-weight:700;margin-top:1px;">·</span><span>${t}</span>`;
     topicsList.appendChild(li);
   });
   topicsCol.appendChild(topicsList);
-
-  /* Quote */
-  const quoteCol = document.createElement('div');
-  quoteCol.innerHTML = `
-    <div style="font-size:11px;color:var(--fg-dim);letter-spacing:0.18em;text-transform:uppercase;margin-bottom:10px;">key quote</div>
-    <div style="font-family:var(--display);font-style:italic;font-weight:500;font-size:16px;line-height:1.3;color:var(--fg);border-left:2px solid var(--green);padding-left:12px;letter-spacing:-0.01em;">${w.quote}</div>
-  `;
-
   info.appendChild(topicsCol);
-  info.appendChild(quoteCol);
   scroll.appendChild(info);
+
+  /* Premium quotes section */
+  const allQuotes = (w.quotes && w.quotes.length > 0) ? w.quotes : (w.quote ? [w.quote] : []);
+  if (allQuotes.length > 0) {
+    const quotesSection = document.createElement('div');
+    quotesSection.style.cssText = 'padding:28px 20px 0;';
+    quotesSection.innerHTML = `<div style="font-family:var(--display);font-size:22px;font-weight:800;letter-spacing:-0.02em;line-height:1;margin-bottom:4px;">WoWs</div><div style="font-size:10px;color:var(--fg-dim);letter-spacing:0.18em;text-transform:uppercase;margin-bottom:16px;">Words of Wisdom</div>`;
+
+    if (allQuotes.length === 1) {
+      /* Single premium block */
+      const block = document.createElement('div');
+      block.style.cssText = 'background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.07);border-radius:18px;padding:26px 22px 22px;position:relative;overflow:hidden;';
+      block.innerHTML = `
+        <div style="font-family:var(--display);font-size:80px;line-height:0.6;color:var(--green);opacity:0.18;position:absolute;top:14px;left:16px;font-weight:900;user-select:none;pointer-events:none;">“</div>
+        <div style="font-family:var(--display);font-style:italic;font-weight:500;font-size:17px;line-height:1.55;color:var(--fg);letter-spacing:-0.015em;position:relative;z-index:1;padding-top:10px;">${allQuotes[0]}</div>
+        <div style="margin-top:18px;width:32px;height:2px;background:var(--green);border-radius:99px;opacity:0.7;"></div>
+      `;
+      const qShr = document.createElement('button');
+      qShr.setAttribute('aria-label','Share quote');
+      qShr.style.cssText = 'position:absolute;top:14px;right:14px;width:32px;height:32px;border-radius:50%;background:rgba(29,185,84,0.1);border:1px solid rgba(29,185,84,0.25);color:var(--green);display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:3;';
+      qShr.innerHTML = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v7a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-7M16 6l-4-4-4 4M12 2v14"/></svg>`;
+      qShr.addEventListener('click', (ev) => { ev.stopPropagation(); shareQuote(allQuotes[0], ep.guest, ep.role || ep.cat); });
+      block.appendChild(qShr);
+      quotesSection.appendChild(block);
+    } else {
+      /* Scrollable carousel */
+      const trackWrap = document.createElement('div');
+      trackWrap.style.cssText = 'margin:0 -20px;padding:0 20px;overflow:hidden;';
+
+      const track = document.createElement('div');
+      track.className = 'no-scrollbar';
+      track.dataset.hscroll = '1';
+      track.style.cssText = 'display:flex;gap:12px;overflow-x:auto;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;padding-right:20px;';
+
+      allQuotes.forEach((q, i) => {
+        const card = document.createElement('div');
+        const isBest = i === 0;
+        card.style.cssText = `flex:0 0 82%;scroll-snap-align:start;background:rgba(255,255,255,0.04);border:1px solid ${isBest ? 'rgba(29,185,84,0.35)' : 'rgba(255,255,255,0.07)'};border-radius:18px;padding:26px 20px 22px;position:relative;overflow:hidden;`;
+        card.innerHTML = `
+          <div style="font-family:var(--display);font-size:72px;line-height:0.6;color:var(--green);opacity:0.18;position:absolute;top:14px;left:14px;font-weight:900;user-select:none;pointer-events:none;">“</div>
+          <div style="font-family:var(--display);font-style:italic;font-weight:500;font-size:15.5px;line-height:1.55;color:var(--fg);letter-spacing:-0.01em;position:relative;z-index:1;padding-top:10px;padding-right:40px;">${q}</div>
+          <div style="margin-top:16px;width:28px;height:2px;background:var(--green);border-radius:99px;opacity:${isBest ? '0.8' : '0.35'};"></div>
+        `;
+        const qShrC = document.createElement('button');
+        qShrC.setAttribute('aria-label','Share quote');
+        qShrC.style.cssText = 'position:absolute;top:14px;right:14px;width:32px;height:32px;border-radius:50%;background:rgba(29,185,84,0.1);border:1px solid rgba(29,185,84,0.25);color:var(--green);display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:3;';
+        qShrC.innerHTML = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v7a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-7M16 6l-4-4-4 4M12 2v14"/></svg>`;
+        qShrC.addEventListener('click', (ev) => { ev.stopPropagation(); shareQuote(q, ep.guest, ep.role || ep.cat); });
+        card.appendChild(qShrC);
+        track.appendChild(card);
+      });
+
+      trackWrap.appendChild(track);
+      quotesSection.appendChild(trackWrap);
+
+      /* Dot indicators */
+      const dots = document.createElement('div');
+      dots.style.cssText = 'display:flex;justify-content:center;gap:6px;margin-top:16px;';
+      allQuotes.forEach((_, i) => {
+        const d = document.createElement('div');
+        d.style.cssText = `width:${i === 0 ? '22' : '6'}px;height:6px;border-radius:99px;background:${i === 0 ? 'var(--green)' : 'rgba(255,255,255,0.18)'};transition:all 0.25s ease;`;
+        dots.appendChild(d);
+      });
+      quotesSection.appendChild(dots);
+
+      /* Sync dots to scroll */
+      track.addEventListener('scroll', () => {
+        const cardW = track.firstChild?.offsetWidth + 12 || 1;
+        const idx = Math.min(Math.round(track.scrollLeft / cardW), allQuotes.length - 1);
+        dots.querySelectorAll('div').forEach((d, i) => {
+          d.style.width   = i === idx ? '22px' : '6px';
+          d.style.background = i === idx ? 'var(--green)' : 'rgba(255,255,255,0.18)';
+        });
+      }, { passive: true });
+    }
+
+    scroll.appendChild(quotesSection);
+  }
 
   /* Listen buttons */
   const listenRow = document.createElement('div');
@@ -1749,19 +2029,30 @@ function Wiki({ epNo }) {
     <a href="${ep.spotify_url || '#'}" ${ep.spotify_url ? 'target="_blank" rel="noopener"' : 'onclick="return false"'} style="flex:1;display:flex;align-items:center;justify-content:center;gap:8px;padding:14px 18px;background:var(--green);color:#000;border-radius:999px;font-weight:700;font-size:14.5px;text-decoration:none;box-shadow:0 4px 14px rgba(29,185,84,0.25);${!ep.spotify_url ? 'opacity:0.5;' : ''}">${Icons.spotifyBlack} Listen on Spotify</a>
     <a href="${ep.youtube_url || '#'}" ${ep.youtube_url ? 'target="_blank" rel="noopener"' : 'onclick="return false"'} style="flex:1;display:flex;align-items:center;justify-content:center;gap:8px;padding:14px 18px;background:transparent;color:var(--fg);border:1px solid var(--line-2);border-radius:999px;font-weight:700;font-size:14.5px;text-decoration:none;${!ep.youtube_url ? 'opacity:0.5;' : ''}">${Icons.youtube} YouTube</a>
   `;
-  const epShareBtn = document.createElement('button');
-  epShareBtn.setAttribute('aria-label', 'Share this episode');
-  epShareBtn.style.cssText = 'flex:0 0 auto;width:52px;display:flex;align-items:center;justify-content:center;background:transparent;color:var(--fg);border:1px solid var(--line-2);border-radius:999px;cursor:pointer;';
-  epShareBtn.innerHTML = Icons.share;
-  epShareBtn.querySelector('svg')?.setAttribute('width', '20');
-  epShareBtn.querySelector('svg')?.setAttribute('height', '20');
-  epShareBtn.addEventListener('click', () => shareContent({
-    title: `TigPods — ${ep.guest}`,
-    text: `${ep.guest} on TigPods — ${ep.title}`,
-    url: ep.youtube_url || ep.spotify_url || null,
-  }));
-  listenRow.appendChild(epShareBtn);
+
   scroll.appendChild(listenRow);
+
+  /* Social links */
+  if (ep.instagram_url || ep.linkedin_url) {
+    const socialRow = document.createElement('div');
+    socialRow.style.cssText = 'padding:14px 20px 0;display:flex;gap:10px;flex-wrap:wrap;';
+    if (ep.instagram_url) {
+      const igA = document.createElement('a');
+      igA.href = ep.instagram_url; igA.target = '_blank'; igA.rel = 'noopener';
+      igA.style.cssText = 'display:inline-flex;align-items:center;gap:8px;padding:10px 18px;border:1px solid var(--line-2);border-radius:999px;font-size:13px;font-weight:600;color:var(--fg);text-decoration:none;';
+      igA.innerHTML = Icons.instagram + ' Instagram';
+      socialRow.appendChild(igA);
+    }
+    if (ep.linkedin_url) {
+      const isIgLink = ep.linkedin_url.includes('instagram.com');
+      const liA = document.createElement('a');
+      liA.href = ep.linkedin_url; liA.target = '_blank'; liA.rel = 'noopener';
+      liA.style.cssText = 'display:inline-flex;align-items:center;gap:8px;padding:10px 18px;border:1px solid var(--line-2);border-radius:999px;font-size:13px;font-weight:600;color:var(--fg);text-decoration:none;';
+      liA.innerHTML = (isIgLink ? Icons.instagram : Icons.linkedin) + (isIgLink ? ' Instagram' : ' LinkedIn');
+      socialRow.appendChild(liA);
+    }
+    scroll.appendChild(socialRow);
+  }
 
   /* Shorts strip */
   if (w.shorts.length > 0) {

@@ -17,7 +17,8 @@
 (function(){
   var isPhone = /Android.*Mobile|iPhone|iPod/i.test(navigator.userAgent);
   var isRoot = location.pathname === '/' || location.pathname === '/index.html';
-  if(isPhone && isRoot && !/[?&]desktop=1/.test(location.search)) location.replace('/m/');
+  var isBot = /Googlebot|bingbot|Slurp|DuckDuckBot|Baiduspider|YandexBot/i.test(navigator.userAgent);
+  if(isPhone && !isBot && isRoot && !/[?&]desktop=1/.test(location.search)) location.replace('/m/');
 })();
 </script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"Organization","name":"The Internet Generation","alternateName":"TIG","url":"https://theintgen.com","email":"hi@theintgen.com","description":"Chennai-based creative and digital agency: digital marketing, video production, influencer marketing, podcasts, open mic events, and the TigGigs freelance job board.","address":{"@type":"PostalAddress","addressLocality":"Chennai","addressCountry":"IN"},"sameAs":["https://theintgen.com/tiggigs/","https://theintgen.com/tigital/","https://theintgen.com/tigpods/"]}</script>

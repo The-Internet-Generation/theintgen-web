@@ -842,11 +842,13 @@ function openBrief(jobId) {
     document.getElementById(bodyId).textContent = v;
   };
   setSection('briefTopicWrap',   'briefTopic',   j.description  || j.topic || '');
-  setSection('briefVisualWrap',  'briefVisual',  j.visual_brief || '');
+  document.getElementById('briefVisualWrap').style.display = 'none';
   setSection('briefCaptionWrap', 'briefCaption', j.copy         || j.caption || '');
 
   const links = [
+    j.visual_brief          ? `<a class="brief-link" href="${j.visual_brief}"          target="_blank">📋 Visual Brief</a>` : '',
     j.reference_image_url   ? `<a class="brief-link" href="${j.reference_image_url}"   target="_blank">📌 Reference</a>`  : '',
+    j.source_files_folder   ? `<a class="brief-link" href="${j.source_files_folder}"   target="_blank">🎬 Source Files</a>` : '',
     j.brand_social_page_url ? `<a class="brief-link" href="${j.brand_social_page_url}" target="_blank">📱 Brand Page</a>` : '',
     j.submission_folder_url ? `<a class="brief-link" href="${j.submission_folder_url}" target="_blank">📁 Submit Here</a>` : '',
   ].filter(Boolean).join('');
