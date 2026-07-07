@@ -881,45 +881,73 @@ function PortfolioBody(app){
 }
 
 /* ===== TIG Sandbox ===== */
-function SandboxCard(name, track, batch){
+function SandboxCard(name, college, batch, star){
   return h("div", {className:"card"},
     h("div", {className:"card-pad"},
-      h("div", {style:{fontFamily:'var(--ui)',fontWeight:600,fontSize:12.5,color:'var(--tx)'}}, "👤 " + name),
-      h("div", {style:{fontFamily:'var(--ui)',fontSize:11,color:'var(--tx-soft)',marginTop:5}}, "Track: " + track),
-      h("div", {style:{fontFamily:'var(--mono)',fontSize:9,color:'var(--tx-faint)',marginTop:4,textTransform:'uppercase',letterSpacing:'.04em'}}, "Batch: " + batch)
-    )
-  );
-}
-function QuoteCard(quote, author){
-  return h("div", {className:"card"},
-    h("div", {className:"card-pad"},
-      h("div", {style:{fontFamily:'var(--ui)',fontSize:12.5,color:'var(--tx)',fontStyle:'italic',lineHeight:1.45}}, '"' + quote + '"'),
-      h("div", {style:{fontFamily:'var(--mono)',fontSize:9.5,color:'var(--tx-soft)',marginTop:8,textTransform:'uppercase',letterSpacing:'.04em'}}, "— " + author)
+      h("div", {style:{fontFamily:'var(--ui)',fontWeight:600,fontSize:12.5,color:'var(--tx)'}}, (star ? "⭐ " : "") + name),
+      h("div", {style:{fontFamily:'var(--ui)',fontSize:11,color:'var(--tx-soft)',marginTop:5}}, college || "—"),
+      h("div", {style:{fontFamily:'var(--mono)',fontSize:9,color:'var(--tx-faint)',marginTop:4,textTransform:'uppercase',letterSpacing:'.04em'}}, batch)
     )
   );
 }
 function SandboxBody(app){
+  var statLabel = {fontFamily:'var(--mono)',fontSize:9,color:'var(--on-ink-soft)',marginTop:4,textTransform:'uppercase',letterSpacing:'.06em'};
+  var alumni = [
+    ['Soukhya Chakravarti','MOP Vaishnav','May–Aug 2018',true],
+    ['Bhaviska','MOP Vaishnav','May–Aug 2018',true],
+    ['Naveen Ramasamy','Sastra Thanjavur','Feb 2021–Jan 2022',true],
+    ['Purushothaman','MGR Film & TV Institute','Mar–Jun 2022',true],
+    ['Rajkumar','Vivekananda College','Aug–Oct 2022',true],
+    ['Priyadharshini','NIFT','Aug–Oct 2022',true],
+    ['Guhapriya','SRM','Aug–Oct 2022',false],
+    ['Pon Balaji','NIFT','Sep–Dec 2022',true],
+    ['Bharathi','Patrician','Sep–Dec 2022',true],
+    ['Sagayaraj','—','Nov–Dec 2022',false],
+    ['Pooja','NIFT','Nov 2022–Jan 2023',false],
+    ['Sarvesh','Vivekananda College','Dec 2022–Feb 2023',true],
+    ['Lalith Krishna','Madras Christian College','Jan 2023',true],
+    ['Shakthi','Madras Christian College','Apr 2023',true],
+    ['Steny','Madras Christian College','May 2023',true],
+    ['Augustine','Madras Christian College','May 2023',true],
+    ['Vidul','—','Dec 2023',true],
+    ['Sabarish','—','Jan 2024',true],
+    ['Poushali','MOP Vaishnav','Apr 2024',false],
+    ['Ramya','MOP Vaishnav','Apr 2024',false],
+    ['Durgeshwaran','—','Apr 2024',false],
+    ['Pradeep','—','Apr 2024',false],
+    ['Vijay','—','Apr 2024',false],
+    ['Jebrina','Ethiraj','Apr 2024',false],
+    ['Ritadevi','Ethiraj','Apr 2024',false],
+    ['Naveen','—','Apr 2024',false],
+    ['Vijayan','—','Jun 2024',false],
+    ['Simon','—','Jul 2024',false]
+  ];
+  var tigAlumniNames = alumni.filter(function(a){ return a[3]; }).map(function(a){ return a[0]; }).join(', ');
   return [
-    h("div", {style:{display:'flex',justifyContent:'flex-end',marginBottom:14}},
-      h("span", {className:"tag accent"}, "🚧 Sample content — swap in real details")),
-    h("div", {className:"isec"}, "The programme"),
+    h("div", {className:"isec"}, "The programme", h("small", null, "Tracks/eligibility TBC")),
     h("div", {className:"stack"},
-      EventRow('clock', '[Duration]', 'e.g. 8–12 weeks, rolling batches', 'Duration'),
-      EventRow('compass', '[Tracks]', 'Video, Digital, Events, Content', 'Tracks'),
-      EventRow('people', '[Eligibility]', 'Students & recent grads, Chennai preferred', 'Eligibility'),
-      EventRow('briefcase', '[Stipend]', 'Paid stipend + certificate', 'Stipend')
+      EventRow('clock', 'Rolling batches', 'Most run 2–4 months (2018–2024)', 'Duration'),
+      EventRow('compass', '[Tracks]', 'e.g. Video, Digital, Events, Content', 'TBC'),
+      EventRow('people', '[Eligibility]', 'e.g. Students & recent grads', 'TBC'),
+      EventRow('briefcase', '[Stipend]', 'e.g. Paid stipend + certificate', 'TBC')
     ),
-    h("div", {className:"isec"}, "Currently enrolled", h("small", null, "Sample entries")),
+    h("div", {className:"isec"}, "Track record"),
+    h("div", {className:"statcard"},
+      h("div", {style:{display:'flex',justifyContent:'space-between',flexWrap:'wrap',gap:14}},
+        h("div", null, h("div", {className:"bignum"}, "28"), h("div", {style:statLabel}, "Interns since 2018")),
+        h("div", null, h("div", {className:"bignum"}, "17"), h("div", {style:statLabel}, "Hiring offers")),
+        h("div", null, h("div", {className:"bignum"}, "15"), h("div", {style:statLabel}, "Now at TIG"))
+      )
+    ),
+    h("div", {className:"isec"}, "Programme alumni", h("small", null, "⭐ now at TIG")),
     h("div", {className:"grid2"},
-      SandboxCard('[Intern Name]', 'Video Production', '[Month Year]'),
-      SandboxCard('[Intern Name]', 'Digital Marketing', '[Month Year]'),
-      SandboxCard('[Intern Name]', 'Events (TIGvents)', '[Month Year]'),
-      SandboxCard('[Intern Name]', 'Content & Social', '[Month Year]')
+      alumni.map(function(a){ return SandboxCard(a[0], a[1], a[2], a[3]); })
     ),
-    h("div", {className:"isec"}, "Success stories", h("small", null, "Sample entries")),
-    h("div", {className:"stack"},
-      QuoteCard("Went from intern to full-time Video Editor in 3 months.", "[Intern Name], now [Role] at TIG"),
-      QuoteCard("Ran their first client shoot solo by week 6.", "[Intern Name], now [Role] at TIG")
+    h("div", {className:"isec"}, "Now working at TIG"),
+    h("div", {className:"card"},
+      h("div", {className:"card-pad"},
+        h("div", {style:{fontFamily:'var(--ui)',fontSize:12.5,color:'var(--tx-soft)',lineHeight:1.55}}, "15 Sandbox alumni went on to join TIG full-time — including " + tigAlumniNames + ".")
+      )
     ),
     h("div", {className:"card", style:{marginTop:18}},
       h("div", {className:"card-pad"},
