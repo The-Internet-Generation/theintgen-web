@@ -158,6 +158,11 @@ html,body{width:100%;height:100%;font-family:var(--font-ui);font-size:12px;
   align-items:flex-start;justify-content:center;padding:4px;overflow:auto;
   background:transparent}
 .woverlay.open{display:flex}
+#recycle-modal-overlay{position:fixed;inset:0;z-index:600;display:none;
+  align-items:center;justify-content:center;background:rgba(0,0,0,.25)}
+#recycle-modal-overlay.open{display:flex}
+#recycle-modal{width:min(340px,90%);max-height:80vh;overflow:auto}
+#recycle-modal .wcontent{font-family:var(--font-ui);font-size:12px;color:#222}
 .wframe{background:var(--gray);width:min(580px,100%);display:flex;flex-direction:column;
   overflow:hidden;max-height:100%;box-shadow:inset -1px -1px 0 #808080,inset 1px 1px 0 #dfdfdf,2px 2px 0 #000;
   border-top:1px solid #fff;border-left:1px solid #fff;border-right:1px solid #000;border-bottom:1px solid #000}
@@ -303,14 +308,15 @@ html,body{width:100%;height:100%;font-family:var(--font-ui);font-size:12px;
   box-shadow:inset 1px 1px 0 #000;padding-top:6px;padding-left:29px}
 
 /* === BANE CLIPPY === */
-#bane{position:fixed;bottom:34px;right:8px;z-index:350;
-  display:flex;flex-direction:column;align-items:center;cursor:pointer;
-  -webkit-tap-highlight-color:transparent;gap:0}
+#bane{position:fixed;bottom:34px;right:8px;z-index:500;
+  display:flex;flex-direction:column;align-items:center;cursor:grab;
+  -webkit-tap-highlight-color:transparent;gap:0;user-select:none;touch-action:none}
+#bane.dragging{cursor:grabbing}
 #bane-bubble{background:#fff;padding:7px 9px;font-family:var(--font-ui);font-size:10px;
-  line-height:1.7;color:#000;max-width:160px;position:relative;margin-bottom:6px;
+  line-height:1.7;color:#000;width:max-content;max-width:180px;position:relative;margin-bottom:6px;
   border-top:1px solid #808080;border-left:1px solid #808080;
   border-right:1px solid #fff;border-bottom:1px solid #fff;
-  box-shadow:inset 1px 1px 0 #000,1px 1px 0 #000}
+  box-shadow:inset 1px 1px 0 #000,1px 1px 0 #000;pointer-events:none}
 #bane-bubble::after{content:'';position:absolute;bottom:-7px;left:50%;transform:translateX(-50%);
   width:0;height:0;border-left:6px solid transparent;border-right:6px solid transparent;
   border-top:7px solid #808080}
@@ -446,7 +452,7 @@ html,body{width:100%;height:100%;font-family:var(--font-ui);font-size:12px;
 
   <!-- Right-edge icons: Our Work, Find Us, Portfolio -->
   <div id="icons-right">
-    <div class="dicon" data-win="ourwork" tabindex="0" role="button" aria-label="Our Work">
+    <div class="dicon" data-win="ourwork" tabindex="0" role="button" aria-label="Brag Doc">
       <svg class="di-img" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
         <rect x="2" y="8" width="28" height="21" fill="#80ff80" stroke="#000" stroke-width="1"/>
         <rect x="2" y="5" width="11" height="5" fill="#80ff80" stroke="#000" stroke-width="1"/>
@@ -458,7 +464,7 @@ html,body{width:100%;height:100%;font-family:var(--font-ui);font-size:12px;
         <line x1="14" y1="17" x2="22" y2="17" stroke="#808080" stroke-width="1"/>
         <line x1="14" y1="20" x2="19" y2="20" stroke="#808080" stroke-width="1"/>
       </svg>
-      <span class="di-lbl">Our Work</span>
+      <span class="di-lbl">Brag Doc</span>
     </div>
 
     <div class="dicon" data-win="findus" tabindex="0" role="button" aria-label="Find Us">
@@ -562,7 +568,7 @@ html,body{width:100%;height:100%;font-family:var(--font-ui);font-size:12px;
     <div class="sm-item" data-win="tigpods"><span class="ms">podcasts</span>Tigpods</div>
     <div class="sm-item" data-win="tigom"><span class="ms">forum</span>TIGOM</div>
     <div class="sm-item" data-win="tighq"><span class="ms">apartment</span>TigHQ</div>
-    <div class="sm-item" data-win="ourwork"><span class="ms">folder_open</span>Our Work</div>
+    <div class="sm-item" data-win="ourwork"><span class="ms">folder_open</span>Brag Doc</div>
     <div class="sm-item" data-win="findus"><span class="ms">location_on</span>Find Us</div>
     <div class="sm-item" data-win="portfolio"><span class="ms">slideshow</span>Portfolio</div>
     <div class="sm-item" data-win="sandbox"><span class="ms">school</span>TIG Sandbox</div>
@@ -918,7 +924,7 @@ html,body{width:100%;height:100%;font-family:var(--font-ui);font-size:12px;
 <div class="wframe">
   <div class="wtbar">
     <span class="ms" style="font-size:12px">folder_open</span>
-    <span class="wt">Exploring — C:\WINDOWS\Desktop\Our_Work</span>
+    <span class="wt">Exploring — C:\WINDOWS\Desktop\Brag_Doc</span>
     <div class="wbtn" data-close="ourwork">_</div>
     <div class="wbtn" data-close="ourwork" style="font-size:7px">□</div>
     <div class="wbtn" data-close="ourwork">✕</div>
@@ -926,7 +932,7 @@ html,body{width:100%;height:100%;font-family:var(--font-ui);font-size:12px;
   <div class="wmenu"><span>File</span><span>Edit</span><span>View</span><span>Go</span><span>Help</span></div>
   <div class="waddr">
     <span class="al">Address</span>
-    <div class="af">C:\WINDOWS\Desktop\Our_Work</div>
+    <div class="af">C:\WINDOWS\Desktop\Brag_Doc</div>
     <div class="ago out btn-press">Go</div>
   </div>
   <div class="wcontent">
@@ -935,7 +941,23 @@ html,body{width:100%;height:100%;font-family:var(--font-ui);font-size:12px;
       <div class="wc-body">Digital marketing, TVCs, web-series, subtitling and live events — plus work for three Tamil Nadu government bodies. This is what we've built.</div>
     </div>
 
-    <div style="padding:5px 14px 3px;font-family:var(--font-ui);font-size:11px;color:#5d5e5f;border-top:1px solid #e3e2e2;border-bottom:1px solid #e3e2e2;background:#efeded"><span class="ms" style="font-size:13px;vertical-align:-2px;color:#006565">play_circle</span> <strong>TVCs &amp; Ad Films</strong> <span style="font-weight:400">— click to watch</span></div>
+    <div style="padding:5px 14px 3px;font-family:var(--font-ui);font-size:11px;color:#5d5e5f;border-top:1px solid #e3e2e2;border-bottom:1px solid #e3e2e2;background:#efeded"><span class="ms" style="font-size:13px;vertical-align:-2px;color:#006565">newspaper</span> <strong>Press Clippings</strong> <span style="font-weight:400">— the newspapers love us, NBD ;)</span></div>
+    <div class="work-thumb-grid">
+      <div class="work-thumb" style="cursor:default"><img src="/public/assets/press/press1.jpg" alt="What's Hot Chennai — F Buddies feature" loading="lazy"><div class="work-thumb-label"><span>What's Hot Chennai — F Buddies</span></div></div>
+      <div class="work-thumb" style="cursor:default"><img src="/public/assets/press/press2.jpg" alt="The Chronicle — Meet a pucca Tamil Deadpool" loading="lazy"><div class="work-thumb-label"><span>The Chronicle — Tamil Deadpool</span></div></div>
+      <div class="work-thumb" style="cursor:default"><img src="/public/assets/press/press3.jpg" alt="Puzzled at MGR Central" loading="lazy"><div class="work-thumb-label"><span>Puzzled at MGR Central</span></div></div>
+      <div class="work-thumb" style="cursor:default"><img src="/public/assets/press/press4.jpg" alt="TIGOM open mic press feature" loading="lazy"><div class="work-thumb-label"><span>TIGOM — Open Mic feature</span></div></div>
+      <div class="work-thumb" style="cursor:default"><img src="/public/assets/press/press5.jpg" alt="Awareness by the bay — Walk for Plastic" loading="lazy"><div class="work-thumb-label"><span>Awareness by the Bay</span></div></div>
+      <div class="work-thumb" style="cursor:default"><img src="/public/assets/press/press6.jpg" alt="The New Indian Express — Behind the meme factory" loading="lazy"><div class="work-thumb-label"><span>New Indian Express — Meme Factory</span></div></div>
+      <div class="work-thumb" style="cursor:default"><img src="/public/assets/press/press7.jpg" alt="iTimes — Chennai's open mic culture" loading="lazy"><div class="work-thumb-label"><span>iTimes — Open Mic Culture</span></div></div>
+      <div class="work-thumb" style="cursor:default"><img src="/public/assets/press/press8.jpg" alt="Open mics thriving post-pandemic press feature" loading="lazy"><div class="work-thumb-label"><span>Open Mics, Restrictions Eased</span></div></div>
+    </div>
+
+    <div style="padding:5px 14px 3px;font-family:var(--font-ui);font-size:11px;color:#5d5e5f;border-top:1px solid #e3e2e2;border-bottom:1px solid #e3e2e2;background:#efeded"><span class="ms" style="font-size:13px;vertical-align:-2px;color:#006565">movie</span> <strong>TigVid</strong> <span style="font-weight:400">— our own little Hollywood studio</span></div>
+    <div class="wc-row"><span class="ms">smart_display</span><span class="wc-row-name">F Buddies — Season 1 &amp; 2</span><span class="wc-row-type">Web-Series</span><span class="wc-row-size">—</span></div>
+    <div class="wc-row"><span class="ms">smart_display</span><span class="wc-row-name">"Yuv" for Silicon Sandhu Pvt Ltd</span><span class="wc-row-type">11 episodes</span><span class="wc-row-size">—</span></div>
+    <div class="wc-row"><span class="ms">smart_display</span><span class="wc-row-name">Single Singam for Ondraga — India's first vertical web-series</span><span class="wc-row-type">7 episodes</span><span class="wc-row-size">—</span></div>
+    <div class="wc-row"><span class="ms">smart_display</span><span class="wc-row-name">Paracetamol Paniyaram — Tamil Nadu's 3rd YouTube channel</span><span class="wc-row-type">100+ videos</span><span class="wc-row-size">1L+ subs</span></div>
     <div class="work-thumb-grid">
       <a class="work-thumb" href="https://www.youtube.com/watch?list=PL0t5Yw_UGzuX8p7TFnfl8BeGsHn_2_NoV&amp;v=jEBMJ6aPPbM&amp;feature=youtu.be&amp;ab_channel=ProjectPakoda" target="_blank" rel="noopener">
         <img src="/public/assets/work/cavins_rabdi.jpg" alt="Cavin's Rabdi Milkshake TVC" loading="lazy">
@@ -949,25 +971,9 @@ html,body{width:100%;height:100%;font-family:var(--font-ui);font-size:12px;
         <img src="/public/assets/work/cavins_lassi.jpg" alt="Cavin's Lassi TVC" loading="lazy">
         <div class="work-thumb-label"><span>Cavin's Lassi</span><span class="ms">smart_display</span></div>
       </a>
-      <a class="work-thumb" href="https://www.youtube.com/watch?list=PL0t5Yw_UGzuX8p7TFnfl8BeGsHn_2_NoV&amp;v=uInLEci4A2A&amp;feature=youtu.be&amp;ab_channel=ProjectPakoda" target="_blank" rel="noopener">
-        <img src="/public/assets/work/swarna_sarees_1.jpg" alt="Swarna Sarees Winter Collection TVC" loading="lazy">
-        <div class="work-thumb-label"><span>Swarna Sarees — Winter</span><span class="ms">smart_display</span></div>
-      </a>
-      <a class="work-thumb" href="https://www.youtube.com/watch?v=r4z6T5Rky4I&amp;list=PL0t5Yw_UGzuX8p7TFnfl8BeGsHn_2_NoV&amp;ab_channel=ProjectPakoda" target="_blank" rel="noopener">
-        <img src="/public/assets/work/swarna_sarees_2.jpg" alt="Swarna Sarees Purple Deciduous TVC" loading="lazy">
-        <div class="work-thumb-label"><span>Swarna Sarees — Purple</span><span class="ms">smart_display</span></div>
-      </a>
       <a class="work-thumb" href="https://www.youtube.com/watch?v=Zq7X0NkWZA0&amp;list=PL0t5Yw_UGzuX8p7TFnfl8BeGsHn_2_NoV&amp;ab_channel=ProjectPakoda" target="_blank" rel="noopener">
         <img src="/public/assets/work/abi_estates.jpg" alt="Abi Estates TVC" loading="lazy">
         <div class="work-thumb-label"><span>Abi Estates</span><span class="ms">smart_display</span></div>
-      </a>
-      <a class="work-thumb" href="https://www.youtube.com/watch?v=iB9ClDEs9fc&amp;list=PL0t5Yw_UGzuX8p7TFnfl8BeGsHn_2_NoV&amp;ab_channel=ProjectPakoda" target="_blank" rel="noopener">
-        <img src="/public/assets/work/oro_safe.jpg" alt="Oro Safe TVC" loading="lazy">
-        <div class="work-thumb-label"><span>Oro Safe</span><span class="ms">smart_display</span></div>
-      </a>
-      <a class="work-thumb" href="https://www.youtube.com/watch?v=_ly-S_VlwwQ&amp;list=PL0t5Yw_UGzuX8p7TFnfl8BeGsHn_2_NoV" target="_blank" rel="noopener">
-        <img src="/public/assets/work/sepoy_co.jpg" alt="Sepoy & Co product shoot" loading="lazy">
-        <div class="work-thumb-label"><span>Sepoy &amp; Co</span><span class="ms">smart_display</span></div>
       </a>
     </div>
 
@@ -985,36 +991,36 @@ html,body{width:100%;height:100%;font-family:var(--font-ui);font-size:12px;
       </div>
     </div>
 
-    <div style="padding:5px 14px 3px;font-family:var(--font-ui);font-size:11px;color:#5d5e5f;border-top:1px solid #e3e2e2;border-bottom:1px solid #e3e2e2;background:#efeded"><span class="ms" style="font-size:13px;vertical-align:-2px;color:#006565">movie</span> <strong>Video Production</strong></div>
-    <div class="wc-row"><span class="ms">smart_display</span><span class="wc-row-name">F Buddies — Season 1 &amp; 2</span><span class="wc-row-type">Web-Series</span><span class="wc-row-size">—</span></div>
-    <div class="wc-row"><span class="ms">smart_display</span><span class="wc-row-name">"Yuv" for Silicon Sandhu Pvt Ltd</span><span class="wc-row-type">11 episodes</span><span class="wc-row-size">—</span></div>
-    <div class="wc-row"><span class="ms">smart_display</span><span class="wc-row-name">Single Singam for Ondraga — India's first vertical web-series</span><span class="wc-row-type">7 episodes</span><span class="wc-row-size">—</span></div>
-    <div class="wc-row"><span class="ms">smart_display</span><span class="wc-row-name">Paracetamol Paniyaram — Tamil Nadu's 3rd YouTube channel</span><span class="wc-row-type">100+ videos</span><span class="wc-row-size">1L+ subs</span></div>
-
     <div style="padding:5px 14px 3px;font-family:var(--font-ui);font-size:11px;color:#5d5e5f;border-top:1px solid #e3e2e2;border-bottom:1px solid #e3e2e2;background:#efeded"><span class="ms" style="font-size:13px;vertical-align:-2px;color:#006565">celebration</span> <strong>TIGvents — Curating Experiences</strong></div>
-    <div class="wc-row"><span class="ms">beach_access</span><span class="wc-row-name">Chennai Day '22 — Besant Nagar Beach, w/ Govt. of Tamil Nadu</span><span class="wc-row-type">Event</span><span class="wc-row-size">—</span></div>
-    <div class="wc-row"><span class="ms">campaign</span><span class="wc-row-name">World's Largest Pledge Against Drugs — NIBCID &amp; TN Govt.</span><span class="wc-row-type">Event</span><span class="wc-row-size">—</span></div>
-    <div class="wc-row"><span class="ms">music_note</span><span class="wc-row-name">Pradeep Kumar's concert — Music Academy, w/ LiveAlive</span><span class="wc-row-type">Event</span><span class="wc-row-size">—</span></div>
-    <div class="wc-row"><span class="ms">festival</span><span class="wc-row-name">Loka Fest V1 &amp; V2 — Auroville</span><span class="wc-row-type">Event</span><span class="wc-row-size">—</span></div>
-    <div class="wc-row"><span class="ms">campaign</span><span class="wc-row-name">Nivaran 90 — influencer campaign for a social cause</span><span class="wc-row-type">Campaign</span><span class="wc-row-size">—</span></div>
-    <div class="wc-row"><span class="ms">sports_tennis</span><span class="wc-row-name">Chennai Open — SDAT Women's Tennis, Nungambakkam ('19 &amp; '21)</span><span class="wc-row-type">Event</span><span class="wc-row-size">—</span></div>
-    <div class="wc-row"><span class="ms">mic</span><span class="wc-row-name">TIGOM — our open mic, 45 editions and counting</span><span class="wc-row-type">Recurring</span><span class="wc-row-size">45+</span></div>
+    <div class="work-thumb-grid">
+      <div class="work-thumb" style="cursor:default"><img src="/public/assets/events/event_p18_b.jpg" alt="Chennai Day crowd on Besant Nagar Beach" loading="lazy"><div class="work-thumb-label"><span>Chennai Day '22 — Besant Nagar Beach</span></div></div>
+      <div class="work-thumb" style="cursor:default"><img src="/public/assets/events/event_p19_b.jpg" alt="World's Largest Pledge Against Drugs crowd" loading="lazy"><div class="work-thumb-label"><span>Pledge Against Drugs — NIBCID &amp; TN Govt.</span></div></div>
+      <div class="work-thumb" style="cursor:default"><img src="/public/assets/events/event_p19_c.jpg" alt="Pradeep Kumar concert crowd at Music Academy" loading="lazy"><div class="work-thumb-label"><span>Pradeep Kumar's Concert — Music Academy</span></div></div>
+      <div class="work-thumb" style="cursor:default"><img src="/public/assets/events/event_p20_b.jpg" alt="Loka Fest crowd at Auroville" loading="lazy"><div class="work-thumb-label"><span>Loka Fest V1 &amp; V2 — Auroville</span></div></div>
+      <div class="work-thumb" style="cursor:default"><img src="/public/assets/events/event_p21_b.jpg" alt="Chennai Open SDAT Women's Tennis crowd" loading="lazy"><div class="work-thumb-label"><span>Chennai Open — SDAT Women's Tennis</span></div></div>
+      <div class="work-thumb" style="cursor:default"><img src="/public/assets/events/event_p21_d.jpg" alt="TIGOM open mic crowd" loading="lazy"><div class="work-thumb-label"><span>TIGOM — 45+ editions and counting</span></div></div>
+    </div>
     <div class="wc-row"><span class="ms">mic</span><span class="wc-row-name">TIGOM PRO I &amp; II — Phoenix Marketcity, Velachery</span><span class="wc-row-type">Event</span><span class="wc-row-size">—</span></div>
     <div class="wc-row"><span class="ms">groups</span><span class="wc-row-name">Cypher TIG Jam — dance &amp; rap/beatbox battles at OG MottaMaadi</span><span class="wc-row-type">Recurring</span><span class="wc-row-size">—</span></div>
     <div class="wc-row"><span class="ms">nightlife</span><span class="wc-row-name">Karaoke Nights @ The Leather Bar</span><span class="wc-row-type">Recurring</span><span class="wc-row-size">—</span></div>
+    <div class="wc-row"><span class="ms">campaign</span><span class="wc-row-name">Nivaran 90 — influencer campaign for a social cause</span><span class="wc-row-type">Campaign</span><span class="wc-row-size">—</span></div>
 
     <div style="padding:5px 14px 3px;font-family:var(--font-ui);font-size:11px;color:#5d5e5f;border-top:1px solid #e3e2e2;border-bottom:1px solid #e3e2e2;background:#efeded"><span class="ms" style="font-size:13px;vertical-align:-2px;color:#006565">gavel</span> <strong>Government Clientele</strong></div>
-    <div class="wc-row"><span class="ms">verified</span><span class="wc-row-name">TN Enforcement Bureau — featured in the Chennai Express</span><span class="wc-row-type">Govt.</span><span class="wc-row-size">—</span></div>
-    <div class="wc-row"><span class="ms">verified</span><span class="wc-row-name">Sports Development Authority of Tamil Nadu (SDAT)</span><span class="wc-row-type">Govt.</span><span class="wc-row-size">—</span></div>
-    <div class="wc-row"><span class="ms">verified</span><span class="wc-row-name">Greater Chennai Traffic Police</span><span class="wc-row-type">Govt.</span><span class="wc-row-size">—</span></div>
+    <div class="work-thumb-grid">
+      <div class="work-thumb" style="cursor:default"><img src="/public/assets/govt/govt_logo1.jpg" alt="TN Enforcement Bureau" loading="lazy"><div class="work-thumb-label"><span>TN Enforcement Bureau</span></div></div>
+      <div class="work-thumb" style="cursor:default"><img src="/public/assets/govt/govt_logo2.jpg" alt="Sports Development Authority of Tamil Nadu" loading="lazy"><div class="work-thumb-label"><span>Sports Development Authority (SDAT)</span></div></div>
+      <div class="work-thumb" style="cursor:default"><img src="/public/assets/govt/govt_logo3.jpg" alt="Greater Chennai Traffic Police" loading="lazy"><div class="work-thumb-label"><span>Greater Chennai Traffic Police</span></div></div>
+    </div>
 
     <div style="padding:5px 14px 3px;font-family:var(--font-ui);font-size:11px;color:#5d5e5f;border-top:1px solid #e3e2e2;border-bottom:1px solid #e3e2e2;background:#efeded"><span class="ms" style="font-size:13px;vertical-align:-2px;color:#006565">closed_caption</span> <strong>Subtitling-as-a-Service</strong></div>
-    <div class="wc-row"><span class="ms">subtitles</span><span class="wc-row-name">Comedy sketches — Paracetamol Paniyaram &amp; Madras Meter</span><span class="wc-row-type">Subtitles</span><span class="wc-row-size">—</span></div>
-    <div class="wc-row"><span class="ms">subtitles</span><span class="wc-row-name">"Blood Money" — Zee5 Original</span><span class="wc-row-type">Subtitles</span><span class="wc-row-size">—</span></div>
-    <div class="wc-row"><span class="ms">subtitles</span><span class="wc-row-name">Select videos for the NETFLIX YouTube channel</span><span class="wc-row-type">Subtitles</span><span class="wc-row-size">—</span></div>
-
-    <div style="padding:5px 14px 3px;font-family:var(--font-ui);font-size:11px;color:#5d5e5f;border-top:1px solid #e3e2e2;border-bottom:1px solid #e3e2e2;background:#efeded"><span class="ms" style="font-size:13px;vertical-align:-2px;color:#006565">newspaper</span> <strong>In The Press</strong></div>
-    <div class="wc-row"><span class="ms">newspaper</span><span class="wc-row-name">Chennai Times · Deccan Chronicle · The Hindu · Chennai Express · Metroplus</span><span class="wc-row-type">Press</span><span class="wc-row-size">—</span></div>
+    <div class="work-thumb-grid">
+      <div class="work-thumb" style="cursor:default"><img src="/public/assets/subtitling/sub1.jpg" alt="Subtitling work sample 1" loading="lazy"><div class="work-thumb-label"><span>Comedy sketches — Paracetamol Paniyaram</span></div></div>
+      <div class="work-thumb" style="cursor:default"><img src="/public/assets/subtitling/sub2.jpg" alt="Subtitling work sample 2" loading="lazy"><div class="work-thumb-label"><span>Madras Meter</span></div></div>
+      <div class="work-thumb" style="cursor:default"><img src="/public/assets/subtitling/sub3.jpg" alt="Subtitling work sample 3" loading="lazy"><div class="work-thumb-label"><span>"Blood Money" — Zee5 Original</span></div></div>
+      <div class="work-thumb" style="cursor:default"><img src="/public/assets/subtitling/sub4.jpg" alt="Subtitling work sample 4" loading="lazy"><div class="work-thumb-label"><span>NETFLIX YouTube channel</span></div></div>
+      <div class="work-thumb" style="cursor:default"><img src="/public/assets/subtitling/sub5.jpg" alt="Subtitling work sample 5" loading="lazy"><div class="work-thumb-label"><span>Subtitling sample</span></div></div>
+      <div class="work-thumb" style="cursor:default"><img src="/public/assets/subtitling/sub6.jpg" alt="Subtitling work sample 6" loading="lazy"><div class="work-thumb-label"><span>Subtitling sample</span></div></div>
+    </div>
 
     <div style="text-align:center;padding:10px">
       <a href="https://drive.google.com/file/d/1ad_kCphu9Lj2Xd-4sYpG4Hq1bzCPlOIn/view" class="wc-btn" target="_blank" rel="noopener">Open Body of Work ↗</a>
@@ -1231,22 +1237,22 @@ html,body{width:100%;height:100%;font-family:var(--font-ui);font-size:12px;
   <div class="wcontent">
     <div class="wc" style="padding:8px 14px">
       <div class="wc-h1" style="font-size:13px">Learn by Doing.</div>
-      <div class="wc-body">TIG Sandbox is our internship programme — real briefs, real clients, real deadlines. No coffee-fetching. 28 interns since 2018, across video, digital, events and content.</div>
+      <div class="wc-body">TIG Sandbox is our internship programme — real briefs, real clients, real deadlines.<br>No coffee-fetching.<br>28 interns since 2018, across video, digital, events and content.</div>
     </div>
 
-    <div style="padding:5px 14px 3px;font-family:var(--font-ui);font-size:11px;color:#5d5e5f;border-top:1px solid #e3e2e2;border-bottom:1px solid #e3e2e2;background:#efeded"><span class="ms" style="font-size:13px;vertical-align:-2px;color:#006565">folder_open</span> <strong>The Programme</strong> <span class="uc-badge" style="margin-left:6px;font-size:6px">🚧 Tracks/eligibility/stipend TBC</span></div>
-    <div class="wc-row"><span class="ms">schedule</span><span class="wc-row-name">Rolling batches — most run 2–4 months (2018–2024 cohorts)</span><span class="wc-row-type">Duration</span><span class="wc-row-size">—</span></div>
-    <div class="wc-row"><span class="ms">alt_route</span><span class="wc-row-name">[Tracks] — e.g. Video Production, Digital Marketing, Events, Content</span><span class="wc-row-type">Tracks</span><span class="wc-row-size">—</span></div>
-    <div class="wc-row"><span class="ms">how_to_reg</span><span class="wc-row-name">[Eligibility] — e.g. open to students &amp; recent grads, Chennai-based preferred</span><span class="wc-row-type">Eligibility</span><span class="wc-row-size">—</span></div>
-    <div class="wc-row"><span class="ms">payments</span><span class="wc-row-name">[Stipend] — e.g. paid stipend + certificate on completion</span><span class="wc-row-type">Stipend</span><span class="wc-row-size">—</span></div>
+    <div style="padding:5px 14px 3px;font-family:var(--font-ui);font-size:11px;color:#5d5e5f;border-top:1px solid #e3e2e2;border-bottom:1px solid #e3e2e2;background:#efeded"><span class="ms" style="font-size:13px;vertical-align:-2px;color:#006565">folder_open</span> <strong>The Programme</strong></div>
+    <div class="wc-row"><span class="ms">schedule</span><span class="wc-row-name">Rolling batches — most run 2–4 months (2018–2024 cohorts)</span></div>
+    <div class="wc-row"><span class="ms">alt_route</span><span class="wc-row-name">Video Production, Digital Marketing, Events, Content, Graphic Design, Editing, Business Development, Influencer Marketing</span></div>
+    <div class="wc-row"><span class="ms">how_to_reg</span><span class="wc-row-name">Anyone and Everyone, as long as you can think horizontally, have the willingness to learn and urge to constantly innovate.</span></div>
+    <div class="wc-row"><span class="ms">payments</span><span class="wc-row-name">₹5,000</span></div>
 
     <div style="padding:5px 14px 3px;font-family:var(--font-ui);font-size:11px;color:#5d5e5f;border-top:1px solid #e3e2e2;border-bottom:1px solid #e3e2e2;background:#efeded"><span class="ms" style="font-size:13px;vertical-align:-2px;color:#006565">bar_chart</span> <strong>Track Record</strong></div>
     <div class="wc-row"><span class="ms">groups</span><span class="wc-row-name">28 interns through the programme since 2018</span><span class="wc-row-type">Total</span><span class="wc-row-size">—</span></div>
     <div class="wc-row"><span class="ms">task_alt</span><span class="wc-row-name">24 completed the full programme</span><span class="wc-row-type">86%</span><span class="wc-row-size">—</span></div>
     <div class="wc-row"><span class="ms">work</span><span class="wc-row-name">17 received a hiring offer on completion</span><span class="wc-row-type">61%</span><span class="wc-row-size">—</span></div>
-    <div class="wc-row"><span class="ms">star</span><span class="wc-row-name">15 went on to work at TIG</span><span class="wc-row-type">54%</span><span class="wc-row-size">—</span></div>
+    <div class="wc-row"><span class="ms">star</span><span class="wc-row-name">16 went on to work at TIG</span><span class="wc-row-type">57%</span><span class="wc-row-size">—</span></div>
 
-    <div style="padding:5px 14px 3px;font-family:var(--font-ui);font-size:11px;color:#5d5e5f;border-top:1px solid #e3e2e2;border-bottom:1px solid #e3e2e2;background:#efeded"><span class="ms" style="font-size:13px;vertical-align:-2px;color:#006565">groups</span> <strong>Programme Alumni</strong> <span style="font-weight:400">— ⭐ now at TIG</span></div>
+    <div style="padding:5px 14px 3px;font-family:var(--font-ui);font-size:11px;color:#5d5e5f;border-top:1px solid #e3e2e2;border-bottom:1px solid #e3e2e2;background:#efeded"><span class="ms" style="font-size:13px;vertical-align:-2px;color:#006565">groups</span> <strong>Programme Alumni</strong> <span style="font-weight:400">— ⭐ Employed at TIG post-internship</span></div>
     <div class="wc-grid">
       <div class="wc-card"><div class="wc-card-name">⭐ Soukhya Chakravarti</div><div class="wc-card-desc">MOP Vaishnav</div><div class="wc-card-meta">May–Aug 2018</div></div>
       <div class="wc-card"><div class="wc-card-name">⭐ Bhaviska</div><div class="wc-card-desc">MOP Vaishnav</div><div class="wc-card-meta">May–Aug 2018</div></div>
@@ -1275,26 +1281,18 @@ html,body{width:100%;height:100%;font-family:var(--font-ui);font-size:12px;
       <div class="wc-card"><div class="wc-card-name">Ritadevi</div><div class="wc-card-desc">Ethiraj</div><div class="wc-card-meta">Apr 2024</div></div>
       <div class="wc-card"><div class="wc-card-name">Naveen</div><div class="wc-card-desc">—</div><div class="wc-card-meta">Apr 2024</div></div>
       <div class="wc-card"><div class="wc-card-name">Vijayan</div><div class="wc-card-desc">—</div><div class="wc-card-meta">Jun 2024</div></div>
-      <div class="wc-card"><div class="wc-card-name">Simon</div><div class="wc-card-desc">—</div><div class="wc-card-meta">Jul 2024</div></div>
-    </div>
-
-    <div style="padding:5px 14px 3px;font-family:var(--font-ui);font-size:11px;color:#5d5e5f;border-top:1px solid #e3e2e2;border-bottom:1px solid #e3e2e2;background:#efeded"><span class="ms" style="font-size:13px;vertical-align:-2px;color:#006565">emoji_events</span> <strong>Now Working at TIG</strong></div>
-    <div class="wc" style="padding:8px 14px">
-      <div class="wc-card">
-        <div class="wc-card-desc">15 Sandbox alumni went on to join TIG full-time — including Soukhya Chakravarti, Bhaviska, Naveen Ramasamy, Purushothaman, Rajkumar, Priyadharshini, Pon Balaji, Bharathi, Sarvesh, Lalith Krishna, Shakthi, Steny, Augustine, Vidul and Sabarish.</div>
-      </div>
+      <div class="wc-card"><div class="wc-card-name">⭐ Simon</div><div class="wc-card-desc">—</div><div class="wc-card-meta">Jul 2024</div></div>
     </div>
 
     <div style="padding:5px 14px 3px;font-family:var(--font-ui);font-size:11px;color:#5d5e5f;border-top:1px solid #e3e2e2;border-bottom:1px solid #e3e2e2;background:#efeded"><span class="ms" style="font-size:13px;vertical-align:-2px;color:#006565">edit_square</span> <strong>Apply</strong></div>
     <div class="wc" style="padding:8px 14px">
       <div class="wc-body">Think you've got what it takes? We're always looking for people who ship.</div>
       <div style="margin-top:10px;display:flex;align-items:center;gap:8px;flex-wrap:wrap">
-        <a href="https://forms.gle/REPLACE-WITH-YOUR-FORM-LINK" target="_blank" rel="noopener" class="wc-btn">📝 Apply to TIG Sandbox</a>
-        <span class="uc-badge">🚧 Add your real Google Form link</span>
+        <a href="https://docs.google.com/forms/d/e/1FAIpQLSd2DP505B8c0NKUM-gtlnXyIHCVxoliY3MMUDe8k1miE9-fhQ/viewform?usp=header" target="_blank" rel="noopener" class="wc-btn">📝 Apply to TIG Sandbox</a>
       </div>
     </div>
   </div>
-  <div class="wstatus"><div class="wsf">28 alumni · 15 at TIG</div><div class="wsf">Applications open</div></div>
+  <div class="wstatus"><div class="wsf">28 alumni · 16 at TIG</div><div class="wsf">Applications open</div></div>
 </div>
 </div>
 
@@ -1316,27 +1314,41 @@ html,body{width:100%;height:100%;font-family:var(--font-ui);font-size:12px;
   </div>
   <div class="wcontent">
     <div class="wc" style="padding:8px 14px">
-      <div class="wc-h1" style="font-size:13px">Scrapped Ideas</div>
-      <div class="wc-body">Every agency has a graveyard. Ours is searchable.</div>
-      <div style="margin-top:8px"><span class="uc-badge">🚧 UNDER CONSTRUCTION</span></div>
+      <div class="wc-h1" style="font-size:13px">Every agency has a *recycle bin.</div>
+      <div class="wc-body">These are the actual projects we've done and dropped.</div>
     </div>
-    <div style="padding:2px 14px 4px;font-family:var(--font-mono);font-size:10px;color:#5d5e5f;border-bottom:1px solid #e3e2e2;display:flex;gap:16px">
-      <span style="flex:1">Name</span><span style="width:90px">Reason Deleted</span>
+    <div style="padding:2px 14px 4px;font-family:var(--font-mono);font-size:10px;color:#5d5e5f;border-bottom:1px solid #e3e2e2">
+      <span>Name</span>
     </div>
-    <div class="wc-row"><span class="ms" style="color:#808080">description</span><span class="wc-row-name">TIG_NFT_Drop_2022.json</span><span class="wc-row-type" style="width:90px">Gas fees ate it</span></div>
-    <div class="wc-row"><span class="ms" style="color:#808080">favorite</span><span class="wc-row-name">TigDates.exe</span><span class="wc-row-type" style="width:90px">For your safety</span></div>
-    <div class="wc-row"><span class="ms" style="color:#808080">view_in_ar</span><span class="wc-row-name">Metaverse_Office.blend</span><span class="wc-row-type" style="width:90px">Nobody came</span></div>
-    <div class="wc-row"><span class="ms" style="color:#808080">paid</span><span class="wc-row-name">TIG_Coin_Whitepaper.docx</span><span class="wc-row-type" style="width:90px">Legal said no</span></div>
-    <div class="wc-row"><span class="ms" style="color:#808080">mic</span><span class="wc-row-name">Clubhouse_Strategy.txt</span><span class="wc-row-type" style="width:90px">Platform vanished</span></div>
-    <div class="wc-row"><span class="ms" style="color:#808080">smart_toy</span><span class="wc-row-name">AI_Replaces_Us_All.bat</span><span class="wc-row-type" style="width:90px">Too real</span></div>
+    <div class="wc-row recycle-item" data-project="lets-talk-sex" style="cursor:pointer"><span class="ms" style="color:#808080">description</span><span class="wc-row-name">Lets Talk Sex</span></div>
+    <div class="wc-row recycle-item" data-project="porkalam" style="cursor:pointer"><span class="ms" style="color:#808080">description</span><span class="wc-row-name">Porkalam</span></div>
+    <div class="wc-row recycle-item" data-project="kakaka" style="cursor:pointer"><span class="ms" style="color:#808080">description</span><span class="wc-row-name">Kakaka</span></div>
+    <div class="wc-row recycle-item" data-project="happ" style="cursor:pointer"><span class="ms" style="color:#808080">description</span><span class="wc-row-name">Happ</span></div>
+    <div class="wc-row recycle-item" data-project="indie-nadu" style="cursor:pointer"><span class="ms" style="color:#808080">description</span><span class="wc-row-name">Indie Nadu</span></div>
+    <div class="wc-row recycle-item" data-project="cult-kalaki" style="cursor:pointer"><span class="ms" style="color:#808080">description</span><span class="wc-row-name">Cult Kalaki</span></div>
+    <div class="wc-row recycle-item" data-project="paracetamol-paniyaram" style="cursor:pointer"><span class="ms" style="color:#808080">description</span><span class="wc-row-name">Paracetamol Paniyaram</span></div>
+    <div class="wc-row recycle-item" data-project="f-buddies" style="cursor:pointer"><span class="ms" style="color:#808080">description</span><span class="wc-row-name">F Buddies</span></div>
+    <div class="wc-row recycle-item" data-project="tigtos" style="cursor:pointer"><span class="ms" style="color:#808080">description</span><span class="wc-row-name">TIGTOS (TIG The Open Screen)</span></div>
     <div style="text-align:center;padding:10px">
       <span class="wc-btn" style="opacity:.5;cursor:not-allowed">Restore</span>
       <span class="wc-btn" style="margin-left:6px;opacity:.5;cursor:not-allowed">Empty Bin</span>
-      <div style="font-family:var(--font-mono);font-size:9px;color:#5d5e5f;margin-top:8px">Some ideas are better left here.</div>
+      <div style="font-family:var(--font-mono);font-size:9px;color:#5d5e5f;margin-top:8px">Click a name to see what it was.</div>
     </div>
   </div>
-  <div class="wstatus"><div class="wsf">6 objects</div><div class="wsf">404 KB of regret</div></div>
+  <div class="wstatus"><div class="wsf">9 objects</div><div class="wsf">Click to reopen</div></div>
 </div>
+</div>
+
+<!-- Recycle Bin project mini-window -->
+<div id="recycle-modal-overlay">
+  <div id="recycle-modal" class="wframe">
+    <div class="wtbar">
+      <span class="ms" style="font-size:12px">description</span>
+      <span class="wt" id="recycle-modal-title">Project</span>
+      <div class="wbtn" id="recycle-modal-close">✕</div>
+    </div>
+    <div class="wcontent" style="padding:14px" id="recycle-modal-body"></div>
+  </div>
 </div>
 
 <!-- ═══════════════ BANE CLIPPY ═══════════════ -->
@@ -1449,6 +1461,43 @@ document.querySelectorAll('.woverlay').forEach(overlay=>{
 
 // Escape key
 document.addEventListener('keydown',e=>{ if(e.key==='Escape'){ closeAllWins(); closeStart(); } });
+
+// ── Recycle Bin project mini-windows ───────────
+const RECYCLE_PROJECTS = {
+  'lets-talk-sex': { title:'Lets Talk Sex', body:'A content property we tried and shelved.' },
+  'porkalam': { title:'Porkalam', body:'A content property we tried and shelved.' },
+  'kakaka': { title:'Kakaka', body:'A content property we tried and shelved.' },
+  'happ': { title:'Happ', body:'A product/content idea we tried and shelved.' },
+  'indie-nadu': { title:'Indie Nadu', body:'A content property we tried and shelved.' },
+  'cult-kalaki': { title:'Cult Kalaki', body:'A content property we tried and shelved.' },
+  'paracetamol-paniyaram': { title:'Paracetamol Paniyaram', body:'An earlier chapter of this project that we later shelved — it lives on today over in Brag Doc → TigVid.' },
+  'f-buddies': { title:'F Buddies', body:'An earlier chapter of this project that we later shelved — it lives on today over in Brag Doc → TigVid.' },
+  'tigtos': { title:'TIGTOS (TIG The Open Screen)', body:'A content property we tried and shelved.' }
+};
+const recycleOverlay = document.getElementById('recycle-modal-overlay');
+const recycleTitle = document.getElementById('recycle-modal-title');
+const recycleBody = document.getElementById('recycle-modal-body');
+function openRecycleProject(key){
+  const p = RECYCLE_PROJECTS[key];
+  if(!p) return;
+  recycleTitle.textContent = p.title;
+  recycleBody.textContent = p.body;
+  recycleOverlay.classList.add('open');
+}
+function closeRecycleProject(){ recycleOverlay.classList.remove('open'); }
+document.querySelectorAll('.recycle-item').forEach(row=>{
+  row.addEventListener('click', e=>{
+    e.stopPropagation();
+    openRecycleProject(row.dataset.project);
+  });
+});
+document.getElementById('recycle-modal-close').addEventListener('click', e=>{
+  e.stopPropagation();
+  closeRecycleProject();
+});
+recycleOverlay.addEventListener('click', e=>{
+  if(e.target===recycleOverlay) closeRecycleProject();
+});
 
 // ── MINI BROWSER (Tigital / TigGigs) ───────────
 // Each .wframe[data-browser] hosts .bpage divs; back/fwd/refresh/home
@@ -1740,7 +1789,7 @@ let baneTimer = null;
 
 impDraw(impBuilt[0]); // initial pose
 
-bane.addEventListener('click', ()=>{
+function baneClick(){
   poseIdx = (poseIdx + 1) % impBuilt.length;
   lineIdx = (lineIdx + 1) % lines.length;
   impDraw(impBuilt[poseIdx]);
@@ -1758,7 +1807,66 @@ bane.addEventListener('click', ()=>{
     bubble.style.color = '#000';
     bubble.style.borderColor = '';
   }, 1600);
-});
+}
+
+// ── Bane — draggable ──
+(function(){
+  let dragging = false, moved = false, startX = 0, startY = 0, origLeft = 0, origTop = 0;
+  const THRESH = 6;
+
+  function getXY(e){
+    if(e.touches && e.touches.length) return { x: e.touches[0].clientX, y: e.touches[0].clientY };
+    return { x: e.clientX, y: e.clientY };
+  }
+
+  function pointerDown(e){
+    dragging = true; moved = false;
+    const rect = bane.getBoundingClientRect();
+    origLeft = rect.left; origTop = rect.top;
+    const p = getXY(e);
+    startX = p.x; startY = p.y;
+    document.addEventListener('mousemove', pointerMove);
+    document.addEventListener('mouseup', pointerUp);
+    document.addEventListener('touchmove', pointerMove, { passive:false });
+    document.addEventListener('touchend', pointerUp);
+  }
+
+  function pointerMove(e){
+    if(!dragging) return;
+    const p = getXY(e);
+    const dx = p.x - startX, dy = p.y - startY;
+    if(!moved && (Math.abs(dx) > THRESH || Math.abs(dy) > THRESH)){
+      moved = true;
+      bane.classList.add('dragging');
+      bane.style.right = 'auto';
+      bane.style.bottom = 'auto';
+      bane.style.left = origLeft + 'px';
+      bane.style.top = origTop + 'px';
+    }
+    if(moved){
+      if(e.cancelable) e.preventDefault();
+      const maxLeft = window.innerWidth - bane.offsetWidth - 4;
+      const maxTop = window.innerHeight - bane.offsetHeight - 4;
+      const newLeft = Math.max(4, Math.min(origLeft + dx, maxLeft));
+      const newTop = Math.max(24, Math.min(origTop + dy, maxTop));
+      bane.style.left = newLeft + 'px';
+      bane.style.top = newTop + 'px';
+    }
+  }
+
+  function pointerUp(){
+    dragging = false;
+    bane.classList.remove('dragging');
+    document.removeEventListener('mousemove', pointerMove);
+    document.removeEventListener('mouseup', pointerUp);
+    document.removeEventListener('touchmove', pointerMove);
+    document.removeEventListener('touchend', pointerUp);
+    if(!moved) baneClick();
+  }
+
+  bane.addEventListener('mousedown', pointerDown);
+  bane.addEventListener('touchstart', pointerDown, { passive:true });
+})();
 
 })();
 </script>

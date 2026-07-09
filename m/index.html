@@ -590,12 +590,12 @@ var APPS = {
   tiggigs:  {name:'TigGigs',  sub:'Gigs that pay',            wordmark:'₹', fill:'fill-logo', ext:true, url:'/tiggigs/'},
   tigpods:  {name:'Tigpods',  sub:'Podcast network',          logo:'icons/tigpods.png', fill:'fill-logo', ext:true, url:'/tigpods/'},
   tigom:    {name:'TIGOM',    sub:'Open mic · live',      logo:'icons/tigom.png', fill:'fill-logo', ext:true, url:'/tigom/'},
-  ourwork:  {name:'Our Work', sub:'TVCs, events & more',      icon:'trophy', fill:'fill-logo', glyph:'#17266b', interior:'ourwork', headFrom:'#3a2030', headTo:'#15140f',
+  ourwork:  {name:'Brag Doc', sub:'TVCs, events & more',      icon:'trophy', fill:'fill-logo', glyph:'#17266b', interior:'ourwork', headFrom:'#3a2030', headTo:'#15140f',
              blurb:'Brands, government clients and culture — TVCs, TIGvents, digital marketing and more.'},
   portfolio:{name:'Portfolio', sub:'Decks & documents',       icon:'book', fill:'fill-logo', glyph:'#17266b', interior:'portfolio', headFrom:'#3a2010', headTo:'#15140f',
              blurb:'Two decks, ready to open — no download required.'},
   sandbox:  {name:'TIG Sandbox', sub:'Internship programme',  icon:'compass', fill:'fill-logo', glyph:'#17266b', interior:'sandbox', headFrom:'#1c2a1c', headTo:'#15140f',
-             blurb:"Real briefs, real clients, real deadlines. No coffee-fetching."}
+             blurb:"Real briefs, real clients, real deadlines.\nNo coffee-fetching."}
 };
 
 /* ===== state + navigation ===== */
@@ -708,7 +708,9 @@ function IHead(app){
         h("p", null, app.sub)),
       h("button", {className:"iweb", onClick:function(){ openWeb(app); }}, "Website", glyph("ext"))
     ),
-    h("p", {className:"blurb"}, app.blurb)
+    h("p", {className:"blurb"}, String(app.blurb).split("\n").map(function(line, i, arr){
+      return i < arr.length - 1 ? [line, h("br")] : line;
+    }))
   );
 }
 function EventRow(icon, title, when, tagTxt, accent){
@@ -717,7 +719,7 @@ function EventRow(icon, title, when, tagTxt, accent){
     h("div", {className:"lmid"},
       h("h6", null, title),
       h("p", null, glyph("clock", {style:{width:11,height:11}}), when)),
-    h("span", {className:"tag" + (accent ? " accent" : "")}, tagTxt)
+    tagTxt ? h("span", {className:"tag" + (accent ? " accent" : "")}, tagTxt) : null
   );
 }
 
@@ -794,7 +796,7 @@ function OurWorkBody(app){
   return [
     h("div", {className:"hof-banner"},
       glyph("trophy", {stroke:'#17266b', style:{width:18,height:18}}),
-      h("span", null, "Our Work"),
+      h("span", null, "Brag Doc"),
       h("small", null, "TVCs, events, digital & govt. clients")
     ),
     chipRow,
@@ -920,40 +922,33 @@ function SandboxBody(app){
     ['Ritadevi','Ethiraj','Apr 2024',false],
     ['Naveen','—','Apr 2024',false],
     ['Vijayan','—','Jun 2024',false],
-    ['Simon','—','Jul 2024',false]
+    ['Simon','—','Jul 2024',true]
   ];
-  var tigAlumniNames = alumni.filter(function(a){ return a[3]; }).map(function(a){ return a[0]; }).join(', ');
   return [
-    h("div", {className:"isec"}, "The programme", h("small", null, "Tracks/eligibility TBC")),
+    h("div", {className:"isec"}, "The programme"),
     h("div", {className:"stack"},
-      EventRow('clock', 'Rolling batches', 'Most run 2–4 months (2018–2024)', 'Duration'),
-      EventRow('compass', '[Tracks]', 'e.g. Video, Digital, Events, Content', 'TBC'),
-      EventRow('people', '[Eligibility]', 'e.g. Students & recent grads', 'TBC'),
-      EventRow('briefcase', '[Stipend]', 'e.g. Paid stipend + certificate', 'TBC')
+      EventRow('clock', 'Rolling batches', 'Most run 2–4 months (2018–2024 cohorts)', 'Duration'),
+      EventRow('compass', 'Tracks', 'Video, Digital, Events, Content, Graphic Design, Editing, Business Development, Influencer Marketing', ''),
+      EventRow('people', 'Eligibility', 'Anyone and Everyone, as long as you can think horizontally, have the willingness to learn and urge to constantly innovate.', ''),
+      EventRow('briefcase', 'Stipend', '₹5,000', '')
     ),
     h("div", {className:"isec"}, "Track record"),
     h("div", {className:"statcard"},
       h("div", {style:{display:'flex',justifyContent:'space-between',flexWrap:'wrap',gap:14}},
         h("div", null, h("div", {className:"bignum"}, "28"), h("div", {style:statLabel}, "Interns since 2018")),
-        h("div", null, h("div", {className:"bignum"}, "17"), h("div", {style:statLabel}, "Hiring offers")),
-        h("div", null, h("div", {className:"bignum"}, "15"), h("div", {style:statLabel}, "Now at TIG"))
+        h("div", null, h("div", {className:"bignum"}, "24"), h("div", {style:statLabel}, "Completed (86%)")),
+        h("div", null, h("div", {className:"bignum"}, "17"), h("div", {style:statLabel}, "Hiring offers (61%)")),
+        h("div", null, h("div", {className:"bignum"}, "16"), h("div", {style:statLabel}, "Now at TIG (57%)"))
       )
     ),
-    h("div", {className:"isec"}, "Programme alumni", h("small", null, "⭐ now at TIG")),
+    h("div", {className:"isec"}, "Programme alumni", h("small", null, "⭐ employed at TIG post-internship")),
     h("div", {className:"grid2"},
       alumni.map(function(a){ return SandboxCard(a[0], a[1], a[2], a[3]); })
-    ),
-    h("div", {className:"isec"}, "Now working at TIG"),
-    h("div", {className:"card"},
-      h("div", {className:"card-pad"},
-        h("div", {style:{fontFamily:'var(--ui)',fontSize:12.5,color:'var(--tx-soft)',lineHeight:1.55}}, "15 Sandbox alumni went on to join TIG full-time — including " + tigAlumniNames + ".")
-      )
     ),
     h("div", {className:"card", style:{marginTop:18}},
       h("div", {className:"card-pad"},
         h("div", {style:{fontFamily:'var(--ui)',fontSize:13,color:'var(--tx-soft)',lineHeight:1.5}}, "Think you've got what it takes? We're always looking for people who ship."),
-        h("a", {className:"btn solid full", style:{marginTop:12,textDecoration:'none',textAlign:'center'}, href:"https://forms.gle/REPLACE-WITH-YOUR-FORM-LINK", target:"_blank", rel:"noopener"}, "📝 Apply to TIG Sandbox"),
-        h("div", {style:{marginTop:8,textAlign:'center'}}, h("span", {className:"tag accent"}, "🚧 Add your real Google Form link"))
+        h("a", {className:"btn solid full", style:{marginTop:12,textDecoration:'none',textAlign:'center'}, href:"https://docs.google.com/forms/d/e/1FAIpQLSd2DP505B8c0NKUM-gtlnXyIHCVxoliY3MMUDe8k1miE9-fhQ/viewform?usp=header", target:"_blank", rel:"noopener"}, "📝 Apply to TIG Sandbox")
       )
     )
   ];
