@@ -13,6 +13,10 @@
 <meta property="og:url" content="https://theintgen.com/">
 <link rel="canonical" href="https://theintgen.com/">
 <link rel="alternate" media="only screen and (max-width: 640px)" href="https://theintgen.com/m/">
+<link rel="icon" type="image/png" sizes="32x32" href="/public/favicon-32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/public/favicon-16.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/public/assets/favicon-180.png">
+<link rel="icon" type="image/png" sizes="192x192" href="/public/assets/favicon-192.png">
 <script>
 (function(){
   var isPhone = /Android.*Mobile|iPhone|iPod/i.test(navigator.userAgent);
@@ -283,6 +287,24 @@ html,body{width:100%;height:100%;font-family:var(--font-ui);font-size:12px;
 .work-thumb-label{padding:5px 7px;font-family:var(--font-ui);font-size:10px;font-weight:700;color:#1b1c1c;
   display:flex;align-items:center;justify-content:space-between;gap:4px;background:#efeded;border-top:1px solid #e3e2e2}
 .work-thumb-label .ms{font-size:13px;color:#c0392b;flex-shrink:0}
+
+/* === PRESS COLLAGE (jigsaw / masonry) === */
+.press-collage{column-count:2;column-gap:6px;padding:8px 14px 2px}
+.press-tile{display:block;width:100%;margin:0 0 6px;break-inside:avoid;cursor:zoom-in;
+  border-top:1px solid #fff;border-left:1px solid #fff;border-right:1px solid #000;border-bottom:1px solid #000;
+  box-shadow:inset -1px -1px 0 #808080,inset 1px 1px 0 #dfdfdf,2px 2px 0 #bdc9c8;overflow:hidden;background:#fff}
+.press-tile img{display:block;width:100%;height:auto}
+.press-tile-cap{padding:4px 6px;font-family:var(--font-ui);font-size:9px;line-height:1.3;font-weight:700;color:#1b1c1c;background:#efeded;border-top:1px solid #e3e2e2}
+#press-lightbox{position:fixed;inset:0;z-index:700;display:none;align-items:center;justify-content:center;
+  background:rgba(0,0,0,.72);padding:24px}
+#press-lightbox.open{display:flex}
+#press-lightbox-inner{max-width:min(900px,100%);max-height:100%;display:flex;flex-direction:column;align-items:center;gap:10px}
+#press-lightbox img{max-width:100%;max-height:78vh;display:block;box-shadow:0 4px 24px rgba(0,0,0,.5);background:#fff}
+#press-lightbox-cap{font-family:var(--font-ui);font-size:12px;color:#fff;text-align:center;max-width:640px}
+#press-lightbox-close{position:absolute;top:16px;right:20px;width:28px;height:28px;background:var(--gray);
+  display:flex;align-items:center;justify-content:center;font-size:14px;cursor:pointer;
+  border-top:1px solid #fff;border-left:1px solid #fff;border-right:1px solid #000;border-bottom:1px solid #000;
+  box-shadow:inset -1px -1px 0 #808080,inset 1px 1px 0 #dfdfdf}
 
 /* === BOOT DIALOG === */
 #boot-overlay{position:fixed;inset:0;z-index:999;display:flex;align-items:center;
@@ -942,21 +964,29 @@ html,body{width:100%;height:100%;font-family:var(--font-ui);font-size:12px;
     </div>
 
     <div style="padding:5px 14px 3px;font-family:var(--font-ui);font-size:11px;color:#5d5e5f;border-top:1px solid #e3e2e2;border-bottom:1px solid #e3e2e2;background:#efeded"><span class="ms" style="font-size:13px;vertical-align:-2px;color:#006565">newspaper</span> <strong>Press Clippings</strong> <span style="font-weight:400">— the newspapers love us, NBD ;)</span></div>
-    <div class="work-thumb-grid">
-      <div class="work-thumb" style="cursor:default"><img src="/public/assets/press/press1.jpg" alt="What's Hot Chennai — F Buddies feature" loading="lazy"><div class="work-thumb-label"><span>What's Hot Chennai — F Buddies</span></div></div>
-      <div class="work-thumb" style="cursor:default"><img src="/public/assets/press/press2.jpg" alt="The Chronicle — Meet a pucca Tamil Deadpool" loading="lazy"><div class="work-thumb-label"><span>The Chronicle — Tamil Deadpool</span></div></div>
-      <div class="work-thumb" style="cursor:default"><img src="/public/assets/press/press3.jpg" alt="Puzzled at MGR Central" loading="lazy"><div class="work-thumb-label"><span>Puzzled at MGR Central</span></div></div>
-      <div class="work-thumb" style="cursor:default"><img src="/public/assets/press/press4.jpg" alt="TIGOM open mic press feature" loading="lazy"><div class="work-thumb-label"><span>TIGOM — Open Mic feature</span></div></div>
-      <div class="work-thumb" style="cursor:default"><img src="/public/assets/press/press5.jpg" alt="Awareness by the bay — Walk for Plastic" loading="lazy"><div class="work-thumb-label"><span>Awareness by the Bay</span></div></div>
-      <div class="work-thumb" style="cursor:default"><img src="/public/assets/press/press6.jpg" alt="The New Indian Express — Behind the meme factory" loading="lazy"><div class="work-thumb-label"><span>New Indian Express — Meme Factory</span></div></div>
-      <div class="work-thumb" style="cursor:default"><img src="/public/assets/press/press7.jpg" alt="iTimes — Chennai's open mic culture" loading="lazy"><div class="work-thumb-label"><span>iTimes — Open Mic Culture</span></div></div>
-      <div class="work-thumb" style="cursor:default"><img src="/public/assets/press/press8.jpg" alt="Open mics thriving post-pandemic press feature" loading="lazy"><div class="work-thumb-label"><span>Open Mics, Restrictions Eased</span></div></div>
+    <div class="press-collage">
+      <div class="press-tile" data-cap="Our webseries highlighted on the first page of Chennai Times"><img src="/public/assets/press/press1.jpg" alt="What's Hot Chennai — New Relationship Status: F Buddies!" loading="lazy"><div class="press-tile-cap">What's Hot Chennai — F Buddies</div></div>
+      <div class="press-tile" data-cap="Our video production content featured in The Deccan Chronicle"><img src="/public/assets/press/press2.jpg" alt="Deccan Chronicle — Meet a pucca Tamil Deadpool" loading="lazy"><div class="press-tile-cap">Deccan Chronicle — Tamil Deadpool</div></div>
+      <div class="press-tile" data-cap="Our Vote Podu campaign, in association with Dunzo, as featured in The Hindu"><img src="/public/assets/press/press3.jpg" alt="Puzzled at MGR Central — Vote Podu campaign" loading="lazy"><div class="press-tile-cap">Puzzled at MGR Central — Vote Podu</div></div>
+      <div class="press-tile" data-cap="TIGOM, our Open Mic event, featured in Metroplus"><img src="/public/assets/press/press4.jpg" alt="TIGOM open mic feature in Metroplus" loading="lazy"><div class="press-tile-cap">TIGOM — Open Mic, Metroplus</div></div>
+      <div class="press-tile" data-cap="&quot;Singalaalaah&quot;, an event by TIG at Elliot's Beach, featured in The Hindu"><img src="/public/assets/press/press5.jpg" alt="Awareness by the Bay — Singalaalaah event" loading="lazy"><div class="press-tile-cap">Awareness by the Bay — Singalaalaah</div></div>
+      <div class="press-tile" data-cap="TIGital's meme page — behind the scenes, featured in the Chennai Express"><img src="/public/assets/press/press6.jpg" alt="Behind the meme factory — Chennai Express" loading="lazy"><div class="press-tile-cap">Chennai Express — Behind the Meme Factory</div></div>
+      <div class="press-tile" data-cap="TIGOM, our Open Mic event, featured in Chennai Times"><img src="/public/assets/press/press7.jpg" alt="Chennai Times — how Chennai's open-mic culture is thriving" loading="lazy"><div class="press-tile-cap">Chennai Times — Open-Mic Culture</div></div>
+      <div class="press-tile" data-cap="TIGOM, our Open Mic event, featured in Chennai Times"><img src="/public/assets/press/press8.jpg" alt="Chennai Times — socially distanced open-mics are happening in the city" loading="lazy"><div class="press-tile-cap">Chennai Times — Open-Mics Are Back</div></div>
+    </div>
+
+    <div id="press-lightbox">
+      <div id="press-lightbox-close">✕</div>
+      <div id="press-lightbox-inner">
+        <img id="press-lightbox-img" src="" alt="">
+        <div id="press-lightbox-cap"></div>
+      </div>
     </div>
 
     <div style="padding:5px 14px 3px;font-family:var(--font-ui);font-size:11px;color:#5d5e5f;border-top:1px solid #e3e2e2;border-bottom:1px solid #e3e2e2;background:#efeded"><span class="ms" style="font-size:13px;vertical-align:-2px;color:#006565">movie</span> <strong>TigVid</strong> <span style="font-weight:400">— our own little Hollywood studio</span></div>
     <div class="wc-row"><span class="ms">smart_display</span><span class="wc-row-name">F Buddies — Season 1 &amp; 2</span><span class="wc-row-type">Web-Series</span><span class="wc-row-size">—</span></div>
-    <div class="wc-row"><span class="ms">smart_display</span><span class="wc-row-name">"Yuv" for Silicon Sandhu Pvt Ltd</span><span class="wc-row-type">11 episodes</span><span class="wc-row-size">—</span></div>
-    <div class="wc-row"><span class="ms">smart_display</span><span class="wc-row-name">Single Singam for Ondraga — India's first vertical web-series</span><span class="wc-row-type">7 episodes</span><span class="wc-row-size">—</span></div>
+    <div class="wc-row"><span class="ms">smart_display</span><span class="wc-row-name">Silicon Sandhu — "Yuv" by KPV</span><span class="wc-row-type">11 episodes</span><span class="wc-row-size">—</span></div>
+    <div class="wc-row"><span class="ms">smart_display</span><span class="wc-row-name">Cult Kalaki — a comedy YouTube channel for Silly Monks</span><span class="wc-row-type">Web-Series</span><span class="wc-row-size">—</span></div>
     <div class="wc-row"><span class="ms">smart_display</span><span class="wc-row-name">Paracetamol Paniyaram — Tamil Nadu's 3rd YouTube channel</span><span class="wc-row-type">100+ videos</span><span class="wc-row-size">1L+ subs</span></div>
     <div class="work-thumb-grid">
       <a class="work-thumb" href="https://www.youtube.com/watch?list=PL0t5Yw_UGzuX8p7TFnfl8BeGsHn_2_NoV&amp;v=jEBMJ6aPPbM&amp;feature=youtu.be&amp;ab_channel=ProjectPakoda" target="_blank" rel="noopener">
@@ -993,33 +1023,29 @@ html,body{width:100%;height:100%;font-family:var(--font-ui);font-size:12px;
 
     <div style="padding:5px 14px 3px;font-family:var(--font-ui);font-size:11px;color:#5d5e5f;border-top:1px solid #e3e2e2;border-bottom:1px solid #e3e2e2;background:#efeded"><span class="ms" style="font-size:13px;vertical-align:-2px;color:#006565">celebration</span> <strong>TIGvents — Curating Experiences</strong></div>
     <div class="work-thumb-grid">
-      <div class="work-thumb" style="cursor:default"><img src="/public/assets/events/event_p18_b.jpg" alt="Chennai Day crowd on Besant Nagar Beach" loading="lazy"><div class="work-thumb-label"><span>Chennai Day '22 — Besant Nagar Beach</span></div></div>
-      <div class="work-thumb" style="cursor:default"><img src="/public/assets/events/event_p19_b.jpg" alt="World's Largest Pledge Against Drugs crowd" loading="lazy"><div class="work-thumb-label"><span>Pledge Against Drugs — NIBCID &amp; TN Govt.</span></div></div>
-      <div class="work-thumb" style="cursor:default"><img src="/public/assets/events/event_p19_c.jpg" alt="Pradeep Kumar concert crowd at Music Academy" loading="lazy"><div class="work-thumb-label"><span>Pradeep Kumar's Concert — Music Academy</span></div></div>
-      <div class="work-thumb" style="cursor:default"><img src="/public/assets/events/event_p20_b.jpg" alt="Loka Fest crowd at Auroville" loading="lazy"><div class="work-thumb-label"><span>Loka Fest V1 &amp; V2 — Auroville</span></div></div>
-      <div class="work-thumb" style="cursor:default"><img src="/public/assets/events/event_p21_b.jpg" alt="Chennai Open SDAT Women's Tennis crowd" loading="lazy"><div class="work-thumb-label"><span>Chennai Open — SDAT Women's Tennis</span></div></div>
+      <div class="work-thumb" style="cursor:default"><img src="/public/assets/events/event_p18_b.jpg" alt="Chennai Day '22 celebration on Besant Nagar Beach" loading="lazy"><div class="work-thumb-label"><span>Chennai Day '22 — Besant Nagar Beach</span></div></div>
+      <div class="work-thumb" style="cursor:default"><img src="/public/assets/events/event_lokafest.jpg" alt="Loka Fest performance at Auroville" loading="lazy"><div class="work-thumb-label"><span>Loka Fest V1 &amp; V2 — Auroville</span></div></div>
+      <div class="work-thumb" style="cursor:default"><img src="/public/assets/events/event_chennaiopen.jpg" alt="Chennai Open SDAT Women's Tennis prize presentation" loading="lazy"><div class="work-thumb-label"><span>Chennai Open — SDAT Women's Tennis</span></div></div>
+      <div class="work-thumb" style="cursor:default"><img src="/public/assets/events/event_tigompro.jpg" alt="TIGOM PRO crowd at Phoenix Marketcity" loading="lazy"><div class="work-thumb-label"><span>TIGOM PRO — Phoenix Marketcity</span></div></div>
+      <div class="work-thumb" style="cursor:default"><img src="/public/assets/events/event_pradeep.jpg" alt="Immerse with Pradeep — Pradeep Kumar's concert poster" loading="lazy"><div class="work-thumb-label"><span>Pradeep Kumar's Concert — Music Academy</span></div></div>
       <div class="work-thumb" style="cursor:default"><img src="/public/assets/events/event_p21_d.jpg" alt="TIGOM open mic crowd" loading="lazy"><div class="work-thumb-label"><span>TIGOM — 45+ editions and counting</span></div></div>
     </div>
-    <div class="wc-row"><span class="ms">mic</span><span class="wc-row-name">TIGOM PRO I &amp; II — Phoenix Marketcity, Velachery</span><span class="wc-row-type">Event</span><span class="wc-row-size">—</span></div>
-    <div class="wc-row"><span class="ms">groups</span><span class="wc-row-name">Cypher TIG Jam — dance &amp; rap/beatbox battles at OG MottaMaadi</span><span class="wc-row-type">Recurring</span><span class="wc-row-size">—</span></div>
-    <div class="wc-row"><span class="ms">nightlife</span><span class="wc-row-name">Karaoke Nights @ The Leather Bar</span><span class="wc-row-type">Recurring</span><span class="wc-row-size">—</span></div>
-    <div class="wc-row"><span class="ms">campaign</span><span class="wc-row-name">Nivaran 90 — influencer campaign for a social cause</span><span class="wc-row-type">Campaign</span><span class="wc-row-size">—</span></div>
 
     <div style="padding:5px 14px 3px;font-family:var(--font-ui);font-size:11px;color:#5d5e5f;border-top:1px solid #e3e2e2;border-bottom:1px solid #e3e2e2;background:#efeded"><span class="ms" style="font-size:13px;vertical-align:-2px;color:#006565">gavel</span> <strong>Government Clientele</strong></div>
     <div class="work-thumb-grid">
       <div class="work-thumb" style="cursor:default"><img src="/public/assets/govt/govt_logo1.jpg" alt="TN Enforcement Bureau" loading="lazy"><div class="work-thumb-label"><span>TN Enforcement Bureau</span></div></div>
-      <div class="work-thumb" style="cursor:default"><img src="/public/assets/govt/govt_logo2.jpg" alt="Sports Development Authority of Tamil Nadu" loading="lazy"><div class="work-thumb-label"><span>Sports Development Authority (SDAT)</span></div></div>
-      <div class="work-thumb" style="cursor:default"><img src="/public/assets/govt/govt_logo3.jpg" alt="Greater Chennai Traffic Police" loading="lazy"><div class="work-thumb-label"><span>Greater Chennai Traffic Police</span></div></div>
+      <div class="work-thumb" style="cursor:default"><img src="/public/assets/govt/govt_logo3.jpg" alt="Sports Development Authority of Tamil Nadu" loading="lazy"><div class="work-thumb-label"><span>Sports Development Authority (SDAT)</span></div></div>
+      <div class="work-thumb" style="cursor:default"><img src="/public/assets/govt/govt_logo2.jpg" alt="Greater Chennai Traffic Police" loading="lazy"><div class="work-thumb-label"><span>Greater Chennai Traffic Police</span></div></div>
     </div>
 
     <div style="padding:5px 14px 3px;font-family:var(--font-ui);font-size:11px;color:#5d5e5f;border-top:1px solid #e3e2e2;border-bottom:1px solid #e3e2e2;background:#efeded"><span class="ms" style="font-size:13px;vertical-align:-2px;color:#006565">closed_caption</span> <strong>Subtitling-as-a-Service</strong></div>
     <div class="work-thumb-grid">
-      <div class="work-thumb" style="cursor:default"><img src="/public/assets/subtitling/sub1.jpg" alt="Subtitling work sample 1" loading="lazy"><div class="work-thumb-label"><span>Comedy sketches — Paracetamol Paniyaram</span></div></div>
+      <div class="work-thumb" style="cursor:default"><img src="/public/assets/subtitling/sub1.jpg" alt="Subtitling work sample 1" loading="lazy"><div class="work-thumb-label"><span>"Blood Money" — Zee5 Original</span></div></div>
       <div class="work-thumb" style="cursor:default"><img src="/public/assets/subtitling/sub2.jpg" alt="Subtitling work sample 2" loading="lazy"><div class="work-thumb-label"><span>Madras Meter</span></div></div>
-      <div class="work-thumb" style="cursor:default"><img src="/public/assets/subtitling/sub3.jpg" alt="Subtitling work sample 3" loading="lazy"><div class="work-thumb-label"><span>"Blood Money" — Zee5 Original</span></div></div>
+      <div class="work-thumb" style="cursor:default"><img src="/public/assets/subtitling/sub3.jpg" alt="Subtitling work sample 3" loading="lazy"><div class="work-thumb-label"><span>Comedy sketches — Paracetamol Paniyaram</span></div></div>
       <div class="work-thumb" style="cursor:default"><img src="/public/assets/subtitling/sub4.jpg" alt="Subtitling work sample 4" loading="lazy"><div class="work-thumb-label"><span>NETFLIX YouTube channel</span></div></div>
-      <div class="work-thumb" style="cursor:default"><img src="/public/assets/subtitling/sub5.jpg" alt="Subtitling work sample 5" loading="lazy"><div class="work-thumb-label"><span>Subtitling sample</span></div></div>
-      <div class="work-thumb" style="cursor:default"><img src="/public/assets/subtitling/sub6.jpg" alt="Subtitling work sample 6" loading="lazy"><div class="work-thumb-label"><span>Subtitling sample</span></div></div>
+      <div class="work-thumb" style="cursor:default"><img src="/public/assets/subtitling/sub5.jpg" alt="Subtitling work sample 5" loading="lazy"><div class="work-thumb-label"><span>NETFLIX YouTube channel</span></div></div>
+      <div class="work-thumb" style="cursor:default"><img src="/public/assets/subtitling/sub6.jpg" alt="Subtitling work sample 6" loading="lazy"><div class="work-thumb-label"><span>NETFLIX YouTube channel</span></div></div>
     </div>
 
     <div style="text-align:center;padding:10px">
@@ -1314,8 +1340,7 @@ html,body{width:100%;height:100%;font-family:var(--font-ui);font-size:12px;
   </div>
   <div class="wcontent">
     <div class="wc" style="padding:8px 14px">
-      <div class="wc-h1" style="font-size:13px">Every agency has a *recycle bin.</div>
-      <div class="wc-body">These are the actual projects we've done and dropped.</div>
+      <div class="wc-h1" style="font-size:13px">Every agency has a recycle bin, ours is searchable.</div>
     </div>
     <div style="padding:2px 14px 4px;font-family:var(--font-mono);font-size:10px;color:#5d5e5f;border-bottom:1px solid #e3e2e2">
       <span>Name</span>
@@ -1325,9 +1350,6 @@ html,body{width:100%;height:100%;font-family:var(--font-ui);font-size:12px;
     <div class="wc-row recycle-item" data-project="kakaka" style="cursor:pointer"><span class="ms" style="color:#808080">description</span><span class="wc-row-name">Kakaka</span></div>
     <div class="wc-row recycle-item" data-project="happ" style="cursor:pointer"><span class="ms" style="color:#808080">description</span><span class="wc-row-name">Happ</span></div>
     <div class="wc-row recycle-item" data-project="indie-nadu" style="cursor:pointer"><span class="ms" style="color:#808080">description</span><span class="wc-row-name">Indie Nadu</span></div>
-    <div class="wc-row recycle-item" data-project="cult-kalaki" style="cursor:pointer"><span class="ms" style="color:#808080">description</span><span class="wc-row-name">Cult Kalaki</span></div>
-    <div class="wc-row recycle-item" data-project="paracetamol-paniyaram" style="cursor:pointer"><span class="ms" style="color:#808080">description</span><span class="wc-row-name">Paracetamol Paniyaram</span></div>
-    <div class="wc-row recycle-item" data-project="f-buddies" style="cursor:pointer"><span class="ms" style="color:#808080">description</span><span class="wc-row-name">F Buddies</span></div>
     <div class="wc-row recycle-item" data-project="tigtos" style="cursor:pointer"><span class="ms" style="color:#808080">description</span><span class="wc-row-name">TIGTOS (TIG The Open Screen)</span></div>
     <div style="text-align:center;padding:10px">
       <span class="wc-btn" style="opacity:.5;cursor:not-allowed">Restore</span>
@@ -1335,7 +1357,7 @@ html,body{width:100%;height:100%;font-family:var(--font-ui);font-size:12px;
       <div style="font-family:var(--font-mono);font-size:9px;color:#5d5e5f;margin-top:8px">Click a name to see what it was.</div>
     </div>
   </div>
-  <div class="wstatus"><div class="wsf">9 objects</div><div class="wsf">Click to reopen</div></div>
+  <div class="wstatus"><div class="wsf">6 objects</div><div class="wsf">Click to reopen</div></div>
 </div>
 </div>
 
@@ -1460,19 +1482,22 @@ document.querySelectorAll('.woverlay').forEach(overlay=>{
 });
 
 // Escape key
-document.addEventListener('keydown',e=>{ if(e.key==='Escape'){ closeAllWins(); closeStart(); } });
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape'){
+    closeAllWins(); closeStart();
+    const rm = document.getElementById('recycle-modal-overlay'); if(rm) rm.classList.remove('open');
+    const pl = document.getElementById('press-lightbox'); if(pl) pl.classList.remove('open');
+  }
+});
 
 // ── Recycle Bin project mini-windows ───────────
 const RECYCLE_PROJECTS = {
-  'lets-talk-sex': { title:'Lets Talk Sex', body:'A content property we tried and shelved.' },
-  'porkalam': { title:'Porkalam', body:'A content property we tried and shelved.' },
-  'kakaka': { title:'Kakaka', body:'A content property we tried and shelved.' },
-  'happ': { title:'Happ', body:'A product/content idea we tried and shelved.' },
-  'indie-nadu': { title:'Indie Nadu', body:'A content property we tried and shelved.' },
-  'cult-kalaki': { title:'Cult Kalaki', body:'A content property we tried and shelved.' },
-  'paracetamol-paniyaram': { title:'Paracetamol Paniyaram', body:'An earlier chapter of this project that we later shelved — it lives on today over in Brag Doc → TigVid.' },
-  'f-buddies': { title:'F Buddies', body:'An earlier chapter of this project that we later shelved — it lives on today over in Brag Doc → TigVid.' },
-  'tigtos': { title:'TIGTOS (TIG The Open Screen)', body:'A content property we tried and shelved.' }
+  'lets-talk-sex': { title:'Lets Talk Sex', body:'An in-person talk show where people from different walks of life and age groups gather to talk about taboo topics, like sex.' },
+  'porkalam': { title:'Porkalam', body:"Chennai's first underground rap and beatbox cypher, where participants face off against each other — like in the movie 8 Mile." },
+  'kakaka': { title:'Kakaka', body:'A post-college event that revives the cultural feeling by recreating typical school and college events.' },
+  'happ': { title:'Happ', body:'An app that helps colleges conduct their culturals better.' },
+  'indie-nadu': { title:'Indie Nadu', body:'The biggest indie concert Chennai would have seen.' },
+  'tigtos': { title:'TIGTOS (TIG The Open Screen)', body:'A short film screening session, along with talks by people who have worked in the film industry.' }
 };
 const recycleOverlay = document.getElementById('recycle-modal-overlay');
 const recycleTitle = document.getElementById('recycle-modal-title');
@@ -1497,6 +1522,32 @@ document.getElementById('recycle-modal-close').addEventListener('click', e=>{
 });
 recycleOverlay.addEventListener('click', e=>{
   if(e.target===recycleOverlay) closeRecycleProject();
+});
+
+// ── Press clippings lightbox ───────────────────
+const pressLightbox = document.getElementById('press-lightbox');
+const pressLightboxImg = document.getElementById('press-lightbox-img');
+const pressLightboxCap = document.getElementById('press-lightbox-cap');
+function openPressLightbox(tile){
+  const img = tile.querySelector('img');
+  pressLightboxImg.src = img.src;
+  pressLightboxImg.alt = img.alt;
+  pressLightboxCap.textContent = tile.dataset.cap || img.alt;
+  pressLightbox.classList.add('open');
+}
+function closePressLightbox(){ pressLightbox.classList.remove('open'); }
+document.querySelectorAll('.press-tile').forEach(tile=>{
+  tile.addEventListener('click', e=>{
+    e.stopPropagation();
+    openPressLightbox(tile);
+  });
+});
+document.getElementById('press-lightbox-close').addEventListener('click', e=>{
+  e.stopPropagation();
+  closePressLightbox();
+});
+pressLightbox.addEventListener('click', e=>{
+  if(e.target===pressLightbox) closePressLightbox();
 });
 
 // ── MINI BROWSER (Tigital / TigGigs) ───────────
