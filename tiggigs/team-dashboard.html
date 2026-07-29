@@ -1779,14 +1779,15 @@ function renderOpsJobs() {
   el.innerHTML = `<div class="ops-table-wrap"><table class="ops-table">
     <thead><tr>
       <th>Job ID</th><th>Title</th><th>Client</th><th>Type</th><th>Status</th>
-      <th>Complexity</th><th>Deadline</th><th>Freelancer</th><th>Rate</th><th>Actions</th>
+      <th>Complexity</th><th>Deadline</th><th>Freelancer</th><th>Claimed</th><th>Rate</th><th>Actions</th>
     </tr></thead>
     <tbody>${rows.map(r => {
-      const id    = esc(r.job_id||'');
-      const flEm  = esc(r.claimed_by_email||'');
-      const flNm  = flEm ? esc(freelancerNameMap[flEm.toLowerCase()]||'') : '';
-      const dl    = r.internal_deadline ? r.internal_deadline.split('T')[0] : '—';
-      const opts  = S_OPTS.map(s => `<option${s===r.board_status?' selected':''}>${s}</option>`).join('');
+      const id        = esc(r.job_id||'');
+      const flEm      = esc(r.claimed_by_email||'');
+      const flNm      = flEm ? esc(freelancerNameMap[flEm.toLowerCase()]||'') : '';
+      const dl        = r.internal_deadline ? r.internal_deadline.split('T')[0] : '—';
+      const claimedOn = r.claimed_at ? new Date(r.claimed_at).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}) : '—';
+      const opts      = S_OPTS.map(s => `<option${s===r.board_status?' selected':''}>${s}</option>`).join('');
       return `<tr>
         <td><span class="chip id">${id}</span></td>
         <td style="max-width:180px;white-space:normal;line-height:1.35;font-size:12px">${esc(r.job_title||'Untitled')}</td>
@@ -1799,6 +1800,7 @@ function renderOpsJobs() {
           ${flNm ? `<div style="font-size:11px;color:var(--white);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${flNm}</div>` : ''}
           ${flEm ? `<div style="font-size:10px;color:#555;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${flEm}</div>` : '<span style="color:#444">—</span>'}
         </td>
+        <td style="font-family:'DM Mono',monospace;font-size:11px;color:var(--gray);white-space:nowrap">${claimedOn}</td>
         <td style="font-family:'Syne',sans-serif;font-size:13px;font-weight:700;color:var(--yellow)">${r.rate_auto ? '₹'+r.rate_auto : '—'}</td>
         <td><div style="display:flex;gap:5px;flex-wrap:wrap">
           ${flEm ? `<button class="tbl-btn" onclick="opsJobClear('${id}')">Clear Claim</button>` : ''}
