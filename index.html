@@ -99,13 +99,26 @@ html,body{width:100%;height:100%;font-family:var(--font-ui);font-size:12px;
   font-family:var(--font-ui);font-size:10px;font-weight:800;color:rgba(255,255,255,.5);letter-spacing:2px}
 .sm-items{flex:1;padding:2px 0;max-height:80vh;overflow-y:auto}
 .sm-item{display:flex;align-items:center;gap:8px;padding:7px 10px;cursor:pointer;
-  font-family:var(--font-ui);font-size:11px;color:#000;border-bottom:1px solid #bdc9c8}
+  font-family:var(--font-ui);font-size:11px;color:#000;text-decoration:none;border-bottom:1px solid #bdc9c8}
 .sm-item:last-child{border-bottom:none}
 .sm-item:hover,.sm-item:active{background:#000080;color:#fff}
 .sm-item:hover .ms,.sm-item:active .ms{color:#fff}
 .sm-item .ms{font-size:16px;color:#5d5e5f}
 .sm-item-toggle .sm-caret{margin-left:auto;font-size:15px;transition:transform .15s}
 .sm-item-toggle.expanded .sm-caret{transform:rotate(180deg)}
+.sm-item-disabled{cursor:not-allowed;opacity:.55}
+.sm-item-disabled:hover{background:none;color:#000}
+.sm-item-disabled:hover .ms{color:#5d5e5f}
+.sm-item-badge{margin-left:auto;font-size:8.5px;font-weight:800;letter-spacing:.2px;
+  color:#5d5e5f;background:#e3e2e2;border:1px solid #c8c7c7;padding:1px 5px;flex-shrink:0}
+.sm-search-wrap{display:flex;align-items:center;gap:7px;padding:8px 10px;
+  border-bottom:1px solid #bdc9c8;background:#fff}
+.sm-search-icon{font-size:15px;color:#5d5e5f;flex-shrink:0}
+.sm-search-input{flex:1;min-width:0;font-family:var(--font-ui);font-size:11px;
+  border:1px solid #000;box-shadow:inset 1px 1px 0 #808080;background:#fff;
+  padding:4px 6px;box-sizing:border-box}
+.sm-search-input:focus{outline:1px dotted #000080}
+.sm-search-input::-webkit-search-cancel-button{cursor:pointer}
 .sm-sublist{max-height:0;overflow:hidden;background:#efeded;border-bottom:1px solid #bdc9c8;transition:max-height .18s ease}
 .sm-sublist.open{max-height:340px;overflow-y:auto}
 .sm-subitem{display:flex;align-items:center;gap:8px;padding:6px 10px 6px 16px;
@@ -640,16 +653,17 @@ html,body{width:100%;height:100%;font-family:var(--font-ui);font-size:12px;
 <div id="start-menu">
   <div class="sm-sidebar"><span>TIG OS 98</span></div>
   <div class="sm-items">
-    <div class="sm-item" data-win="tigital"><span class="ms">library_books</span>Tigital</div>
-    <div class="sm-item" data-win="tiggigs"><span class="ms">currency_rupee</span>TigGigs</div>
-    <div class="sm-item" data-win="tigpods"><span class="ms">podcasts</span>Tigpods</div>
-    <div class="sm-item" data-win="tigom"><span class="ms">forum</span>TIGOM</div>
-    <div class="sm-item" data-win="tighq"><span class="ms">apartment</span>TigHQ</div>
-    <div class="sm-item" data-win="ourwork"><span class="ms">folder_open</span>Brag Doc</div>
-    <div class="sm-item" data-win="findus"><span class="ms">location_on</span>Find Us</div>
-    <div class="sm-item" data-win="portfolio"><span class="ms">slideshow</span>Portfolio</div>
-    <div class="sm-item" data-win="sandbox"><span class="ms">school</span>TIG Sandbox</div>
-    <div class="sm-item" data-win="recycle"><span class="ms">delete</span>Recycle Bin</div>
+    <form class="sm-search-wrap" id="sm-search-form">
+      <span class="ms sm-search-icon">search</span>
+      <input type="search" id="sm-search-input" class="sm-search-input" placeholder="Search theintgen.com" autocomplete="off" aria-label="Search theintgen.com">
+    </form>
+    <a class="sm-item" href="/tigital/" target="_blank" rel="noopener"><span class="ms">library_books</span>Tigital</a>
+    <a class="sm-item" href="/tiggigs/" target="_blank" rel="noopener"><span class="ms">currency_rupee</span>TigGigs</a>
+    <a class="sm-item" href="/tigpods/" target="_blank" rel="noopener"><span class="ms">podcasts</span>Tigpods</a>
+    <a class="sm-item" href="/tigom/" target="_blank" rel="noopener"><span class="ms">forum</span>TIGOM</a>
+    <div class="sm-item sm-item-disabled" title="Merch is in the works — hang tight">
+      <span class="ms">redeem</span>Tig Merch<span class="sm-item-badge">Coming Soon</span>
+    </div>
     <div class="sm-item sm-item-toggle" id="sm-cool-sites-toggle"><span class="ms">explore</span>Cool Websites<span class="ms sm-caret">expand_more</span></div>
     <div class="sm-sublist" id="sm-cool-sites-list">
       <a class="sm-subitem" href="https://floor796.com/#t3l5,772,502" target="_blank" rel="noopener">
@@ -1559,10 +1573,19 @@ document.querySelectorAll('.dicon').forEach(icon=>{
   icon.addEventListener('keydown',e=>{ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); activate(); } });
 });
 
-// start menu items (skip the Cool Websites toggle — it expands in place, doesn't open a window)
-document.querySelectorAll('.sm-item[data-win]').forEach(item=>{
-  item.addEventListener('click',()=>openWin(item.dataset.win));
-});
+// Start Menu search — searches the whole site via Google site search, opens results in a new tab
+const smSearchForm = document.getElementById('sm-search-form');
+const smSearchInput = document.getElementById('sm-search-input');
+if(smSearchForm && smSearchInput){
+  smSearchForm.addEventListener('submit', e=>{
+    e.preventDefault();
+    const q = smSearchInput.value.trim();
+    if(!q) return;
+    window.open('https://www.google.com/search?q=' + encodeURIComponent('site:theintgen.com ' + q), '_blank', 'noopener');
+    smSearchInput.value = '';
+    closeStart();
+  });
+}
 
 // Cool Websites — accordion toggle within the start menu
 const coolSitesToggle = document.getElementById('sm-cool-sites-toggle');
