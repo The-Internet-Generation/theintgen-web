@@ -97,13 +97,41 @@ html,body{width:100%;height:100%;font-family:var(--font-ui);font-size:12px;
   justify-content:center;padding-bottom:8px;flex-shrink:0}
 .sm-sidebar span{writing-mode:vertical-rl;transform:rotate(180deg);
   font-family:var(--font-ui);font-size:10px;font-weight:800;color:rgba(255,255,255,.5);letter-spacing:2px}
-.sm-items{flex:1;padding:2px 0}
+.sm-items{flex:1;padding:2px 0;max-height:80vh;overflow-y:auto}
 .sm-item{display:flex;align-items:center;gap:8px;padding:7px 10px;cursor:pointer;
   font-family:var(--font-ui);font-size:11px;color:#000;border-bottom:1px solid #bdc9c8}
 .sm-item:last-child{border-bottom:none}
 .sm-item:hover,.sm-item:active{background:#000080;color:#fff}
 .sm-item:hover .ms,.sm-item:active .ms{color:#fff}
 .sm-item .ms{font-size:16px;color:#5d5e5f}
+.sm-item-toggle .sm-caret{margin-left:auto;font-size:15px;transition:transform .15s}
+.sm-item-toggle.expanded .sm-caret{transform:rotate(180deg)}
+.sm-sublist{max-height:0;overflow:hidden;background:#efeded;border-bottom:1px solid #bdc9c8;transition:max-height .18s ease}
+.sm-sublist.open{max-height:340px;overflow-y:auto}
+.sm-subitem{display:flex;align-items:center;gap:8px;padding:6px 10px 6px 16px;
+  text-decoration:none;color:#000;font-family:var(--font-ui);cursor:pointer;border-bottom:1px solid #e3e2e2}
+.sm-subitem:last-child{border-bottom:none}
+.sm-subitem:hover{background:#000080;color:#fff}
+.sm-subitem:hover .sm-subitem-desc{color:#cfd6ff}
+.sm-subitem-icon{width:22px;height:22px;flex-shrink:0;image-rendering:pixelated}
+.sm-subitem-text{display:flex;flex-direction:column;min-width:0}
+.sm-subitem-name{font-size:11px;font-weight:700}
+.sm-subitem-desc{font-size:9px;color:#5d5e5f;line-height:1.3}
+.sm-suggest-row{color:#006565}
+.sm-suggest-row .ms{color:#006565}
+.sm-suggest-row:hover{background:#000080}
+.sm-suggest-row:hover .ms{color:#fff}
+#suggest-modal-overlay{position:fixed;inset:0;z-index:650;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.25)}
+#suggest-modal-overlay.open{display:flex}
+#suggest-modal{width:min(300px,90%)}
+#suggest-modal .wcontent{padding:14px;font-family:var(--font-ui);font-size:11px}
+#suggest-modal label{display:block;font-weight:700;margin:8px 0 3px;color:#1b1c1c}
+#suggest-modal label:first-child{margin-top:0}
+#suggest-modal input,#suggest-modal textarea{width:100%;font-family:var(--font-ui);font-size:11px;
+  padding:5px 6px;border:1px solid #000;box-shadow:inset 1px 1px 0 #808080;box-sizing:border-box;background:#fff}
+#suggest-modal textarea{resize:vertical;min-height:44px}
+#suggest-status{margin-top:8px;font-size:10px;color:#006500}
+#suggest-status.err{color:#a01818}
 
 /* === DESKTOP ICONS === */
 .icon-grid{display:grid;grid-template-columns:repeat(3,104px);gap:16px 4px;padding:14px 10px}
@@ -622,6 +650,51 @@ html,body{width:100%;height:100%;font-family:var(--font-ui);font-size:12px;
     <div class="sm-item" data-win="portfolio"><span class="ms">slideshow</span>Portfolio</div>
     <div class="sm-item" data-win="sandbox"><span class="ms">school</span>TIG Sandbox</div>
     <div class="sm-item" data-win="recycle"><span class="ms">delete</span>Recycle Bin</div>
+    <div class="sm-item sm-item-toggle" id="sm-cool-sites-toggle"><span class="ms">explore</span>Cool Websites<span class="ms sm-caret">expand_more</span></div>
+    <div class="sm-sublist" id="sm-cool-sites-list">
+      <a class="sm-subitem" href="https://floor796.com/#t3l5,772,502" target="_blank" rel="noopener">
+        <img class="sm-subitem-icon" src="/public/assets/icons/site-floor796.png" alt="">
+        <span class="sm-subitem-text"><span class="sm-subitem-name">floor796</span><span class="sm-subitem-desc">A pixel-art building that never stops growing</span></span>
+      </a>
+      <a class="sm-subitem" href="https://radio.garden/visit/pretoria/enCtUacB" target="_blank" rel="noopener">
+        <img class="sm-subitem-icon" src="/public/assets/icons/site-radiogarden.png" alt="">
+        <span class="sm-subitem-text"><span class="sm-subitem-name">Radio Garden</span><span class="sm-subitem-desc">Spin the globe, tune into radio anywhere on Earth</span></span>
+      </a>
+      <a class="sm-subitem" href="https://musical.toys/toys/snapegiator/" target="_blank" rel="noopener">
+        <img class="sm-subitem-icon" src="/public/assets/icons/site-musicaltoys.png" alt="">
+        <span class="sm-subitem-text"><span class="sm-subitem-name">Snapegiator</span><span class="sm-subitem-desc">A strange, satisfying little musical toy</span></span>
+      </a>
+      <a class="sm-subitem" href="https://bongo.cat/" target="_blank" rel="noopener">
+        <img class="sm-subitem-icon" src="/public/assets/icons/site-bongocat.png" alt="">
+        <span class="sm-subitem-text"><span class="sm-subitem-name">Bongo Cat</span><span class="sm-subitem-desc">The legendary drumming cat</span></span>
+      </a>
+      <div class="sm-subitem sm-suggest-row" id="sm-suggest-toggle">
+        <span class="ms">add_circle</span>
+        <span class="sm-subitem-text"><span class="sm-subitem-name">Know a cool site?</span><span class="sm-subitem-desc">Suggest it — we'll add the good ones</span></span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Suggest-a-site dialog -->
+<div id="suggest-modal-overlay">
+  <div id="suggest-modal" class="wframe">
+    <div class="wtbar">
+      <span class="ms" style="font-size:12px">add_circle</span>
+      <span class="wt">Suggest a Cool Website</span>
+      <div class="wbtn" id="suggest-modal-close">✕</div>
+    </div>
+    <div class="wcontent">
+      <label for="suggest-url">Website URL</label>
+      <input type="url" id="suggest-url" placeholder="https://..." required>
+      <label for="suggest-note">Why's it cool? (optional)</label>
+      <textarea id="suggest-note" placeholder="One line is plenty"></textarea>
+      <div style="margin-top:10px;display:flex;align-items:center;gap:8px">
+        <span class="wc-btn" id="suggest-submit" style="cursor:pointer">Submit</span>
+        <span id="suggest-status"></span>
+      </div>
+      <div style="font-family:var(--font-mono);font-size:9px;color:#5d5e5f;margin-top:8px">We read every submission — the good ones make the list above.</div>
+    </div>
   </div>
 </div>
 
@@ -1486,9 +1559,70 @@ document.querySelectorAll('.dicon').forEach(icon=>{
   icon.addEventListener('keydown',e=>{ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); activate(); } });
 });
 
-// start menu items
-document.querySelectorAll('.sm-item').forEach(item=>{
+// start menu items (skip the Cool Websites toggle — it expands in place, doesn't open a window)
+document.querySelectorAll('.sm-item[data-win]').forEach(item=>{
   item.addEventListener('click',()=>openWin(item.dataset.win));
+});
+
+// Cool Websites — accordion toggle within the start menu
+const coolSitesToggle = document.getElementById('sm-cool-sites-toggle');
+const coolSitesList = document.getElementById('sm-cool-sites-list');
+if(coolSitesToggle && coolSitesList){
+  coolSitesToggle.addEventListener('click', e=>{
+    e.stopPropagation();
+    const isOpen = coolSitesList.classList.toggle('open');
+    coolSitesToggle.classList.toggle('expanded', isOpen);
+  });
+  coolSitesList.addEventListener('click', e=>{
+    e.stopPropagation(); // clicking a site link or the suggest row shouldn't close the start menu
+  });
+}
+
+// Suggest-a-site dialog
+const SUGGEST_URL = 'https://snlcskmszhbipinffwpy.supabase.co/rest/v1';
+const SUGGEST_KEY = 'sb_publishable_8_Fj46gQBqoA4HgidRKP6g_1uDbhWPM';
+const suggestOverlay = document.getElementById('suggest-modal-overlay');
+const suggestUrlInput = document.getElementById('suggest-url');
+const suggestNoteInput = document.getElementById('suggest-note');
+const suggestStatus = document.getElementById('suggest-status');
+const suggestToggle = document.getElementById('sm-suggest-toggle');
+function openSuggestModal(){
+  suggestStatus.textContent = '';
+  suggestStatus.className = '';
+  suggestUrlInput.value = '';
+  suggestNoteInput.value = '';
+  suggestOverlay.classList.add('open');
+  closeStart();
+}
+function closeSuggestModal(){ suggestOverlay.classList.remove('open'); }
+if(suggestToggle) suggestToggle.addEventListener('click', e=>{ e.stopPropagation(); openSuggestModal(); });
+document.getElementById('suggest-modal-close').addEventListener('click', closeSuggestModal);
+suggestOverlay.addEventListener('click', e=>{ if(e.target===suggestOverlay) closeSuggestModal(); });
+document.getElementById('suggest-submit').addEventListener('click', async ()=>{
+  const url = suggestUrlInput.value.trim();
+  const note = suggestNoteInput.value.trim();
+  if(!url || !/^https?:\/\/.+/i.test(url)){
+    suggestStatus.textContent = 'Add a valid URL (starting with http:// or https://)';
+    suggestStatus.className = 'err';
+    return;
+  }
+  suggestStatus.textContent = 'Sending…';
+  suggestStatus.className = '';
+  try{
+    const r = await fetch(`${SUGGEST_URL}/site_suggestions`, {
+      method:'POST',
+      headers:{ apikey:SUGGEST_KEY, Authorization:`Bearer ${SUGGEST_KEY}`, 'Content-Type':'application/json', Prefer:'return=minimal' },
+      body: JSON.stringify({ url, note: note || null })
+    });
+    if(!r.ok) throw new Error('HTTP '+r.status);
+    suggestStatus.textContent = 'Thanks! We\'ll take a look.';
+    suggestStatus.className = '';
+    suggestUrlInput.value = '';
+    suggestNoteInput.value = '';
+  }catch(err){
+    suggestStatus.textContent = 'Couldn\'t send that — try again in a bit?';
+    suggestStatus.className = 'err';
+  }
 });
 
 // close buttons
@@ -1517,6 +1651,7 @@ document.addEventListener('keydown',e=>{
     closeAllWins(); closeStart();
     const rm = document.getElementById('recycle-modal-overlay'); if(rm) rm.classList.remove('open');
     const pl = document.getElementById('press-lightbox'); if(pl) pl.classList.remove('open');
+    const sg = document.getElementById('suggest-modal-overlay'); if(sg) sg.classList.remove('open');
   }
 });
 
