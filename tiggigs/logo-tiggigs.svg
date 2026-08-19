@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 220 48" width="220" height="48" role="img" aria-label="TigGigs wordmark">
+  <defs>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@700&amp;display=swap');
+      .wordmark {
+        font-family: 'DM Sans', 'Inter', system-ui, -apple-system, sans-serif;
+        font-size: 28px;
+        font-weight: 700;
+        fill: #1c1b1b;
+        letter-spacing: -0.5px;
+      }
+    </style>
+  </defs>
+  <text class="wordmark" x="0" y="35">TigGigs.</text>
+</svg>

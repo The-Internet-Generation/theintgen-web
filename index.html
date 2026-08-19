@@ -181,8 +181,22 @@ html,body{width:100%;height:100%;font-family:var(--font-ui);font-size:12px;
 #recycle-modal-overlay{position:fixed;inset:0;z-index:600;display:none;
   align-items:center;justify-content:center;background:rgba(0,0,0,.25)}
 #recycle-modal-overlay.open{display:flex}
-#recycle-modal{width:min(340px,90%);max-height:80vh;overflow:auto}
+#recycle-modal{width:min(420px,90%);max-height:80vh;overflow:auto}
 #recycle-modal .wcontent{font-family:var(--font-ui);font-size:12px;color:#222}
+.recycle-img-row{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
+.recycle-img-tile{display:block;flex:1 1 120px;min-width:0;cursor:zoom-in;
+  border-top:1px solid #fff;border-left:1px solid #fff;border-right:1px solid #000;border-bottom:1px solid #000;
+  box-shadow:inset -1px -1px 0 #808080,inset 1px 1px 0 #dfdfdf,2px 2px 0 #bdc9c8;overflow:hidden;background:#fff}
+.recycle-img-tile img{display:block;width:100%;height:96px;object-fit:cover}
+.recycle-link-card{display:flex;align-items:center;gap:8px;padding:5px 7px;margin:6px 6px 0 0;
+  border:1px solid #d8d7d7;background:#fff;text-decoration:none;max-width:230px}
+.recycle-link-card:hover{background:#efeded}
+.recycle-link-thumb{width:34px;height:34px;flex-shrink:0;background-size:cover;background-position:center;
+  background-color:#e3e2e2;border:1px solid #c8c7c7;display:flex;align-items:center;justify-content:center}
+.recycle-link-thumb .ms{font-size:16px;color:#8f8f8f}
+.recycle-link-meta{display:flex;flex-direction:column;min-width:0}
+.recycle-link-label{font-family:var(--font-mono);font-size:10px;font-weight:700;color:#1b1c1c;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:170px}
+.recycle-link-sub{font-family:var(--font-mono);font-size:9px;color:#5d5e5f}
 .wframe{background:var(--gray);width:min(580px,100%);display:flex;flex-direction:column;
   overflow:hidden;max-height:100%;box-shadow:inset -1px -1px 0 #808080,inset 1px 1px 0 #dfdfdf,2px 2px 0 #000;
   border-top:1px solid #fff;border-left:1px solid #fff;border-right:1px solid #000;border-bottom:1px solid #000}
@@ -259,6 +273,10 @@ html,body{width:100%;height:100%;font-family:var(--font-ui);font-size:12px;
 .wc-row-name{font-family:var(--font-mono);font-size:10px;font-weight:700;flex:1;color:#1b1c1c}
 .wc-row-type{font-family:var(--font-mono);font-size:9px;color:#5d5e5f;width:50px;text-align:right}
 .wc-row-size{font-family:var(--font-mono);font-size:9px;color:#5d5e5f;width:44px;text-align:right}
+.wc-vote-wrap{display:flex;align-items:center;justify-content:flex-end;gap:5px;width:76px;flex-shrink:0}
+.wc-vote-count{font-family:var(--font-mono);font-size:10px;font-weight:700;color:#1b1c1c;min-width:16px;text-align:right}
+.wc-vote-btn{font-family:var(--font-mono);font-size:11px;line-height:1;padding:3px 6px;background:var(--gray);cursor:pointer}
+.wc-vote-btn:disabled,.wc-vote-btn.voted{opacity:.5;cursor:default}
 .wc-irc{background:#fff;margin:0;font-family:var(--font-mono);font-size:10px;color:#1b1c1c;
   padding:6px;line-height:1.8;border-bottom:1px solid #e3e2e2;max-height:180px;overflow-y:auto}
 .wc-irc .irc-sys{color:#000080;font-weight:700}
@@ -548,16 +566,7 @@ html,body{width:100%;height:100%;font-family:var(--font-ui);font-size:12px;
 
     <!-- Recycle Bin — now part of the same auto-flowing column as the rest of icons-right -->
     <div class="dicon" data-win="recycle" tabindex="0" role="button" aria-label="Recycle Bin">
-      <svg class="di-img" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
-        <polygon points="7,9 25,9 23,29 9,29" fill="#dfdfdf" stroke="#000" stroke-width="1"/>
-        <ellipse cx="16" cy="9" rx="9" ry="2.5" fill="#c0c0c0" stroke="#000" stroke-width="1"/>
-        <line x1="11" y1="12" x2="11.8" y2="26" stroke="#808080" stroke-width="1"/>
-        <line x1="16" y1="12" x2="16" y2="26" stroke="#808080" stroke-width="1"/>
-        <line x1="21" y1="12" x2="20.2" y2="26" stroke="#808080" stroke-width="1"/>
-        <path d="M13 18 l2.6 -4.4 l1.6 2.6" fill="none" stroke="#006500" stroke-width="1.4"/>
-        <path d="M18.6 15.5 l1.6 2.8 l-3 0.4" fill="none" stroke="#006500" stroke-width="1.4"/>
-        <path d="M16.6 21.8 l-3.2 0 l1.2 -2.6" fill="none" stroke="#006500" stroke-width="1.4"/>
-      </svg>
+      <img class="di-img" src="/public/assets/icons/recycle-bin-8bit.png" alt="" width="30" height="36" style="image-rendering:pixelated">
       <span class="di-lbl">Recycle Bin</span>
     </div>
   </div>
@@ -989,14 +998,6 @@ html,body{width:100%;height:100%;font-family:var(--font-ui);font-size:12px;
       <div class="press-tile" data-cap="TIGOM, our Open Mic event, featured in Chennai Times"><img src="/public/assets/press/press8.jpg" alt="Chennai Times — socially distanced open-mics are happening in the city" loading="lazy"><div class="press-tile-cap">Chennai Times — Open-Mics Are Back</div></div>
     </div>
 
-    <div id="press-lightbox">
-      <div id="press-lightbox-close">✕</div>
-      <div id="press-lightbox-inner">
-        <img id="press-lightbox-img" src="" alt="">
-        <div id="press-lightbox-cap"></div>
-      </div>
-    </div>
-
     <div style="padding:5px 14px 3px;font-family:var(--font-ui);font-size:11px;color:#5d5e5f;border-top:1px solid #e3e2e2;border-bottom:1px solid #e3e2e2;background:#efeded"><span class="ms" style="font-size:13px;vertical-align:-2px;color:#006565">movie</span> <strong>TigVid</strong> <span style="font-weight:400">— our own little Hollywood studio</span></div>
     <div class="wc-row"><span class="ms">smart_display</span><span class="wc-row-name">F Buddies — Season 1 &amp; 2</span><span class="wc-row-type">Web-Series</span><span class="wc-row-size">—</span></div>
     <div class="wc-row"><span class="ms">smart_display</span><span class="wc-row-name">Silicon Sandhu — "Yuv" by KPV</span><span class="wc-row-type">11 episodes</span><span class="wc-row-size">—</span></div>
@@ -1354,24 +1355,26 @@ html,body{width:100%;height:100%;font-family:var(--font-ui);font-size:12px;
   </div>
   <div class="wcontent">
     <div class="wc" style="padding:8px 14px">
-      <div class="wc-h1" style="font-size:13px">Every agency has a recycle bin, ours is searchable.</div>
+      <div class="wc-h1" style="font-size:13px">Projects from the past, both executed and shelved without the right energy.</div>
     </div>
-    <div style="padding:2px 14px 4px;font-family:var(--font-mono);font-size:10px;color:#5d5e5f;border-bottom:1px solid #e3e2e2">
-      <span>Name</span>
+    <div style="padding:2px 14px 4px;display:flex;font-family:var(--font-mono);font-size:10px;color:#5d5e5f;border-bottom:1px solid #e3e2e2">
+      <span style="flex:1">Name</span>
+      <span style="width:76px;text-align:right">Votes</span>
     </div>
-    <div class="wc-row recycle-item" data-project="lets-talk-sex" style="cursor:pointer"><span class="ms" style="color:#808080">description</span><span class="wc-row-name">Lets Talk Sex</span></div>
-    <div class="wc-row recycle-item" data-project="porkalam" style="cursor:pointer"><span class="ms" style="color:#808080">description</span><span class="wc-row-name">Porkalam</span></div>
-    <div class="wc-row recycle-item" data-project="kakaka" style="cursor:pointer"><span class="ms" style="color:#808080">description</span><span class="wc-row-name">Kakaka</span></div>
-    <div class="wc-row recycle-item" data-project="happ" style="cursor:pointer"><span class="ms" style="color:#808080">description</span><span class="wc-row-name">Happ</span></div>
-    <div class="wc-row recycle-item" data-project="indie-nadu" style="cursor:pointer"><span class="ms" style="color:#808080">description</span><span class="wc-row-name">Indie Nadu</span></div>
-    <div class="wc-row recycle-item" data-project="tigtos" style="cursor:pointer"><span class="ms" style="color:#808080">description</span><span class="wc-row-name">TIGTOS (TIG The Open Screen)</span></div>
+    <div class="wc-row recycle-item" data-project="lets-talk-sex"><span class="ms" style="color:#808080;cursor:pointer">description</span><span class="wc-row-name" style="cursor:pointer">Lets Talk</span><span class="wc-vote-wrap" data-project="lets-talk-sex"></span></div>
+    <div class="wc-row recycle-item" data-project="porkalam"><span class="ms" style="color:#808080;cursor:pointer">description</span><span class="wc-row-name" style="cursor:pointer">Porkalam</span><span class="wc-vote-wrap" data-project="porkalam"></span></div>
+    <div class="wc-row recycle-item" data-project="kakaka"><span class="ms" style="color:#808080;cursor:pointer">description</span><span class="wc-row-name" style="cursor:pointer">Kakaka</span><span class="wc-vote-wrap" data-project="kakaka"></span></div>
+    <div class="wc-row recycle-item" data-project="happ"><span class="ms" style="color:#808080;cursor:pointer">description</span><span class="wc-row-name" style="cursor:pointer">Happ</span><span class="wc-vote-wrap" data-project="happ"></span></div>
+    <div class="wc-row recycle-item" data-project="indie-nadu"><span class="ms" style="color:#808080;cursor:pointer">description</span><span class="wc-row-name" style="cursor:pointer">Indie Nadu</span><span class="wc-vote-wrap" data-project="indie-nadu"></span></div>
+    <div class="wc-row recycle-item" data-project="tigtos"><span class="ms" style="color:#808080;cursor:pointer">description</span><span class="wc-row-name" style="cursor:pointer">TIGTOS (TIG The Open Screen)</span><span class="wc-vote-wrap" data-project="tigtos"></span></div>
+    <div class="wc-row recycle-item" data-project="roatula-beatu"><span class="ms" style="color:#808080;cursor:pointer">description</span><span class="wc-row-name" style="cursor:pointer">Roatula Beatu</span><span class="wc-vote-wrap" data-project="roatula-beatu"></span></div>
     <div style="text-align:center;padding:10px">
-      <span class="wc-btn" style="opacity:.5;cursor:not-allowed">Restore</span>
-      <span class="wc-btn" style="margin-left:6px;opacity:.5;cursor:not-allowed">Empty Bin</span>
-      <div style="font-family:var(--font-mono);font-size:9px;color:#5d5e5f;margin-top:8px">Click a name to see what it was.</div>
+      <a href="mailto:jaytesh@theintgen.com?subject=Let%27s%20revive%20a%20TIG%20project" class="wc-btn" title="Think you have it in you to infuse fresh energy and revive any of these projects? Let's talk!">Restore</a>
+      <span class="wc-btn" style="margin-left:6px;opacity:.5;cursor:not-allowed" title="Sorry, we don't do shift+deletes here">Empty Bin</span>
+      <div style="font-family:var(--font-mono);font-size:9px;color:#5d5e5f;margin-top:8px">Click a name to see what it was, or vote to bring it back.</div>
     </div>
   </div>
-  <div class="wstatus"><div class="wsf">6 objects</div><div class="wsf">Click to reopen</div></div>
+  <div class="wstatus"><div class="wsf">7 objects</div><div class="wsf">Click to reopen</div></div>
 </div>
 </div>
 
@@ -1384,6 +1387,15 @@ html,body{width:100%;height:100%;font-family:var(--font-ui);font-size:12px;
       <div class="wbtn" id="recycle-modal-close">✕</div>
     </div>
     <div class="wcontent" style="padding:14px" id="recycle-modal-body"></div>
+  </div>
+</div>
+
+<!-- Image lightbox — lives at top level (not inside any window) so it can be triggered from any open window -->
+<div id="press-lightbox">
+  <div id="press-lightbox-close">✕</div>
+  <div id="press-lightbox-inner">
+    <img id="press-lightbox-img" src="" alt="">
+    <div id="press-lightbox-cap"></div>
   </div>
 </div>
 
@@ -1505,13 +1517,67 @@ document.addEventListener('keydown',e=>{
 });
 
 // ── Recycle Bin project mini-windows ───────────
+function recycleLinkHost(url){
+  try{ return new URL(url).hostname.replace(/^www\./,''); }catch(e){ return ''; }
+}
+function recycleLink(url,label,thumb){
+  const host = recycleLinkHost(url);
+  const thumbHtml = thumb
+    ? `<span class="recycle-link-thumb" style="background-image:url('${esc(thumb)}')"></span>`
+    : `<span class="recycle-link-thumb"><span class="ms">movie</span></span>`;
+  return `<a href="${esc(url)}" target="_blank" rel="noopener" class="recycle-link-card">${thumbHtml}<span class="recycle-link-meta"><span class="recycle-link-label">${esc(label)}</span><span class="recycle-link-sub">↗ ${esc(host)}</span></span></a>`;
+}
 const RECYCLE_PROJECTS = {
-  'lets-talk-sex': { title:'Lets Talk Sex', body:'An in-person talk show where people from different walks of life and age groups gather to talk about taboo topics, like sex.' },
-  'porkalam': { title:'Porkalam', body:"Chennai's first underground rap and beatbox cypher, where participants face off against each other — like in the movie 8 Mile." },
-  'kakaka': { title:'Kakaka', body:'A post-college event that revives the cultural feeling by recreating typical school and college events.' },
-  'happ': { title:'Happ', body:'An app that helps colleges conduct their culturals better.' },
-  'indie-nadu': { title:'Indie Nadu', body:'The biggest indie concert Chennai would have seen.' },
-  'tigtos': { title:'TIGTOS (TIG The Open Screen)', body:'A short film screening session, along with talks by people who have worked in the film industry.' }
+  'lets-talk-sex': {
+    title:'Lets Talk',
+    body:'The idea was to simply allow people to engage in "taboo" conversations. The first edition was "Sex" — leading to the next edition, around LGBTQ. The goal: create safe spaces where people can voice their opinions.',
+    images:[],
+    links:[ ['https://www.instagram.com/p/Bv4Ozx5l75e/','LTS aftermovie'] ]
+  },
+  'porkalam': {
+    title:'Porkalam',
+    body:"One of the first ever underground rap battles to take place in Chennai — a cypher where participants faced off against each other, like in the movie 8 Mile.",
+    images:[
+      {src:'/public/assets/recycle/porkalam-poster.jpg', alt:'Porkalam Vol 3 — TIG x P.E.A.C.E hip hop showcase poster'},
+      {src:'/public/assets/recycle/porkalam-crowd.jpg', alt:'Porkalam crowd on the night'}
+    ],
+    links:[ ['https://www.instagram.com/p/B3HiZRIjsg5/','Porkalam 2 aftermovie'], ['https://www.instagram.com/p/B5nt-RMg8Sg/','Porkalam 4 aftermovie'] ]
+  },
+  'kakaka': {
+    title:'Kakaka',
+    body:'College culturals are such a unique event — it\'s a shame they die with college. "Kallege Kapram Kalturals" (Kakaka) brings that energy to people even after they\'ve graduated.',
+    images:[],
+    links:[ ['https://www.instagram.com/p/BxSNRXcj-nu/','Kakaka promo'], ['https://www.instagram.com/p/BxZrPzPj5mE/','Kakaka aftermovie'] ]
+  },
+  'happ': {
+    title:'Happ',
+    body:"Organizing college culturals is chaotic enough — Happ was our attempt to help that organization happen a tad smoother. What started as a simple tool for better organizing would soon transform into its own college-based social network. Big dreams, insufficient funds and power to pull off.",
+    images:[],
+    links:[ ['https://drive.google.com/file/d/1rlyMh8rKl69gcJqfZGpwv92AX4pB-C_X/view?usp=sharing','Happ deck'] ]
+  },
+  'indie-nadu': {
+    title:'Indie Nadu',
+    body:"A huge dream back when Indian indie music wasn't yet mainstream — now it is, and other players have pulled off something similar. The essence of Indie Nadu still exists: a beachside music festival with the best home-grown artists and creators. Still in our sights, and we'll bring it to reality. Putting the deck out there to prove the idea is bigger than the identity — if someone else has the funds and power to mobilise this, we'd love to witness it or help however we can.",
+    images:[],
+    links:[ ['https://drive.google.com/file/d/1VWLDMuahZ7cnTuUzIWnq8UNAs-03y-2R/view?usp=sharing','Indie Nadu aspiration deck'] ]
+  },
+  'tigtos': {
+    title:'TIGTOS (TIG The Open Screen)',
+    body:'A short film screening session, along with talks by people who have worked in the film industry.',
+    images:[
+      {src:'/public/assets/recycle/tigtos-open-screen.jpg', alt:'TIGTOS — The Open Screen, screening Shanmugam Saloon'}
+    ],
+    links:[]
+  },
+  'roatula-beatu': {
+    title:'Roatula Beatu',
+    body:"When we took the beats to the streets, literally. Did such a great job the cops ended up calling us to perform for them too!",
+    images:[
+      {src:'/public/assets/recycle/roatula-beatu-cops.jpg', alt:'Roatula Beatu — performing for the Chennai police'},
+      {src:'/public/assets/recycle/roatula-beatu-poster.jpg', alt:'TIG x P.E.A.C.E — Roatula Beatu, busking in the streets of Madras'}
+    ],
+    links:[]
+  }
 };
 const recycleOverlay = document.getElementById('recycle-modal-overlay');
 const recycleTitle = document.getElementById('recycle-modal-title');
@@ -1520,7 +1586,12 @@ function openRecycleProject(key){
   const p = RECYCLE_PROJECTS[key];
   if(!p) return;
   recycleTitle.textContent = p.title;
-  recycleBody.textContent = p.body;
+  const imagesHtml = (p.images&&p.images.length)
+    ? `<div class="recycle-img-row">${p.images.map(im=>`<a class="recycle-img-tile" href="${esc(im.src)}" data-cap="${esc(im.alt)}"><img src="${esc(im.src)}" alt="${esc(im.alt)}" loading="lazy"></a>`).join('')}</div>`
+    : '';
+  const thumb = (p.images&&p.images[0]) ? p.images[0].src : null;
+  const linksHtml = (p.links&&p.links.length) ? `<div style="margin-top:4px">${p.links.map(l=>recycleLink(l[0],l[1],thumb)).join('')}</div>` : '';
+  recycleBody.innerHTML = `${imagesHtml}<div style="font-family:var(--font-ui);font-size:12px;line-height:1.5;color:#1b1c1c">${esc(p.body)}</div>${linksHtml}`;
   recycleOverlay.classList.add('open');
 }
 function closeRecycleProject(){ recycleOverlay.classList.remove('open'); }
@@ -1538,16 +1609,88 @@ recycleOverlay.addEventListener('click', e=>{
   if(e.target===recycleOverlay) closeRecycleProject();
 });
 
+// ── Recycle Bin voting — which scrapped idea deserves a revival ──
+const VOTES_URL = 'https://snlcskmszhbipinffwpy.supabase.co/rest/v1';
+const VOTES_KEY = 'sb_publishable_8_Fj46gQBqoA4HgidRKP6g_1uDbhWPM';
+const VOTED_STORE_KEY = 'tig-recycle-voted';
+function getVotedSet(){
+  try{ return new Set(JSON.parse(localStorage.getItem(VOTED_STORE_KEY)||'[]')); }
+  catch(e){ return new Set(); }
+}
+function saveVotedSet(s){
+  try{ localStorage.setItem(VOTED_STORE_KEY, JSON.stringify(Array.from(s))); }catch(e){}
+}
+function renderVoteRow(wrap, key, count, voted){
+  wrap.innerHTML = `<span class="wc-vote-count">${count}</span><span class="wc-vote-btn${voted?' voted':''}" data-project="${key}" title="${voted?'You already voted for this one':'Vote to bring this back'}">▲</span>`;
+}
+async function loadRecycleVotes(){
+  const wraps = document.querySelectorAll('.wc-vote-wrap');
+  if(!wraps.length) return;
+  const voted = getVotedSet();
+  try{
+    const r = await fetch(`${VOTES_URL}/recycle_votes?select=project_key,votes`, { headers:{ apikey:VOTES_KEY, Authorization:`Bearer ${VOTES_KEY}` } });
+    if(!r.ok) throw new Error('HTTP '+r.status);
+    const rows = await r.json();
+    const counts = {};
+    rows.forEach(row=>{ counts[row.project_key]=row.votes; });
+    wraps.forEach(wrap=>{
+      const key = wrap.dataset.project;
+      renderVoteRow(wrap, key, counts[key]||0, voted.has(key));
+    });
+  }catch(err){
+    wraps.forEach(wrap=>{ wrap.innerHTML=''; });
+  }
+}
+document.querySelectorAll('.wc-vote-wrap').forEach(wrap=>{
+  wrap.addEventListener('click', async e=>{
+    e.stopPropagation();
+    const btn = e.target.closest('.wc-vote-btn');
+    if(!btn || btn.classList.contains('voted')) return;
+    const key = btn.dataset.project;
+    const voted = getVotedSet();
+    if(voted.has(key)) return;
+    btn.classList.add('voted');
+    btn.title = 'You already voted for this one';
+    const countEl = wrap.querySelector('.wc-vote-count');
+    if(countEl) countEl.textContent = (parseInt(countEl.textContent,10)||0) + 1;
+    voted.add(key); saveVotedSet(voted);
+    try{
+      const r = await fetch(`${VOTES_URL}/rpc/increment_recycle_vote`, {
+        method:'POST',
+        headers:{ apikey:VOTES_KEY, Authorization:`Bearer ${VOTES_KEY}`, 'Content-Type':'application/json' },
+        body: JSON.stringify({ p_key:key })
+      });
+      if(r.ok){
+        const newCount = await r.json();
+        if(countEl && typeof newCount === 'number') countEl.textContent = newCount;
+      }
+    }catch(err){ /* optimistic local count stands */ }
+  });
+});
+
+// Recycle project images open the same lightbox press clippings use (delegated — images render dynamically)
+recycleBody.addEventListener('click', e=>{
+  const tile = e.target.closest('.recycle-img-tile');
+  if(!tile) return;
+  e.preventDefault();
+  e.stopPropagation();
+  openImageLightbox(tile.querySelector('img').src, tile.querySelector('img').alt, tile.dataset.cap);
+});
+loadRecycleVotes();
+
 // ── Press clippings lightbox ───────────────────
 const pressLightbox = document.getElementById('press-lightbox');
 const pressLightboxImg = document.getElementById('press-lightbox-img');
 const pressLightboxCap = document.getElementById('press-lightbox-cap');
+function openImageLightbox(src, alt, cap){
+  pressLightboxImg.src = src;
+  pressLightboxImg.alt = alt || '';
+  pressLightboxCap.textContent = cap || alt || '';
+  pressLightbox.classList.add('open');
+}
 function openPressLightbox(tile){
   const img = tile.querySelector('img');
-  pressLightboxImg.src = img.src;
-  pressLightboxImg.alt = img.alt;
-  pressLightboxCap.textContent = tile.dataset.cap || img.alt;
-  pressLightbox.classList.add('open');
+  openImageLightbox(img.src, img.alt, tile.dataset.cap);
 }
 function closePressLightbox(){ pressLightbox.classList.remove('open'); }
 document.querySelectorAll('.press-tile').forEach(tile=>{
