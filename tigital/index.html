@@ -717,6 +717,111 @@
 
   .footer a { color: rgba(255,255,255,0.45); text-decoration: none; }
   .footer a:hover { color: var(--yellow); }
+
+  /* ── TOOL MODALS ── */
+  .tool-modal-overlay {
+    position: fixed; inset: 0; z-index: 500; display: none;
+    align-items: flex-start; justify-content: center;
+    background: rgba(15,10,30,0.55);
+    padding: 4vh 1rem; overflow-y: auto;
+  }
+  .tool-modal-overlay.open { display: flex; }
+  .tool-modal {
+    background: var(--white); border-radius: 16px; width: min(560px, 100%);
+    margin: auto 0; box-shadow: 0 20px 60px rgba(15,10,30,0.35); overflow: hidden;
+  }
+  .tool-modal-head {
+    background: var(--navy); padding: 1.1rem 1.4rem;
+    display: flex; align-items: center; justify-content: space-between;
+    border-bottom: 3px solid var(--yellow); gap: 1rem;
+  }
+  .tool-modal-head h3 {
+    font-family: 'Syne', sans-serif; font-size: 1.02rem; font-weight: 700; color: var(--white);
+  }
+  .tool-modal-close {
+    background: none; border: none; color: var(--white); font-size: 1.3rem; line-height: 1;
+    cursor: pointer; width: 30px; height: 30px; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center; border-radius: 7px;
+  }
+  .tool-modal-close:hover { background: rgba(255,255,255,0.14); }
+  .tool-modal-body { padding: 1.4rem clamp(1.1rem, 4vw, 1.8rem) 1.7rem; font-size: 0.85rem; color: var(--ink); }
+  .tool-modal-body p.tool-intro { color: var(--muted); font-size: 0.78rem; line-height: 1.6; margin-bottom: 1.1rem; }
+
+  .tool-field { margin-bottom: 1rem; }
+  .tool-field label {
+    display: block; font-family: 'Syne', sans-serif; font-size: 0.68rem; font-weight: 700;
+    letter-spacing: 0.05em; text-transform: uppercase; color: var(--navy); margin-bottom: 0.4rem;
+  }
+  .tool-field select, .tool-field input[type="text"], .tool-field input[type="number"], .tool-field textarea {
+    width: 100%; font-family: 'DM Sans', sans-serif; font-size: 0.85rem; color: var(--ink);
+    padding: 0.6rem 0.7rem; border: 1px solid var(--border); border-radius: 8px;
+    background: var(--paper); appearance: none;
+  }
+  .tool-field select { background-image: linear-gradient(45deg,transparent 50%,var(--muted) 50%),linear-gradient(135deg,var(--muted) 50%,transparent 50%);
+    background-position: calc(100% - 18px) center, calc(100% - 13px) center; background-size: 5px 5px, 5px 5px; background-repeat: no-repeat; }
+  .tool-field select:focus, .tool-field input:focus, .tool-field textarea:focus { outline: 2px solid var(--yellow); outline-offset: -1px; }
+  .tool-field textarea { resize: vertical; min-height: 56px; }
+  .tool-field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 0.8rem; }
+  @media (max-width: 420px) { .tool-field-row { grid-template-columns: 1fr; } }
+
+  .tool-hints { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 0.5rem; }
+  .tool-hint-chip {
+    font-size: 0.68rem; font-family: 'DM Sans', sans-serif; color: var(--crimson);
+    background: rgba(155,28,58,0.07); border: 1px solid rgba(155,28,58,0.18);
+    border-radius: 20px; padding: 0.3rem 0.65rem; cursor: pointer; transition: background .15s;
+  }
+  .tool-hint-chip:hover { background: rgba(155,28,58,0.15); }
+
+  .tool-btn {
+    font-family: 'Syne', sans-serif; font-weight: 700; font-size: 0.78rem; letter-spacing: 0.01em;
+    background: var(--crimson); color: var(--white); border: none; border-radius: 8px;
+    padding: 0.68rem 1.3rem; cursor: pointer; transition: background .15s, transform .15s;
+  }
+  .tool-btn:hover { background: #7d1730; }
+  .tool-btn:active { transform: scale(0.98); }
+  .tool-btn-secondary { background: var(--navy); }
+  .tool-btn-secondary:hover { background: #12082c; }
+  .tool-btn[disabled] { opacity: 0.5; cursor: not-allowed; }
+
+  .tool-output { margin-top: 1.3rem; padding-top: 1.2rem; border-top: 1px dashed var(--border); display: none; }
+  .tool-output.show { display: block; }
+  .tool-output-actions { display: flex; gap: 0.6rem; margin-top: 1.1rem; flex-wrap: wrap; }
+  .tool-copy-note { font-size: 0.7rem; color: var(--crimson); font-weight: 600; margin-left: 0.2rem; }
+
+  /* Calendar tool */
+  .cal-table-wrap { max-height: 340px; overflow-y: auto; border: 1px solid var(--border); border-radius: 10px; }
+  .cal-table { width: 100%; border-collapse: collapse; font-size: 0.76rem; }
+  .cal-table th { position: sticky; top: 0; background: var(--navy); color: var(--white); text-align: left;
+    padding: 0.5rem 0.6rem; font-family: 'Syne', sans-serif; font-weight: 700; font-size: 0.65rem; letter-spacing: 0.04em; text-transform: uppercase; }
+  .cal-table td { padding: 0.5rem 0.6rem; border-top: 1px solid var(--border); vertical-align: top; }
+  .cal-table tr:nth-child(even) td { background: rgba(26,10,60,0.02); }
+  .cal-day { font-weight: 700; color: var(--navy); white-space: nowrap; }
+  .cal-format { color: var(--crimson); font-weight: 600; white-space: nowrap; }
+
+  /* Budget tool */
+  .budget-result { background: var(--paper); border: 1px solid var(--border); border-radius: 12px; padding: 1.1rem 1.2rem; }
+  .budget-row { display: flex; align-items: baseline; justify-content: space-between; padding: 0.4rem 0; }
+  .budget-row + .budget-row { border-top: 1px solid var(--border); }
+  .budget-label { font-size: 0.78rem; color: var(--muted); }
+  .budget-value { font-family: 'Syne', sans-serif; font-weight: 700; color: var(--navy); font-size: 0.95rem; }
+  .budget-total .budget-value { color: var(--crimson); font-size: 1.2rem; }
+  .budget-note { font-size: 0.74rem; color: var(--muted); line-height: 1.6; margin-top: 0.9rem; }
+
+  /* Caption tool */
+  .caption-preview {
+    background: var(--navy); color: var(--white); border-radius: 12px; padding: 1.1rem 1.2rem;
+    font-size: 0.82rem; line-height: 1.65; white-space: pre-wrap; min-height: 90px;
+  }
+  .caption-preview .cp-empty { color: rgba(255,255,255,0.4); font-style: italic; }
+
+  /* Best time tool */
+  .besttime-result { display: flex; flex-direction: column; gap: 0.6rem; }
+  .besttime-slot {
+    display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+    background: var(--paper); border: 1px solid var(--border); border-radius: 10px; padding: 0.7rem 0.9rem;
+  }
+  .besttime-day { font-family: 'Syne', sans-serif; font-weight: 700; color: var(--navy); font-size: 0.82rem; }
+  .besttime-window { font-weight: 700; color: var(--crimson); font-size: 0.82rem; white-space: nowrap; }
 </style>
 </head>
 <body>
@@ -849,28 +954,28 @@
       <a href="#tools" class="section-link">All tools →</a>
     </div>
     <div class="tools-grid">
-      <a href="#" class="tool-card">
+      <a href="#" class="tool-card" data-tool="calendar">
         <div class="tool-icon">📅</div>
         <p class="tool-name">Content Calendar Generator</p>
         <p class="tool-desc">Input your business type and get a 30-day content plan with post ideas, formats and captions.</p>
         <span class="tool-cta">Use free →</span>
       </a>
-      <a href="#" class="tool-card">
+      <a href="#" class="tool-card" data-tool="budget">
         <div class="tool-icon">💰</div>
         <p class="tool-name">Ad Budget Calculator</p>
         <p class="tool-desc">Figure out how much to spend on Meta & Google Ads based on your revenue goals and industry.</p>
         <span class="tool-cta">Use free →</span>
       </a>
-      <a href="#" class="tool-card">
+      <a href="#" class="tool-card" data-tool="caption">
         <div class="tool-icon">✍️</div>
         <p class="tool-name">Caption Formula Builder</p>
         <p class="tool-desc">Build scroll-stopping Instagram captions using proven hook → body → CTA frameworks.</p>
         <span class="tool-cta">Use free →</span>
       </a>
-      <a href="#" class="tool-card">
-        <div class="tool-icon">📈</div>
-        <p class="tool-name">Engagement Rate Checker</p>
-        <p class="tool-desc">Paste any Instagram handle and see whether their engagement is good, average or fake.</p>
+      <a href="#" class="tool-card" data-tool="besttime">
+        <div class="tool-icon">⏰</div>
+        <p class="tool-name">Best Time to Post Calculator</p>
+        <p class="tool-desc">Pick your platform and audience, get the days and time windows worth posting around.</p>
         <span class="tool-cta">Use free →</span>
       </a>
     </div>
@@ -883,19 +988,19 @@
       <a href="#guides" class="section-link">All guides →</a>
     </div>
     <div class="tools-grid">
-      <a href="#" class="tool-card" style="border-color:var(--yellow);">
+      <a href="/public/assets/guides/smb-social-media-starter-kit.pdf" download class="tool-card" style="border-color:var(--yellow);">
         <div class="tool-icon">📖</div>
         <p class="tool-name">The SMB Social Media Starter Kit</p>
-        <p class="tool-desc">A complete 20-page guide to setting up, running and growing your brand's social media from scratch.</p>
+        <p class="tool-desc">A complete guide to setting up, running and growing your brand's social media from scratch.</p>
         <span class="tool-cta" style="color:var(--navy);font-weight:700;">↓ Download Free PDF</span>
       </a>
-      <a href="#" class="tool-card">
+      <a href="/public/assets/guides/meta-ads-beginner-playbook.pdf" download class="tool-card">
         <div class="tool-icon">🎯</div>
         <p class="tool-name">The Meta Ads Beginner Playbook</p>
         <p class="tool-desc">Step-by-step guide to running your first profitable Meta Ad campaign without burning your budget.</p>
         <span class="tool-cta">↓ Download Free PDF</span>
       </a>
-      <a href="#" class="tool-card">
+      <a href="/public/assets/guides/reels-script-templates.pdf" download class="tool-card">
         <div class="tool-icon">🎬</div>
         <p class="tool-name">Reels Script Templates</p>
         <p class="tool-desc">10 fill-in-the-blank reel scripts for product brands, service businesses and personal brands.</p>
@@ -920,6 +1025,452 @@
   <p class="footer-brand">Tigital — by The Internet Generation</p>
   <p>T. Nagar, Chennai &nbsp;·&nbsp; <a href="mailto:hi@theintgen.com">hi@theintgen.com</a> &nbsp;·&nbsp; <a href="/">theintgen.com</a></p>
 </footer>
+
+<!-- Tool modal — shell reused by all 4 free tools, content swapped in by JS -->
+<div class="tool-modal-overlay" id="tool-modal-overlay">
+  <div class="tool-modal" role="dialog" aria-modal="true">
+    <div class="tool-modal-head">
+      <h3 id="tool-modal-title">Tool</h3>
+      <button type="button" class="tool-modal-close" id="tool-modal-close" aria-label="Close">✕</button>
+    </div>
+    <div class="tool-modal-body" id="tool-modal-body"></div>
+  </div>
+</div>
+
+<!-- Free Tools — all 4 run entirely client-side, no backend/API needed -->
+<script>
+(() => {
+  const overlay = document.getElementById('tool-modal-overlay');
+  const titleEl = document.getElementById('tool-modal-title');
+  const bodyEl = document.getElementById('tool-modal-body');
+  const closeBtn = document.getElementById('tool-modal-close');
+
+  function openTool(key) {
+    const tool = TOOLS[key];
+    if (!tool) return;
+    titleEl.textContent = tool.title;
+    bodyEl.innerHTML = tool.html;
+    tool.init(bodyEl);
+    overlay.classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeTool() {
+    overlay.classList.remove('open');
+    document.body.style.overflow = '';
+  }
+  closeBtn.addEventListener('click', closeTool);
+  overlay.addEventListener('click', e => { if (e.target === overlay) closeTool(); });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeTool(); });
+
+  document.querySelectorAll('.tool-card[data-tool]').forEach(card => {
+    card.addEventListener('click', e => {
+      e.preventDefault();
+      openTool(card.dataset.tool);
+    });
+  });
+
+  function downloadText(filename, text) {
+    const blob = new Blob([text], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = filename;
+    document.body.appendChild(a); a.click(); a.remove();
+    URL.revokeObjectURL(url);
+  }
+
+  function copyText(text, noteEl) {
+    navigator.clipboard.writeText(text).then(() => {
+      if (noteEl) { noteEl.textContent = 'Copied!'; setTimeout(() => noteEl.textContent = '', 1800); }
+    }).catch(() => { if (noteEl) noteEl.textContent = 'Could not copy — select & copy manually'; });
+  }
+
+  // ── TOOL 1: Content Calendar Generator ──────────────────────────
+  const CAL_POOLS = {
+    general: [
+      ['Reel','Behind-the-scenes of how your product/service actually gets made'],
+      ['Carousel','5 mistakes people make before choosing a business like yours'],
+      ['Static Post','Customer testimonial spotlight — screenshot + your reaction'],
+      ['Story','Poll: ask your audience what they want to see more of'],
+      ['Educational','A myth vs. fact about your industry'],
+      ['UGC Repost','Repost a customer\'s post/tag with a thank-you caption'],
+      ['Promo','This week\'s offer, spelled out simply'],
+      ['Reel','A day in the life at your business'],
+      ['Carousel','Before/after or a process breakdown'],
+      ['Static Post','Founder\'s note — why you started this'],
+      ['Story','Quick Q&A — answer 3 DMs publicly'],
+      ['Educational','3 tips your customers wish they knew earlier'],
+      ['UGC Repost','A client win or result you helped create'],
+      ['Promo','A limited-time bundle or seasonal push'],
+      ['Reel','A quick tutorial — teach one small thing well'],
+    ],
+    fashion: [
+      ['Reel','3 ways to style one piece'],
+      ['Carousel','New arrivals lookbook'],
+      ['Static Post','Customer OOTD repost'],
+      ['Story','"This or that" poll between two products'],
+      ['Educational','A fit or fabric-care tip'],
+      ['UGC Repost','Customer unboxing repost'],
+      ['Promo','Flash sale countdown'],
+      ['Reel','Try-on haul / get-ready-with-me'],
+      ['Carousel','Sizing guide or styling for different body types'],
+      ['Static Post','Founder\'s pick of the week'],
+      ['Story','Restock alert'],
+      ['Educational','How to care for a specific material'],
+      ['UGC Repost','Tag-us repost from a happy customer'],
+      ['Promo','Bundle discount'],
+      ['Reel','Behind the design/sourcing process'],
+    ],
+    food: [
+      ['Reel','A recipe or prep process in 15 seconds'],
+      ['Carousel','Menu highlight with pairing suggestions'],
+      ['Static Post','Dish of the day, styled shot'],
+      ['Story','Poll: which special should we bring back?'],
+      ['Educational','Ingredient spotlight or sourcing story'],
+      ['UGC Repost','Customer table/food repost'],
+      ['Promo','Happy hour or combo deal'],
+      ['Reel','Kitchen behind-the-scenes'],
+      ['Carousel','5 dishes you have to try'],
+      ['Static Post','Chef or owner feature'],
+      ['Story','Today\'s special, countdown to sell-out'],
+      ['Educational','A pairing or serving tip'],
+      ['UGC Repost','Review screenshot repost'],
+      ['Promo','Weekend-only offer'],
+      ['Reel','Plating or prep close-up'],
+    ],
+    beauty: [
+      ['Reel','A quick technique or tutorial'],
+      ['Carousel','Before/after transformation set'],
+      ['Static Post','Product spotlight, clean flat-lay'],
+      ['Story','"Ask me anything" about skin/beauty'],
+      ['Educational','Myth-busting a common concern'],
+      ['UGC Repost','A client result repost'],
+      ['Promo','A package or membership offer'],
+      ['Reel','A day in the life at the studio/salon'],
+      ['Carousel','A routine, broken down step by step'],
+      ['Static Post','Team/therapist spotlight'],
+      ['Story','Booking slots left this week'],
+      ['Educational','What a specific ingredient or technique actually does'],
+      ['UGC Repost','A testimonial screenshot'],
+      ['Promo','A referral offer'],
+      ['Reel','A client transformation reveal'],
+    ],
+    fitness: [
+      ['Reel','A quick workout or technique demo'],
+      ['Carousel','3 exercises for a specific goal'],
+      ['Static Post','A client transformation (with permission)'],
+      ['Story','Poll: what\'s your biggest struggle?'],
+      ['Educational','A myth about diet or training'],
+      ['UGC Repost','A client check-in repost'],
+      ['Promo','New batch/cohort enrollment open'],
+      ['Reel','A day in the life of a coach'],
+      ['Carousel','Common form mistakes'],
+      ['Static Post','Client win of the week'],
+      ['Story','Countdown to program start'],
+      ['Educational','A recovery or nutrition tip'],
+      ['UGC Repost','A client shoutout'],
+      ['Promo','Limited seats left'],
+      ['Reel','A quick mobility or warm-up routine'],
+    ],
+    b2b: [
+      ['Carousel','3 mistakes businesses make with what you offer'],
+      ['Static Post','A case study result — one clean stat'],
+      ['Reel','"What we actually do", explained in 20 seconds'],
+      ['Story','Poll: what\'s your biggest bottleneck?'],
+      ['Educational','A framework or checklist breakdown'],
+      ['UGC Repost','A client shoutout/tag repost'],
+      ['Promo','A free audit or consult offer'],
+      ['Static Post','Team spotlight'],
+      ['Carousel','Before/after working with you'],
+      ['Reel','A founder POV — a lesson learned'],
+      ['Story','A poll or quiz on industry knowledge'],
+      ['Educational','A piece of jargon, explained simply'],
+      ['UGC Repost','A client quote, turned into a graphic'],
+      ['Promo','Limited slots this quarter'],
+      ['Reel','A quick tip that saves time or money'],
+    ],
+    realestate: [
+      ['Reel','A property walkthrough, fast cuts'],
+      ['Carousel','What a given budget gets you in your city'],
+      ['Static Post','Listing highlight, hero shot'],
+      ['Story','Poll: which finish do you prefer?'],
+      ['Educational','A first-time buyer tip'],
+      ['UGC Repost','A client key-handover repost'],
+      ['Promo','Open house announcement'],
+      ['Reel','A neighbourhood spotlight'],
+      ['Carousel','The buying process, step by step'],
+      ['Static Post','Agent spotlight'],
+      ['Story','New listing alert'],
+      ['Educational','A loan or paperwork tip'],
+      ['UGC Repost','A client testimonial'],
+      ['Promo','A limited-inventory push'],
+      ['Reel','A before/after renovation reveal'],
+    ],
+    education: [
+      ['Reel','One thing students get wrong about a topic'],
+      ['Carousel','What you\'ll learn, broken down'],
+      ['Static Post','A student result or score improvement'],
+      ['Story','Poll: what topic should we cover next?'],
+      ['Educational','A quick concept explainer'],
+      ['UGC Repost','A student shoutout/repost'],
+      ['Promo','New batch enrollment open'],
+      ['Reel','A day in the life of a student or teacher'],
+      ['Carousel','Study tips or exam strategy'],
+      ['Static Post','Instructor spotlight'],
+      ['Story','Countdown to batch start'],
+      ['Educational','A common doubt, answered'],
+      ['UGC Repost','A parent/student testimonial'],
+      ['Promo','Early-bird discount'],
+      ['Reel','A concept explained in under 30 seconds'],
+    ],
+  };
+  CAL_POOLS.other = CAL_POOLS.general;
+
+  const NICHE_LABELS = {
+    general: 'General / Other', fashion: 'Fashion & Retail', food: 'Food & Beverage',
+    beauty: 'Beauty & Wellness', fitness: 'Fitness & Coaching', b2b: 'Professional Services / B2B',
+    realestate: 'Real Estate', education: 'Education & Coaching',
+  };
+
+  const TOOLS = {};
+
+  TOOLS.calendar = {
+    title: '📅 Content Calendar Generator',
+    html: `
+      <p class="tool-intro">Pick the closest match to your business — you'll get a 30-day content plan with a post idea and format for every day.</p>
+      <div class="tool-field">
+        <label for="cal-niche">Business type</label>
+        <select id="cal-niche">
+          ${Object.entries(NICHE_LABELS).map(([k,v]) => `<option value="${k}">${v}</option>`).join('')}
+        </select>
+      </div>
+      <button type="button" class="tool-btn" id="cal-generate">Generate my calendar</button>
+      <div class="tool-output" id="cal-output">
+        <div class="cal-table-wrap">
+          <table class="cal-table">
+            <thead><tr><th>Day</th><th>Format</th><th>Post idea</th></tr></thead>
+            <tbody id="cal-tbody"></tbody>
+          </table>
+        </div>
+        <div class="tool-output-actions">
+          <button type="button" class="tool-btn tool-btn-secondary" id="cal-download">Download as text file</button>
+        </div>
+      </div>`,
+    init(root) {
+      const niche = root.querySelector('#cal-niche');
+      const genBtn = root.querySelector('#cal-generate');
+      const output = root.querySelector('#cal-output');
+      const tbody = root.querySelector('#cal-tbody');
+      const downloadBtn = root.querySelector('#cal-download');
+      let lastRows = [];
+      genBtn.addEventListener('click', () => {
+        const pool = CAL_POOLS[niche.value] || CAL_POOLS.general;
+        const rows = [];
+        for (let day = 1; day <= 30; day++) {
+          const idx = day <= 15 ? day - 1 : (day - 1 + 5) % 15;
+          rows.push({ day, format: pool[idx][0], idea: pool[idx][1] });
+        }
+        lastRows = rows;
+        tbody.innerHTML = rows.map(r => `<tr><td class="cal-day">Day ${r.day}</td><td class="cal-format">${r.format}</td><td>${r.idea}</td></tr>`).join('');
+        output.classList.add('show');
+      });
+      downloadBtn.addEventListener('click', () => {
+        if (!lastRows.length) return;
+        const label = NICHE_LABELS[niche.value] || 'General';
+        const text = `TIGITAL — 30-Day Content Calendar (${label})\n` + '='.repeat(40) + '\n\n' +
+          lastRows.map(r => `Day ${r.day} — ${r.format}\n${r.idea}\n`).join('\n');
+        downloadText('tigital-content-calendar.txt', text);
+      });
+    }
+  };
+
+  // ── TOOL 2: Ad Budget Calculator ────────────────────────────────
+  const BUDGET_BENCHMARKS = {
+    ecommerce:  { label: 'E-commerce / Retail',           pct: 12, meta: 0.70, note: 'Visual, impulse-driven products tend to perform best on Meta (Instagram/Facebook); keep a smaller Google Search slice for people already looking to buy.' },
+    food:       { label: 'Food & Beverage',                pct: 10, meta: 0.65, note: 'Meta builds craving and brand recall; Google Search catches the "near me / order now" intent moments.' },
+    beauty:     { label: 'Beauty & Wellness',               pct: 12, meta: 0.75, note: 'Highly visual and trust-driven — Meta (Instagram especially) usually carries most of the weight here.' },
+    realestate: { label: 'Real Estate',                     pct: 8,  meta: 0.40, note: 'High-intent buyers search before they scroll — Google Search typically outperforms for real estate leads.' },
+    b2b:        { label: 'Professional Services / B2B',     pct: 7,  meta: 0.30, note: 'B2B buyers usually search with intent — weight Google higher, use Meta mainly for retargeting and brand awareness.' },
+    education:  { label: 'Education & Coaching',            pct: 10, meta: 0.55, note: 'A fairly even split works well — Meta for discovery and storytelling, Google for people actively searching for a course.' },
+    other:      { label: 'General / Other',                 pct: 10, meta: 0.60, note: 'A balanced starting split — lean further into whichever channel is already sending you cheaper leads.' },
+  };
+  TOOLS.budget = {
+    title: '💰 Ad Budget Calculator',
+    html: `
+      <p class="tool-intro">A starting-point benchmark for how much to spend and how to split it — not a guarantee. Adjust from here based on your actual cost-per-lead once you have data.</p>
+      <div class="tool-field">
+        <label for="bud-revenue">Monthly revenue goal (₹)</label>
+        <input type="number" id="bud-revenue" min="0" step="1000" placeholder="e.g. 500000">
+      </div>
+      <div class="tool-field">
+        <label for="bud-industry">Industry</label>
+        <select id="bud-industry">
+          ${Object.entries(BUDGET_BENCHMARKS).map(([k,v]) => `<option value="${k}">${v.label}</option>`).join('')}
+        </select>
+      </div>
+      <button type="button" class="tool-btn" id="bud-calc">Calculate my budget</button>
+      <div class="tool-output" id="bud-output">
+        <div class="budget-result">
+          <div class="budget-row budget-total"><span class="budget-label">Suggested total monthly ad budget</span><span class="budget-value" id="bud-total"></span></div>
+          <div class="budget-row"><span class="budget-label">Meta Ads (Instagram/Facebook)</span><span class="budget-value" id="bud-meta"></span></div>
+          <div class="budget-row"><span class="budget-label">Google Ads</span><span class="budget-value" id="bud-google"></span></div>
+        </div>
+        <p class="budget-note" id="bud-note"></p>
+      </div>`,
+    init(root) {
+      const revenueInput = root.querySelector('#bud-revenue');
+      const industrySel = root.querySelector('#bud-industry');
+      const calcBtn = root.querySelector('#bud-calc');
+      const output = root.querySelector('#bud-output');
+      const totalEl = root.querySelector('#bud-total');
+      const metaEl = root.querySelector('#bud-meta');
+      const googleEl = root.querySelector('#bud-google');
+      const noteEl = root.querySelector('#bud-note');
+      const fmt = n => '₹' + Math.round(n).toLocaleString('en-IN');
+      calcBtn.addEventListener('click', () => {
+        const revenue = parseFloat(revenueInput.value);
+        if (!revenue || revenue <= 0) { revenueInput.focus(); return; }
+        const b = BUDGET_BENCHMARKS[industrySel.value];
+        const total = revenue * (b.pct / 100);
+        const meta = total * b.meta;
+        const google = total - meta;
+        totalEl.textContent = fmt(total) + '/mo';
+        metaEl.textContent = fmt(meta) + ` (${Math.round(b.meta*100)}%)`;
+        googleEl.textContent = fmt(google) + ` (${Math.round((1-b.meta)*100)}%)`;
+        noteEl.textContent = `Based on a ${b.pct}% of revenue benchmark for ${b.label}. ${b.note}`;
+        output.classList.add('show');
+      });
+    }
+  };
+
+  // ── TOOL 3: Caption Formula Builder ─────────────────────────────
+  const CAPTION_PRESETS = {
+    sell:     { label: 'Sell (promo/offer)', hooks: ['Still thinking about it? Here\'s your sign.', 'This won\'t be around for long.', 'The offer everyone\'s been asking for is finally here.'],
+                ctas: ['DM us "YES" to grab yours', 'Tap the link in bio to order', 'Offer ends soon — don\'t sleep on it'] },
+    educate:  { label: 'Educate (tip/how-to)', hooks: ['Nobody tells you this, but...', 'Here\'s a mistake I see all the time:', 'Save this for later — you\'ll need it.'],
+                ctas: ['Save this post for later', 'Which tip are you trying first? Tell us below', 'Follow for more tips like this'] },
+    entertain:{ label: 'Entertain (relatable/fun)', hooks: ['POV: you just found the best thing in town.', 'Tag someone who needs to see this.', 'We didn\'t plan this, it just happened.'],
+                ctas: ['Tag a friend who\'d relate', 'Drop a 🔥 if this is you', 'Which one are you? Comment below'] },
+    trust:    { label: 'Build trust (testimonial/story)', hooks: ['This review made our whole week.', 'Real story, real result.', 'We don\'t say this enough, so here goes:'],
+                ctas: ['Read more reviews — link in bio', 'Ready for your own story? DM us', 'This could be you next'] },
+  };
+  TOOLS.caption = {
+    title: '✍️ Caption Formula Builder',
+    html: `
+      <p class="tool-intro">Pick a goal, fill in the blanks (or tap a suggestion to drop it in), and watch your caption build itself.</p>
+      <div class="tool-field">
+        <label for="cap-goal">Caption goal</label>
+        <select id="cap-goal">${Object.entries(CAPTION_PRESETS).map(([k,v]) => `<option value="${k}">${v.label}</option>`).join('')}</select>
+      </div>
+      <div class="tool-field">
+        <label for="cap-hook">Hook (first line)</label>
+        <input type="text" id="cap-hook" placeholder="Grab attention in the first line...">
+        <div class="tool-hints" id="cap-hook-hints"></div>
+      </div>
+      <div class="tool-field">
+        <label for="cap-body">Body</label>
+        <textarea id="cap-body" placeholder="The value, the story, the details..."></textarea>
+      </div>
+      <div class="tool-field">
+        <label for="cap-cta">Call to action</label>
+        <input type="text" id="cap-cta" placeholder="Tell them what to do next...">
+        <div class="tool-hints" id="cap-cta-hints"></div>
+      </div>
+      <div class="tool-output show">
+        <label style="display:block;font-family:'Syne',sans-serif;font-size:0.68rem;font-weight:700;letter-spacing:0.05em;text-transform:uppercase;color:var(--navy);margin-bottom:0.5rem;">Preview</label>
+        <div class="caption-preview" id="cap-preview"><span class="cp-empty">Your caption will build here as you type...</span></div>
+        <div class="tool-output-actions">
+          <button type="button" class="tool-btn tool-btn-secondary" id="cap-copy">Copy caption</button>
+          <span class="tool-copy-note" id="cap-copy-note"></span>
+        </div>
+      </div>`,
+    init(root) {
+      const goalSel = root.querySelector('#cap-goal');
+      const hookInput = root.querySelector('#cap-hook');
+      const bodyInput = root.querySelector('#cap-body');
+      const ctaInput = root.querySelector('#cap-cta');
+      const hookHints = root.querySelector('#cap-hook-hints');
+      const ctaHints = root.querySelector('#cap-cta-hints');
+      const preview = root.querySelector('#cap-preview');
+      const copyBtn = root.querySelector('#cap-copy');
+      const copyNote = root.querySelector('#cap-copy-note');
+
+      function renderHints() {
+        const p = CAPTION_PRESETS[goalSel.value];
+        hookHints.innerHTML = p.hooks.map(h => `<span class="tool-hint-chip" data-fill="hook">${h}</span>`).join('');
+        ctaHints.innerHTML = p.ctas.map(c => `<span class="tool-hint-chip" data-fill="cta">${c}</span>`).join('');
+        hookHints.querySelectorAll('.tool-hint-chip').forEach(chip => chip.addEventListener('click', () => { hookInput.value = chip.textContent; updatePreview(); }));
+        ctaHints.querySelectorAll('.tool-hint-chip').forEach(chip => chip.addEventListener('click', () => { ctaInput.value = chip.textContent; updatePreview(); }));
+      }
+      function updatePreview() {
+        const parts = [hookInput.value.trim(), bodyInput.value.trim(), ctaInput.value.trim()].filter(Boolean);
+        preview.innerHTML = parts.length ? parts.join('\n\n').replace(/</g,'&lt;') : '<span class="cp-empty">Your caption will build here as you type...</span>';
+      }
+      goalSel.addEventListener('change', renderHints);
+      [hookInput, bodyInput, ctaInput].forEach(el => el.addEventListener('input', updatePreview));
+      copyBtn.addEventListener('click', () => {
+        const parts = [hookInput.value.trim(), bodyInput.value.trim(), ctaInput.value.trim()].filter(Boolean);
+        if (!parts.length) return;
+        copyText(parts.join('\n\n'), copyNote);
+      });
+      renderHints();
+    }
+  };
+
+  // ── TOOL 4: Best Time to Post Calculator ────────────────────────
+  const PLATFORM_LABELS = { instagram: 'Instagram', facebook: 'Facebook', linkedin: 'LinkedIn', youtube: 'YouTube' };
+  const AUDIENCE_LABELS = { general: 'General consumer (India)', young: 'Young / student audience', b2b: 'Business professionals (B2B)', local: 'Local / regional audience' };
+  const BEST_TIMES = {
+    instagram_general: [['Tue–Thu','11:00 AM – 1:00 PM'], ['Mon/Wed/Fri','7:00 PM – 9:00 PM'], ['Saturday','10:00 AM – 12:00 PM']],
+    instagram_young:   [['Weekdays','8:00 PM – 10:00 PM'], ['Sunday','12:00 PM – 2:00 PM'], ['Friday','6:00 PM – 8:00 PM']],
+    instagram_b2b:     [['Tue–Thu','8:00 AM – 10:00 AM'], ['Wednesday','12:00 PM – 1:00 PM'], ['Tuesday','5:00 PM – 6:00 PM']],
+    instagram_local:   [['Fri–Sun','5:00 PM – 8:00 PM'], ['Wednesday','7:00 PM – 9:00 PM'], ['Saturday','11:00 AM – 1:00 PM']],
+    facebook_general:  [['Tue–Thu','1:00 PM – 3:00 PM'], ['Sat–Sun','12:00 PM – 1:00 PM'], ['Friday','3:00 PM – 5:00 PM']],
+    facebook_young:    [['Weekdays','7:00 PM – 9:00 PM'], ['Saturday','11:00 AM – 1:00 PM'], ['Sunday','2:00 PM – 4:00 PM']],
+    facebook_b2b:      [['Tue–Thu','9:00 AM – 11:00 AM'], ['Wednesday','1:00 PM – 2:00 PM'], ['Thursday','4:00 PM – 5:00 PM']],
+    facebook_local:    [['Fri–Sun','6:00 PM – 8:00 PM'], ['Wednesday','12:00 PM – 2:00 PM'], ['Saturday','10:00 AM – 12:00 PM']],
+    linkedin_general:  [['Tue–Thu','9:00 AM – 11:00 AM'], ['Wednesday','12:00 PM – 1:00 PM'], ['Tuesday','5:00 PM – 6:00 PM']],
+    linkedin_young:    [['Wednesday','5:00 PM – 7:00 PM'], ['Tuesday','9:00 AM – 10:00 AM'], ['Thursday','12:00 PM – 1:00 PM']],
+    linkedin_b2b:      [['Tue–Thu','8:00 AM – 10:00 AM'], ['Wednesday','12:00 PM – 1:00 PM'], ['Tuesday','5:00 PM – 6:00 PM']],
+    linkedin_local:    [['Tue/Thu','9:00 AM – 11:00 AM'], ['Wednesday','1:00 PM – 2:00 PM'], ['Monday','10:00 AM – 11:00 AM']],
+    youtube_general:   [['Fri–Sun','6:00 PM – 9:00 PM'], ['Wednesday','7:00 PM – 9:00 PM'], ['Saturday','12:00 PM – 2:00 PM']],
+    youtube_young:     [['Sat–Sun','12:00 PM – 3:00 PM'], ['Friday','7:00 PM – 9:00 PM'], ['Wednesday','5:00 PM – 7:00 PM']],
+    youtube_b2b:       [['Tue–Thu','10:00 AM – 12:00 PM'], ['Wednesday','1:00 PM – 2:00 PM'], ['Thursday','4:00 PM – 5:00 PM']],
+    youtube_local:     [['Saturday','5:00 PM – 8:00 PM'], ['Sunday','11:00 AM – 1:00 PM'], ['Wednesday','7:00 PM – 9:00 PM']],
+  };
+  TOOLS.besttime = {
+    title: '⏰ Best Time to Post Calculator',
+    html: `
+      <p class="tool-intro">General benchmarks in IST — a starting point, not a guarantee. Your own Insights/Analytics data will always beat this once you have enough of it.</p>
+      <div class="tool-field-row">
+        <div class="tool-field">
+          <label for="bt-platform">Platform</label>
+          <select id="bt-platform">${Object.entries(PLATFORM_LABELS).map(([k,v]) => `<option value="${k}">${v}</option>`).join('')}</select>
+        </div>
+        <div class="tool-field">
+          <label for="bt-audience">Audience</label>
+          <select id="bt-audience">${Object.entries(AUDIENCE_LABELS).map(([k,v]) => `<option value="${k}">${v}</option>`).join('')}</select>
+        </div>
+      </div>
+      <button type="button" class="tool-btn" id="bt-calc">Show me the best times</button>
+      <div class="tool-output" id="bt-output">
+        <div class="besttime-result" id="bt-result"></div>
+      </div>`,
+    init(root) {
+      const platformSel = root.querySelector('#bt-platform');
+      const audienceSel = root.querySelector('#bt-audience');
+      const calcBtn = root.querySelector('#bt-calc');
+      const output = root.querySelector('#bt-output');
+      const resultEl = root.querySelector('#bt-result');
+      calcBtn.addEventListener('click', () => {
+        const key = `${platformSel.value}_${audienceSel.value}`;
+        const slots = BEST_TIMES[key] || BEST_TIMES.instagram_general;
+        resultEl.innerHTML = slots.map(([day, win]) => `<div class="besttime-slot"><span class="besttime-day">${day}</span><span class="besttime-window">${win} IST</span></div>`).join('');
+        output.classList.add('show');
+      });
+    }
+  };
+})();
+</script>
 
 <!-- Notion CMS — live posts injected from /api/posts (Cloudflare Pages Function) -->
 <script>
