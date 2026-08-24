@@ -131,7 +131,8 @@ body{
 @keyframes riseIn{from{transform:translateY(14px);}to{transform:none;}}
 
 /* ================= LOCK SCREEN ================= */
-.lock{position:absolute;inset:0;color:var(--on-ink);overflow:hidden;cursor:pointer;}
+.lock{position:absolute;inset:0;color:var(--on-ink);overflow:hidden;cursor:grab;touch-action:none;user-select:none;will-change:transform;}
+.lock:active{cursor:grabbing;}
 .lock-bg{position:absolute;inset:0;background:
   radial-gradient(90% 70% at 50% 22%, #322f24 0%, #1c1a13 55%, #0d0c08 100%);}
 .lock-imp{position:absolute;left:50%;top:47%;transform:translate(-50%,-50%);
@@ -392,6 +393,27 @@ body{
 .soc-mid p{font-family:var(--mono);font-size:10px;color:var(--tx-soft);margin-top:4px;}
 .soc-row .larrow{color:var(--tig-blue);flex:none;opacity:.55;}
 .soc-row .larrow svg{fill:none;stroke:currentColor;stroke-width:2;}
+.soc-row.nolink{cursor:default;}
+.soc-row.nolink:hover{transform:none;box-shadow:0 6px 16px -12px rgba(0,0,0,.3);}
+
+/* ===== About / Contact shared bits ===== */
+.about-blurb{font-family:var(--ui);font-size:13.5px;line-height:1.55;color:var(--tx);
+  background:#fff;border:1px solid var(--paper-line);border-radius:18px;padding:16px;
+  box-shadow:0 6px 16px -12px rgba(0,0,0,.3);}
+.about-stats{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.about-stat{background:linear-gradient(157deg,var(--tig-yellow),var(--tig-yellow-2));
+  border-radius:16px;padding:14px 14px 12px;box-shadow:0 8px 18px -12px rgba(247,181,0,.7);}
+.about-stat .as-val{font-family:var(--ui);font-weight:700;font-size:22px;color:var(--tig-blue);letter-spacing:-.01em;line-height:1;}
+.about-stat .as-lbl{font-family:var(--mono);font-size:9px;letter-spacing:.04em;color:#7a5a00;margin-top:6px;line-height:1.3;}
+.sec-mini{font-family:var(--mono);font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--tx-soft);
+  margin:4px 2px 2px;}
+.about-founder{text-align:center;padding:14px 10px 4px;}
+.about-founder .af-name{font-family:var(--ui);font-weight:600;font-size:13.5px;color:var(--tx);}
+.about-founder .af-role{font-family:var(--mono);font-size:9.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--tx-soft);margin-top:4px;}
+.about-cta{display:block;text-align:center;text-decoration:none;font-family:var(--ui);font-weight:600;font-size:14px;
+  color:var(--tig-blue);background:linear-gradient(157deg,var(--tig-yellow),var(--tig-yellow-2));
+  border-radius:30px;padding:14px;margin-top:4px;box-shadow:0 10px 20px -12px rgba(247,181,0,.8);}
+.about-cta:active{transform:scale(.985);}
 
 /* ===== Hall of Fame (Our Work) ===== */
 .hof-banner{display:flex;align-items:center;gap:9px;margin-bottom:14px;
@@ -593,7 +615,7 @@ var APPS = {
   tiggigs:  {name:'TigGigs',  sub:'Gigs that pay',            wordmark:'₹', fill:'fill-logo', ext:true, url:'/tiggigs/'},
   tigpods:  {name:'Tigpods',  sub:'Podcast network',          logo:'icons/tigpods.png', fill:'fill-logo', ext:true, url:'/tigpods/'},
   tigom:    {name:'TIGOM',    sub:'Open mic · live',      logo:'icons/tigom.png', fill:'fill-logo', ext:true, url:'/tigom/'},
-  ourwork:  {name:'Brag Doc', sub:'TVCs, events & more',      icon:'trophy', fill:'fill-logo', glyph:'#17266b', interior:'ourwork', headFrom:'#3a2030', headTo:'#15140f',
+  ourwork:  {name:'Body of Work', sub:'TVCs, events & more',      icon:'trophy', fill:'fill-logo', glyph:'#17266b', interior:'ourwork', headFrom:'#3a2030', headTo:'#15140f',
              blurb:'Brands, government clients and culture — TVCs, TIGvents, digital marketing and more.'},
   portfolio:{name:'Portfolio', sub:'Decks & documents',       icon:'book', fill:'fill-logo', glyph:'#17266b', interior:'portfolio', headFrom:'#3a2010', headTo:'#15140f',
              blurb:'Two decks, ready to open — no download required.'},
@@ -602,7 +624,7 @@ var APPS = {
 };
 
 /* ===== state + navigation ===== */
-var state = {view:'lock', interiorId:null, web:null, socials:false};
+var state = {view:'lock', interiorId:null, web:null, socials:false, about:false, contact:false};
 
 try{
   var saved = JSON.parse(localStorage.getItem('tigos') || '{}');
@@ -624,14 +646,18 @@ function openApp(id){
   if(app.interior){ set({interiorId:id}); return; }
 }
 function openWeb(app){ set({web:app}); }
+function openAbout(){ set({about:true}); }
+function openContact(){ set({contact:true}); }
 function unlock(){ set({view:'home'}); }
 function back(){
+  if(state.contact){ set({contact:false}); return; }
+  if(state.about){ set({about:false}); return; }
   if(state.socials){ set({socials:false}); return; }
   if(state.web){ set({web:null}); return; }
   if(state.interiorId){ set({interiorId:null}); return; }
   if(state.view === 'home'){ set({view:'lock'}); return; }
 }
-function goHome(){ set({socials:false, web:null, interiorId:null, view:'home'}); }
+function goHome(){ set({socials:false, about:false, contact:false, web:null, interiorId:null, view:'home'}); }
 
 /* ===== LOCK ===== */
 function Lock(){
@@ -640,7 +666,7 @@ function Lock(){
     {icon:'laptopcam',fill:'fill-ink', glyph:'#ffb261', src:'TIG HQ',      time:'1h',  text:'TIGHQ Launch is coming — date TBA soon'},
     {icon:'megaphone',fill:'fill-red', glyph:'#fff',    src:'Going viral',  time:'3h',  text:"DoorDash's delivery bags started a podcast"}
   ];
-  return h("div", {className:"lock", onClick:unlock},
+  var lockEl = h("div", {className:"lock"},
     h("div", {className:"lock-bg"}),
     impCanvas(10, "lock-imp"),
     h("div", {className:"lock-grain"}),
@@ -666,6 +692,52 @@ function Lock(){
         h("div", {className:"lock-hint"}, "Swipe up to open"))
     )
   );
+  attachSwipeUnlock(lockEl);
+  return lockEl;
+}
+
+/* real swipe-up-to-unlock drag gesture (touch + mouse/pen via Pointer Events) —
+   manipulates the DOM directly during the drag instead of going through
+   set()/render(), since render() rebuilds the whole tree on every state change */
+function attachSwipeUnlock(el){
+  var THRESHOLD = 90;   // px of upward movement required to unlock
+  var MAXPULL = 240;    // px before drag resistance kicks in
+  var startY = null, dragging = false, dy = 0;
+
+  function onDown(clientY, pointerId){
+    startY = clientY; dragging = true; dy = 0;
+    el.style.transition = 'none';
+    if(pointerId != null){ try{ el.setPointerCapture(pointerId); }catch(e){} }
+  }
+  function onMoveTo(clientY){
+    if(!dragging) return;
+    dy = Math.max(0, startY - clientY);
+    var pull = dy < MAXPULL ? dy : MAXPULL + (dy - MAXPULL) * 0.15;
+    el.style.transform = 'translateY(-' + pull + 'px)';
+    el.style.opacity = String(Math.max(0.35, 1 - dy / 420));
+  }
+  function onUp(){
+    if(!dragging) return;
+    dragging = false;
+    el.style.transition = 'transform .28s cubic-bezier(.2,.8,.2,1), opacity .28s';
+    if(dy > THRESHOLD){
+      el.style.transform = 'translateY(-100%)';
+      el.style.opacity = '0';
+      setTimeout(unlock, 220);
+    } else {
+      el.style.transform = 'translateY(0)';
+      el.style.opacity = '1';
+    }
+    startY = null; dy = 0;
+  }
+
+  el.addEventListener('pointerdown', function(e){
+    if(e.pointerType === 'mouse' && e.button !== 0) return;
+    onDown(e.clientY, e.pointerId);
+  });
+  el.addEventListener('pointermove', function(e){ onMoveTo(e.clientY); });
+  el.addEventListener('pointerup', onUp);
+  el.addEventListener('pointercancel', onUp);
 }
 
 /* ===== HOME ===== */
@@ -799,7 +871,7 @@ function OurWorkBody(app){
   return [
     h("div", {className:"hof-banner"},
       glyph("trophy", {stroke:'#17266b', style:{width:18,height:18}}),
-      h("span", null, "Brag Doc"),
+      h("span", null, "Body of Work"),
       h("small", null, "TVCs, events, digital & govt. clients")
     ),
     chipRow,
@@ -993,6 +1065,88 @@ function Socials(){
   );
 }
 
+/* ===== About overlay ===== */
+function About(){
+  var stats = [
+    {value:'45+', label:'TIGOM editions run'},
+    {value:'24',  label:'TigPods guests recorded'},
+    {value:'28',  label:'Sandbox interns since 2018'},
+    {value:'3',   label:'Govt. clients served'}
+  ];
+  var ventures = [
+    {icon:'headphones', name:'TigPods',  desc:"TIG's podcast — Spotify named it the 2nd best podcast, 2024"},
+    {icon:'mic',        name:'TIGOM',    desc:"TIG's open mic — 45 editions, 12–15 artists a night"},
+    {icon:'briefcase',  name:'TigGigs',  desc:'Freelance job board — brands post jobs, freelancers claim them'},
+    {icon:'laptopcam',  name:'TigHQ',    desc:"Chennai's first creator-first co-working studio"}
+  ];
+  return h("div", {className:"socials"},
+    h("div", {className:"soc-head"},
+      h("button", {className:"iback", "aria-label":"Back", onClick:function(){ set({about:false}); }}, glyph("back")),
+      h("div", {className:"titles"},
+        h("h2", null, "About TIG"),
+        h("p", null, "Chennai · since 2018"))
+    ),
+    h("div", {className:"soc-list"},
+      h("div", {className:"about-blurb"},
+        "Chennai-born. Internet-raised. Globally connected.", h("br"), h("br"),
+        "The Internet Generation is a Chennai-based creative & digital agency — digital marketing, video production, influencer marketing, podcasts, open mic events, and TigGigs, our curated freelance job board."),
+      h("div", {className:"about-stats"},
+        stats.map(function(s){
+          return h("div", {className:"about-stat"},
+            h("div", {className:"as-val"}, s.value),
+            h("div", {className:"as-lbl"}, s.label));
+        })
+      ),
+      h("div", {className:"sec-mini"}, "The Tigiverse"),
+      ventures.map(function(v){
+        return h("div", {className:"soc-row nolink"},
+          h("div", {className:"soc-ic"}, glyph(v.icon, {stroke:'#17266b'})),
+          h("div", {className:"soc-mid"},
+            h("h6", null, v.name),
+            h("p", null, v.desc)));
+      }),
+      h("div", {className:"about-founder"},
+        h("div", {className:"af-name"}, "Founded by Jaytesh Calpakkam"),
+        h("div", {className:"af-role"}, "Co-Founder & CEO, The Internet Generation"))
+    )
+  );
+}
+
+/* ===== Contact overlay ===== */
+function Contact(){
+  var rows = [
+    {icon:'camera',   label:'@theintgen — Instagram',   sub:'Follow',   url:'https://www.instagram.com/theintgen/'},
+    {icon:'linkedin', label:'The Internet Generation',  sub:'LinkedIn · Connect', url:'https://www.linkedin.com/company/theintgen'},
+    {icon:'youtube',  label:'@TigPods — YouTube',       sub:'Watch',    url:'https://www.youtube.com/@TigPods'},
+    {icon:'spotify',  label:'TigPods — Spotify',        sub:'Listen',   url:'https://open.spotify.com/show/24ft92ZKYHNniM2onRhckB'},
+    {icon:'chat',     label:'TIG Community — WhatsApp', sub:'Join',     url:'https://wa.me/919940237330'},
+    {icon:'mail',     label:'hello@theintgen.com',      sub:'Email',    url:'mailto:hello@theintgen.com'},
+    {icon:'pin',      label:'T. Nagar, Chennai',        sub:'Location', url:'https://maps.google.com/?q=T.+Nagar,+Chennai'}
+  ];
+  return h("div", {className:"socials"},
+    h("div", {className:"soc-head"},
+      h("button", {className:"iback", "aria-label":"Back", onClick:function(){ set({contact:false}); }}, glyph("back")),
+      h("div", {className:"titles"},
+        h("h2", null, "Find Us"),
+        h("p", null, "You already know where"))
+    ),
+    h("div", {className:"soc-list"},
+      h("div", {className:"about-blurb"},
+        "If this feels like home — you're already one of us.", h("br"),
+        "Chennai-born. Internet-raised. Globally connected."),
+      rows.map(function(r){
+        return h("a", {className:"soc-row", href:r.url, target:r.url.indexOf('mailto:') === 0 ? null : "_blank", rel:"noopener"},
+          h("div", {className:"soc-ic"}, glyph(r.icon, {stroke:'#17266b'})),
+          h("div", {className:"soc-mid"},
+            h("h6", null, r.label),
+            h("p", null, r.sub)),
+          h("div", {className:"larrow"}, glyph("ext", {style:{width:15,height:15}})));
+      }),
+      h("a", {className:"about-cta", href:"mailto:hello@theintgen.com"}, "Get In Touch")
+    )
+  );
+}
+
 /* ===== Website overlay ===== */
 function WebLayer(app){
   return h("div", {className:"weblayer"},
@@ -1010,10 +1164,10 @@ function Dock(){
     h("button", {onClick:function(){ set({socials:true}); }},
       h("div", {className:"di"}, glyph("heart")),
       h("span", null, "Socials")),
-    h("button", {onClick:function(){ openWeb({name:'About', url:'theintgen.com/about'}); }},
+    h("button", {onClick:openAbout},
       h("div", {className:"di"}, glyph("info")),
       h("span", null, "About")),
-    h("button", {onClick:function(){ openWeb({name:'Contact', url:'theintgen.com/say-hi'}); }},
+    h("button", {onClick:openContact},
       h("div", {className:"di"}, glyph("mail")),
       h("span", null, "Contact"))
   );
@@ -1043,6 +1197,8 @@ function render(){
   }
   if(state.interiorId) append(viewport, Interior(APPS[state.interiorId]));
   if(state.socials) append(viewport, Socials());
+  if(state.about) append(viewport, About());
+  if(state.contact) append(viewport, Contact());
   if(state.web) append(viewport, WebLayer(state.web));
 
   var device = h("div", {className:"device"},
