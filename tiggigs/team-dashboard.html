@@ -633,6 +633,12 @@ body{
   border-radius:99px;padding:1px 8px;color:var(--gray);
 }
 .ops-tab.active .ops-tab-count{background:#2A2000;border-color:#4A3800;color:var(--yellow);}
+.ops-tab-count.alert{background:var(--yellow);border-color:var(--yellow);color:var(--black);font-weight:700;}
+.chip.role-new{color:var(--yellow);background:#1A1500;border-color:#4A3800;}
+.chip.rq-Pending{color:var(--orange);background:#1A1000;border-color:#3A2600;}
+.chip.rq-Approved{color:var(--green);background:#0A1A0A;border-color:#1A3A26;}
+.chip.rq-Declined{color:var(--red);background:#1A0A0A;border-color:#3A1A1A;}
+.rq-note{font-size:11px;color:var(--gray);max-width:220px;white-space:normal;line-height:1.4;}
 
 /* Panel */
 .ops-panel{
@@ -881,6 +887,9 @@ body{
         <button class="ops-tab"        data-tab="freelancers" onclick="switchOpsTab('freelancers')">
           Freelancers <span class="ops-tab-count" id="opsCount_freelancers">—</span>
         </button>
+        <button class="ops-tab"        data-tab="roles"       onclick="switchOpsTab('roles')">
+          Skill Requests <span class="ops-tab-count" id="opsCount_roles">—</span>
+        </button>
         <button class="ops-tab"        data-tab="payouts"     onclick="switchOpsTab('payouts')">
           Payouts <span class="ops-tab-count" id="opsCount_payouts">—</span>
         </button>
@@ -925,6 +934,11 @@ body{
         <!-- FREELANCERS ──────────────────────────────────────── -->
         <div class="ops-panel-inner" id="opsPanel_freelancers">
           <div id="opsFlBody"><div class="ops-loading">Loading…</div></div>
+        </div>
+
+        <!-- SKILL REQUESTS ───────────────────────────────────── -->
+        <div class="ops-panel-inner" id="opsPanel_roles">
+          <div id="opsRoleBody"><div class="ops-loading">Loading…</div></div>
         </div>
 
         <!-- PAYOUTS ─────────────────────────────────────────── -->
@@ -1035,6 +1049,7 @@ function showDashboard() {
   document.getElementById('authScreen').style.display = 'none';
   document.getElementById('dashboard').classList.add('visible');
   loadAll();
+  loadOpsRoles();
 }
 
 function signOut() {
@@ -1713,7 +1728,8 @@ if (localStorage.getItem(AUTH_KEY) === '1' && teamPass()) {
 // OPS LAYER
 // ═══════════════════════════════════════════════════════════════════════════
 
-const opsLoaded = { jobs:false, freelancers:false, payouts:false, submissions:false };
+const opsLoaded = { jobs:false, freelancers:false, roles:false, payouts:false, submissions:false };
+let opsRoleData = [];
 let opsJobsData = [], opsFlData = [], opsPayData = [];
 
 // ── TAB SWITCHING ────────────────────────────────────────────────────────
@@ -1722,7 +1738,7 @@ function switchOpsTab(name) {
   document.querySelectorAll('.ops-panel-inner').forEach(p => p.classList.toggle('active', p.id === 'opsPanel_' + name));
   if (!opsLoaded[name]) {
     opsLoaded[name] = true;
-    ({ jobs: loadOpsJobs, freelancers: loadOpsFreelancers, payouts: loadOpsPayouts, submissions: loadOpsSubmissions })[name]?.();
+    ({ jobs: loadOpsJobs, freelancers: loadOpsFreelancers, roles: loadOpsRoles, payouts: loadOpsPayouts, submissions: loadOpsSubmissions })[name]?.();
   }
 }
 
@@ -1952,6 +1968,71 @@ async function opsFlUPI(email, idx) {
     const fl = opsFlData.find(x => x.email===email); if (fl) fl.upi_id = val;
     showToast('UPI saved ✓');
   } catch(e) { showToast('Error: '+e.message, true); }
+}
+
+// ── SKILL REQUESTS (freelancer asks to add a role, e.g. Editor → Designer) ──
+async function loadOpsRoles() {
+  const body = document.getElementById('opsRoleBody');
+  if (body) body.innerHTML = opsSpinner();
+  try {
+    opsRoleData = await sbRpc('team_role_requests', { p_pass: teamPass() });
+    renderOpsRoles();
+  } catch(e) {
+    if (body) body.innerHTML = `<div class="ops-loading" style="color:var(--red)">Error: ${e.message}</div>`;
+  }
+}
+
+function renderOpsRoles() {
+  const pending = opsRoleData.filter(r => r.status === 'Pending').length;
+  const cnt = document.getElementById('opsCount_roles');
+  cnt.textContent = pending;
+  cnt.classList.toggle('alert', pending > 0);
+  const el = document.getElementById('opsRoleBody');
+  if (!opsRoleData.length) { el.innerHTML = '<div class="ops-loading" style="color:#555">No skill requests yet. When a freelancer asks to unlock another job type, it lands here.</div>'; return; }
+  const fmt = d => d ? new Date(d).toLocaleDateString('en-GB',{day:'numeric',month:'short'}) : '—';
+  el.innerHTML = `<div class="ops-table-wrap"><table class="ops-table">
+    <thead><tr>
+      <th>Requested</th><th>Freelancer</th><th>Current Role</th><th>Wants</th><th>Portfolio</th><th>Note</th><th>Status</th><th>Actions</th>
+    </tr></thead>
+    <tbody>${opsRoleData.map(r => {
+      const isPending = r.status === 'Pending';
+      const url = /^https?:\/\//i.test(r.portfolio_url||'') ? esc(r.portfolio_url) : '';
+      return `<tr>
+        <td style="font-family:'DM Mono',monospace;font-size:11px;color:var(--gray);white-space:nowrap">${fmt(r.created_at)}</td>
+        <td style="font-family:'DM Mono',monospace;font-size:11px">
+          <div style="color:var(--white);font-family:'DM Sans',sans-serif;font-weight:500;font-size:13px">${esc(r.full_name||'—')}</div>
+          <div style="color:#555;font-size:10px">${esc(r.email||'')}</div>
+        </td>
+        <td>${r.current_role ? `<span class="chip">${esc(r.current_role)}</span>` : '—'}</td>
+        <td><span class="chip role-new">+ ${esc(r.requested_role)}</span></td>
+        <td>${url ? `<a class="tbl-btn" href="${url}" target="_blank" rel="noopener">Open ↗</a>` : '—'}</td>
+        <td><div class="rq-note">${r.note ? esc(r.note) : '<span style="color:#444">—</span>'}${r.decline_reason ? `<div style="color:var(--red);margin-top:4px">Declined: ${esc(r.decline_reason)}</div>` : ''}</div></td>
+        <td><span class="chip rq-${esc(r.status)}">${esc(r.status)}</span>${!isPending && r.decided_at ? `<div style="font-size:10px;color:#555;margin-top:3px">${fmt(r.decided_at)}</div>` : ''}</td>
+        <td>${isPending ? `<div style="display:flex;gap:5px">
+          <button class="tbl-btn save" onclick="opsRoleDecide(${r.id}, true)">Approve</button>
+          <button class="tbl-btn del" onclick="opsRoleDecide(${r.id}, false)">Decline</button>
+        </div>` : '<span style="color:#444">—</span>'}</td>
+      </tr>`;
+    }).join('')}</tbody>
+  </table></div>`;
+}
+
+async function opsRoleDecide(id, approve) {
+  const r = opsRoleData.find(x => x.id === id);
+  if (!r) return;
+  let reason = null;
+  if (approve) {
+    if (!confirm(`Add ${r.requested_role} to ${r.full_name || r.email}?\n${r.requested_role} jobs unlock for them immediately.`)) return;
+  } else {
+    reason = prompt(`Decline ${r.requested_role} for ${r.full_name || r.email}?\nOptional reason (internal note):`, '');
+    if (reason === null) return;
+  }
+  try {
+    await sbRpc('team_role_decide', { p_pass: teamPass(), p_id: id, p_approve: approve, p_reason: reason });
+    showToast(approve ? `${r.requested_role} added ✓` : 'Request declined');
+    opsLoaded.freelancers = false; // role changed — refetch next time the tab opens
+    await loadOpsRoles();
+  } catch(e) { showToast('Error: ' + e.message, true); }
 }
 
 // ── TAB 3 — PAYOUTS ──────────────────────────────────────────────────────

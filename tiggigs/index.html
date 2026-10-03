@@ -618,6 +618,62 @@
   </div>
 </div>
 
+<!-- ── ROLE REQUEST MODAL ─────────────────────────────────────────────────── -->
+<div id="roleOverlay" class="hidden fixed inset-0 z-[1000]">
+  <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" onclick="closeRoleRequest()"></div>
+  <div class="absolute inset-0 flex items-center justify-center p-4">
+    <div class="relative bg-surface-container-lowest rounded-3xl p-8 w-full max-w-md editorial-shadow max-h-[90vh] overflow-y-auto">
+      <div id="rqForm">
+        <div class="flex items-center gap-3 mb-2">
+          <div class="p-2.5 rounded-xl bg-[#f0edec] text-on-surface"><span id="rqIcon" class="material-symbols-outlined text-xl">palette</span></div>
+          <h3 id="rqTitle" class="font-headline text-xl font-bold text-on-surface leading-tight">Add a skill</h3>
+        </div>
+        <p class="text-sm text-[#464555]/70 leading-relaxed mb-6">Share a few samples and the TIG team will review them. Once approved, you can claim <span id="rqJobs">these jobs</span> alongside your current work.</p>
+
+        <div class="flex items-center gap-2 mb-6 pb-6 border-b border-[#c8c4d8]/20 text-[11px] font-bold uppercase tracking-wider">
+          <span class="px-2.5 py-1 rounded-full bg-[#f0edec] text-[#464555]" id="rqCurrent">—</span>
+          <span class="material-symbols-outlined text-[#464555]/40" style="font-size:16px">add</span>
+          <span class="px-2.5 py-1 rounded-full bg-[#1c1b1b] text-white" id="rqNew">Designer</span>
+        </div>
+
+        <div class="space-y-5">
+          <div>
+            <label for="rqPortfolio" class="block text-[11px] font-bold uppercase tracking-widest text-[#464555]/60 mb-2">Portfolio link</label>
+            <input type="url" id="rqPortfolio" placeholder="https://…"
+              class="w-full bg-surface-container-low border-transparent focus:border-black focus:ring-0 rounded-xl px-4 py-3.5 text-on-surface placeholder:text-[#464555]/30 text-sm font-body outline-none transition-all"/>
+            <p id="rqPortfolioHint" class="text-[11px] text-[#464555]/40 mt-1.5"></p>
+          </div>
+          <div>
+            <label for="rqNote" class="block text-[11px] font-bold uppercase tracking-widest text-[#464555]/60 mb-2">Anything we should know? <span class="normal-case font-normal">(optional)</span></label>
+            <textarea id="rqNote" rows="2" maxlength="500" placeholder="Tools you use, brands you've worked with…"
+              class="w-full bg-surface-container-low border-transparent focus:border-black focus:ring-0 rounded-xl px-4 py-3.5 text-on-surface placeholder:text-[#464555]/30 text-sm font-body outline-none transition-all resize-none"></textarea>
+          </div>
+          <div id="rqCodeWrap">
+            <label for="rqCode" class="block text-[11px] font-bold uppercase tracking-widest text-[#464555]/60 mb-2">Access Code</label>
+            <input type="password" id="rqCode" autocomplete="current-password" placeholder="e.g. BHAV-recXXXXXXXX"
+              class="w-full bg-surface-container-low border-transparent focus:border-black focus:ring-0 rounded-xl px-4 py-3.5 text-on-surface placeholder:text-[#464555]/30 text-sm font-body outline-none transition-all"/>
+            <p class="text-[11px] text-[#464555]/40 mt-1.5">Sent in your TIG welcome email.</p>
+          </div>
+        </div>
+        <div id="rqErr" class="hidden mt-4 text-sm text-error font-medium"></div>
+        <div class="grid grid-cols-2 gap-3 mt-6">
+          <button onclick="closeRoleRequest()" class="py-3.5 rounded-xl border border-[#c8c4d8]/40 text-on-surface font-bold text-sm hover:bg-surface-container-high transition-colors">Cancel</button>
+          <button id="rqSubmit" onclick="submitRoleRequest()" class="py-3.5 rounded-xl bg-primary text-on-primary font-bold text-sm shadow-md active:scale-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed">Send for review</button>
+        </div>
+      </div>
+
+      <div id="rqDone" class="hidden text-center py-4">
+        <div class="mx-auto mb-4 w-14 h-14 rounded-full bg-[#e8f8f2] flex items-center justify-center">
+          <span class="material-symbols-outlined text-[#1a9e75]" style="font-size:28px;font-variation-settings:'FILL' 1">schedule_send</span>
+        </div>
+        <h3 class="font-headline text-xl font-bold text-on-surface mb-2">Request sent</h3>
+        <p class="text-sm text-[#464555]/70 leading-relaxed mb-6">The TIG team will review your <span id="rqDoneRole" class="font-bold text-on-surface">Designer</span> samples. Once approved, those jobs unlock right here on the board. Keep claiming your usual jobs in the meantime.</p>
+        <button onclick="closeRoleRequest()" class="w-full py-3.5 rounded-xl bg-primary text-on-primary font-bold text-sm">Got it</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- ── MOBILE POST-A-GIG FAB ─────────────────────────────────────────────── -->
 <a href="client.html" class="md:hidden fixed right-4 z-50 flex items-center gap-2 bg-[#fddf29] text-black font-headline font-extrabold text-sm px-5 py-3.5 rounded-full shadow-[0_8px_24px_rgba(0,0,0,0.18)] active:scale-95 transition-all" style="bottom:96px">
   <span class="material-symbols-outlined" style="font-size:18px;font-variation-settings:'FILL' 1">add_circle</span>
@@ -655,6 +711,31 @@ let savedName = null, savedCode = null;
 let userRole = null, monthlyClaimCount = 0;
 
 const ROLE_CATEGORY_MAP = { 'Designer': 'Design', 'Editor': 'Edit', 'Video Producer': 'Production' };
+const CATEGORY_ROLE = { 'Design': 'Designer', 'Edit': 'Editor', 'Production': 'Video Producer' };
+let pendingRoles = [];   // roles this freelancer has requested and are awaiting review
+let roleReqTarget = null; // role being requested in the modal
+
+// Normalise free-text roles ("Graphic Designer", "Video Editor", "Designer,Editor") → canonical list.
+// Mirrors public.role_canon() in Supabase.
+function canonRoles(raw) {
+  const out = new Set();
+  String(raw || '').split(',').forEach(t => {
+    const s = t.trim().toLowerCase();
+    if (!s) return;
+    if (s.includes('design')) out.add('Designer');
+    else if (s.includes('edit')) out.add('Editor');
+    else if (s.includes('produc') || s.includes('creator')) out.add('Video Producer');
+  });
+  return [...out];
+}
+function userCategories() { return new Set(canonRoles(userRole).map(r => ROLE_CATEGORY_MAP[r])); }
+// Returns the role needed if this job is outside the freelancer's roles, else null
+function lockedRoleFor(job) {
+  if (!email) return null;
+  const cats = userCategories();
+  if (!cats.size || cats.has(job.jobCategory)) return null;
+  return CATEGORY_ROLE[job.jobCategory] || null;
+}
 let briefCurrentId = null;
 
 // ── RATE CARD ──────────────────────────────────────────────────────────────
@@ -1001,14 +1082,25 @@ function render() {
       claimBtn = `<button class="py-3 px-4 rounded-xl font-bold text-sm cursor-default flex items-center justify-center gap-1.5" style="background:#f3f4f6;color:#6b7280" disabled>
         <span class="text-[10px] uppercase tracking-wider font-bold">Posted ✓</span>
       </button>`;
-    } else if (email && userRole && ROLE_CATEGORY_MAP[userRole] && j.jobCategory !== ROLE_CATEGORY_MAP[userRole]) {
-      claimBtn = `<div class="relative group/tip">
-        <button class="w-full py-3 px-4 rounded-xl bg-[#f0edec] text-[#464555]/40 font-bold text-sm cursor-default">Not Your Role</button>
-        <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-56 bg-[#1c1b1b] text-white text-xs rounded-xl px-3 py-2.5 opacity-0 group-hover/tip:opacity-100 transition-opacity pointer-events-none text-center leading-relaxed z-10 shadow-lg">
-          This job is for ${j.jobCategory} roles. You're registered as a ${userRole}.
-          <div class="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-[#1c1b1b]"></div>
-        </div>
-      </div>`;
+    } else if (lockedRoleFor(j)) {
+      const needRole = lockedRoleFor(j);
+      if (pendingRoles.includes(needRole)) {
+        claimBtn = `<div class="relative group/tip">
+          <button class="w-full py-2.5 px-3 rounded-xl bg-[#fef9ec] text-[#b45309] border border-[#f59e0b]/30 font-bold text-sm cursor-default flex flex-col items-center leading-tight" disabled>
+            <span class="text-[9px] uppercase tracking-wider opacity-70">${needRole} access</span>
+            <span class="text-xs font-bold">Under review</span>
+          </button>
+          <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-56 bg-[#1c1b1b] text-white text-xs rounded-xl px-3 py-2.5 opacity-0 group-hover/tip:opacity-100 transition-opacity pointer-events-none text-center leading-relaxed z-10 shadow-lg">
+            Your ${needRole} request is with the TIG team. ${j.jobCategory} jobs unlock once it's approved.
+            <div class="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-[#1c1b1b]"></div>
+          </div>
+        </div>`;
+      } else {
+        claimBtn = `<button onclick="openRoleRequest('${needRole}')" class="w-full py-2.5 px-3 rounded-xl bg-white text-on-surface border border-dashed border-[#1c1b1b]/30 font-bold text-sm hover:border-[#1c1b1b] hover:bg-[#fcf9f8] transition-colors flex flex-col items-center leading-tight">
+          <span class="text-[9px] uppercase tracking-wider text-[#464555]/50">${needRole}s only</span>
+          <span class="text-xs font-bold flex items-center gap-1">Request access <span class="material-symbols-outlined" style="font-size:14px">arrow_forward</span></span>
+        </button>`;
+      }
     } else if (email && monthlyClaimCount >= 5) {
       claimBtn = `<div class="relative group/tip">
         <button class="w-full py-3 px-4 rounded-xl bg-[#fef3c7] text-[#92400e] font-bold text-sm cursor-default">Limit Reached</button>
@@ -1225,8 +1317,9 @@ function showUnlockedGate(emailAddr, fullName) {
     first ? `${first} · ${emailAddr}` : emailAddr;
   // Role badge
   const roleBadge = document.getElementById('gateRoleBadge');
-  if (userRole && ROLE_CATEGORY_MAP[userRole]) {
-    roleBadge.textContent = userRole;
+  const roles = canonRoles(userRole);
+  if (roles.length) {
+    roleBadge.textContent = roles.join(' · ');
     roleBadge.classList.remove('hidden');
   } else { roleBadge.classList.add('hidden'); }
   // Monthly claim count
@@ -1237,7 +1330,7 @@ function showUnlockedGate(emailAddr, fullName) {
 }
 
 function signOutGate() {
-  email = null; savedName = null; savedCode = null; userRole = null; monthlyClaimCount = 0;
+  email = null; savedName = null; savedCode = null; userRole = null; monthlyClaimCount = 0; pendingRoles = [];
   localStorage.removeItem('tig_email');
   localStorage.removeItem('tig_name');
   localStorage.removeItem('tig_access_code');
@@ -1271,8 +1364,8 @@ async function verifyEmail() {
         userRole = rec.role || null;
         localStorage.setItem('tig_email', v);
         if (fullName) localStorage.setItem('tig_name', fullName);
-        if (userRole) localStorage.setItem('tig_role', userRole);
-        await fetchMonthlyClaimCount(v);
+        if (userRole) localStorage.setItem('tig_role', userRole); else localStorage.removeItem('tig_role');
+        await Promise.all([fetchMonthlyClaimCount(v), fetchPendingRoles(v)]);
         st.textContent = '';
         showUnlockedGate(v, fullName);
       } else if (isWhitelisted) {
@@ -1300,10 +1393,111 @@ async function verifyEmail() {
   }
 }
 
+// ── ROLE REQUESTS (add a skill, e.g. Editor → Designer) ──────────────────
+async function fetchPendingRoles(emailAddr) {
+  try {
+    const r = await fetch(`${SB_URL}/rpc/fl_pending_roles`, { method: 'POST', headers: SB_HDRS,
+      body: JSON.stringify({ p_email: emailAddr }) });
+    pendingRoles = r.ok ? await r.json() : [];
+  } catch(e) { pendingRoles = []; }
+}
+
+async function refreshRole(emailAddr) {
+  try {
+    const r = await fetch(`${SB_URL}/rpc/fl_status`, { method: 'POST', headers: SB_HDRS,
+      body: JSON.stringify({ p_email: emailAddr }) });
+    const recs = r.ok ? await r.json() : [];
+    if (!recs || !recs.length) return 'missing';
+    userRole = recs[0].role || null;
+    if (userRole) localStorage.setItem('tig_role', userRole); else localStorage.removeItem('tig_role');
+    return recs[0].status || null;
+  } catch(e) { return null; /* network issue — keep cached session */ }
+}
+
+const ROLE_REQ_COPY = {
+  'Designer':       { icon: 'palette',    jobs: 'static posts, carousels and stories', ask: 'Behance, Drive folder or Instagram with 3+ design pieces' },
+  'Editor':         { icon: 'movie_edit', jobs: 'reels and short-form edits',          ask: 'Drive folder, YouTube or Instagram with 3+ edited videos' },
+  'Video Producer': { icon: 'videocam',   jobs: 'shoots and on-ground production',     ask: 'Showreel or Drive folder with 3+ shoots you led' },
+};
+
+function openRoleRequest(role) {
+  roleReqTarget = role;
+  const c = ROLE_REQ_COPY[role] || ROLE_REQ_COPY['Designer'];
+  const current = canonRoles(userRole);
+  document.getElementById('rqIcon').textContent = c.icon;
+  document.getElementById('rqTitle').textContent = `Add ${role} to your profile`;
+  document.getElementById('rqCurrent').textContent = current.length ? current.join(' · ') : '—';
+  document.getElementById('rqNew').textContent = role;
+  document.getElementById('rqJobs').textContent = c.jobs;
+  document.getElementById('rqPortfolio').value = '';
+  document.getElementById('rqPortfolio').placeholder = 'https://…';
+  document.getElementById('rqPortfolioHint').textContent = c.ask + '.';
+  document.getElementById('rqNote').value = '';
+  document.getElementById('rqCode').value = localStorage.getItem('tig_remembered_code') || '';
+  document.getElementById('rqCodeWrap').classList.toggle('hidden', !!savedCode);
+  document.getElementById('rqErr').classList.add('hidden');
+  document.getElementById('rqForm').classList.remove('hidden');
+  document.getElementById('rqDone').classList.add('hidden');
+  const btn = document.getElementById('rqSubmit');
+  btn.disabled = false; btn.textContent = 'Send for review';
+  document.getElementById('roleOverlay').classList.remove('hidden');
+}
+
+function closeRoleRequest() {
+  document.getElementById('roleOverlay').classList.add('hidden');
+  roleReqTarget = null;
+}
+
+async function submitRoleRequest() {
+  const role = roleReqTarget;
+  if (!role || !email) return;
+  const portfolio = document.getElementById('rqPortfolio').value.trim();
+  const note      = document.getElementById('rqNote').value.trim();
+  const code      = savedCode || document.getElementById('rqCode').value.trim();
+  const err = document.getElementById('rqErr');
+  const btn = document.getElementById('rqSubmit');
+  const fail = msg => { err.textContent = msg; err.classList.remove('hidden'); btn.disabled = false; btn.textContent = 'Send for review'; };
+  err.classList.add('hidden');
+  if (!/^https?:\/\/\S+\.\S+/i.test(portfolio)) return fail('Add a full portfolio link starting with https://');
+  if (!code) return fail('Enter your access code — it\'s in your TIG welcome email.');
+  btn.disabled = true; btn.textContent = 'Sending…';
+  try {
+    const r = await fetch(`${SB_URL}/rpc/fl_request_role`, { method: 'POST', headers: SB_HDRS,
+      body: JSON.stringify({ p_email: email, p_code: code, p_role: role, p_portfolio: portfolio, p_note: note || null }) });
+    if (!r.ok) {
+      let m = ''; try { m = (await r.json()).message || ''; } catch(_) {}
+      const msgs = {
+        invalid_code:      'That access code doesn\'t match. Check your TIG welcome email.',
+        not_active:        'Your profile isn\'t active right now. Reach out to the TIG team.',
+        already_has_role:  `You're already registered as a ${role}. Refresh the page.`,
+        already_pending:   `You already have a ${role} request under review.`,
+        invalid_portfolio: 'Add a full portfolio link starting with https://',
+      };
+      if (m === 'already_has_role') await refreshRole(email);
+      if (m === 'already_pending' && !pendingRoles.includes(role)) pendingRoles.push(role);
+      render();
+      return fail(msgs[m] || 'Something went wrong. Please try again.');
+    }
+    if (!savedCode) {
+      savedCode = code;
+      localStorage.setItem('tig_access_code', code);
+    }
+    if (!pendingRoles.includes(role)) pendingRoles.push(role);
+    document.getElementById('rqDoneRole').textContent = role;
+    document.getElementById('rqForm').classList.add('hidden');
+    document.getElementById('rqDone').classList.remove('hidden');
+    render();
+  } catch(e) {
+    fail('Network error. Please try again.');
+  }
+}
+
 // ── CLAIM ──────────────────────────────────────────────────────────────────
 function openClaim(id) {
   target = jobs.find(x => x.id === id);
   if (!target) return;
+  const needRole = lockedRoleFor(target);
+  if (needRole) { target = null; if (!pendingRoles.includes(needRole)) openRoleRequest(needRole); return; }
   document.getElementById('mTitle').textContent = target.title;
   document.getElementById('mSub').textContent   = `Job ID: ${target.jobId}  ·  ${email}`;
   document.getElementById('mNote').value = '';
@@ -1350,12 +1544,13 @@ async function submitClaim() {
   btn.disabled = true; btn.textContent = 'Verifying…';
   try {
     // Validate access code against Supabase freelancers table
-    if (!savedCode) {
+    {
       btn.textContent = 'Verifying code…';
       const codeCheck = await fetch(`${SB_URL}/rpc/fl_auth`, { method: 'POST', headers: SB_HDRS,
         body: JSON.stringify({ p_email: email, p_code: code }) });
       const codeOk = await codeCheck.json();
       if (codeOk !== true) {
+        if (savedCode) { closeModal(); signOutGate(); return; } // saved session no longer valid (code changed or account deactivated)
         err.textContent = 'Invalid access code. Check your TIG welcome email and try again.';
         err.classList.remove('hidden');
         btn.disabled = false; btn.textContent = 'Confirm Claim';
@@ -1418,6 +1613,8 @@ async function submitClaim() {
     btn.textContent = 'Done';
     // Optimistic update
     const claimedJob = jobs.find(j => j.id === claimJobId);
+    monthlyClaimCount += 1;
+    showUnlockedGate(email, savedName);
     if (claimedJob) {
       claimedJob.status     = 'Claimed';
       claimedJob.claimEmail = email;
@@ -1634,7 +1831,8 @@ async function restoreSession() {
     if (storedCode) savedCode = storedCode;
     if (storedName) savedName = storedName;
     userRole = localStorage.getItem('tig_role') || null;
-    await fetchMonthlyClaimCount(storedEmail);
+    const [, , liveStatus] = await Promise.all([fetchMonthlyClaimCount(storedEmail), fetchPendingRoles(storedEmail), refreshRole(storedEmail)]);
+    if (liveStatus && liveStatus !== 'Active') { signOutGate(); return; }
     showUnlockedGate(storedEmail, storedName);
     render();
   }
