@@ -36,6 +36,8 @@ theintgen-web/
 │   ├── team-dashboard.html
 │   ├── client.html
 │   └── [client logo PNGs]
+├── tigabites/                    ← Tigabites: F&B-only marketing venture (6 pages + work page; see tigabites/README.md)
+├── assets/tigabites/work/previews/ ← Tigabites work-page preview loops (make_previews.py output)
 ├── tigital/index.html            ← Digital marketing library
 ├── tigom/index.html              ← Open mic events (Chennai)
 └── tigpods/index.html            ← Podcast platform

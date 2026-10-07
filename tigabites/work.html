@@ -1,0 +1,374 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Clean Plates | Tigabites</title>
+  <meta name="description" content="We've mastered the playbook of marketing kitchenware and FnB brands for digital. 14 repeatable video formats we've served food brands, from trends and mascots to recipes, contests and designs.">
+  <meta name="theme-color" content="#1c013b">
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=DM+Mono:wght@400;500&family=Press+Start+2P&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/style.css">
+  <script src="assets/js/site.js" defer></script>
+  <script src="assets/js/work.js" defer></script>
+</head>
+<body>
+  <main class="work-page">
+    <!-- ============ HOOK ============ -->
+    <section class="page-head on-dark work-head">
+      <div class="wrap">
+        <span class="course reveal" style="color:var(--yellow)">Page 05 · Clean Plates</span>
+        <h1 class="h1 reveal d1">We've mastered the playbook of marketing <span class="hl">kitchenware and FnB brands</span> for digital.</h1>
+        <p class="lede reveal d2">Hard flex? Check them out yourself.</p>
+      </div>
+    </section>
+
+    <!-- ============ MENU BOARD: every show at a glance ============ -->
+    <section class="wmenu-wrap cream-scallop scallop-top">
+      <div class="wrap">
+        <div class="wmenu">
+          <p class="wmenu-title pixel" id="wmenu-title">TODAY'S MENU</p>
+          <div class="wmenu-cols" id="wmenu-cols"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ STICKY COURSE BAR ============ -->
+    <nav class="wbar" id="wbar" aria-label="Jump to a course or show">
+      <div class="wrap">
+        <div class="wbar-courses" id="wbar-courses"></div>
+        <div class="wbar-ips" id="wbar-ips"></div>
+      </div>
+    </nav>
+
+    <!-- ============ ONE ROW PER SHOW (built from work-data.json) ============ -->
+    <section class="wrows">
+      <div class="wrap" id="wrows"></div>
+    </section>
+
+    <!-- ============ CASE STUDIES ============ -->
+    <section class="pad cream-scallop scallop-top">
+      <div class="wrap">
+        <div class="section-head">
+          <div>
+            <span class="course reveal">The receipts · Case studies</span>
+            <h2 class="h2 reveal d1">Numbers that<br>taste good.</h2>
+          </div>
+          <p class="reveal d2">Tap a plate to read the full recipe: the challenge, what we cooked and what came out of the oven.</p>
+        </div>
+        <div class="cases">
+          <button class="case reveal" type="button" data-open="ramajeyam">
+            <div class="cover" style="background:var(--yellow)"><img src="assets/img/logos/Ramajeyam_Rice.png" alt="" style="max-width:46%;max-height:55%"><span class="big">80 → 12K+</span></div>
+            <div class="body"><span class="cat">RICE / FMCG STAPLE</span><h3>Ramajeyam Rice</h3><p style="margin:0">Graining Momentum: a contest blitz that built a community.</p><span class="open">Read the recipe →</span></div>
+          </button>
+          <button class="case reveal d1" type="button" data-open="tamilpaal">
+            <div class="cover" style="background:var(--mint)"><img src="assets/img/logos/Tamil_Paal.png" alt="" style="max-width:46%;max-height:55%"><span class="big">600 → 25K+</span></div>
+            <div class="body"><span class="cat">DAIRY</span><h3>Tamil Paal</h3><p style="margin:0">Milking the Moment: a founder-led dairy story people follow.</p><span class="open">Read the recipe →</span></div>
+          </button>
+          <div class="case reveal d2" data-draft="next case study: brand + big number">
+            <div class="cover" style="background:var(--pink)"><span data-sprite="cone"></span><span class="big">Coming soon</span></div>
+            <div class="body"><span class="cat">NEXT ON THE MENU</span><h3>Recipe in the oven</h3><p style="margin:0">Our next case study is being plated up. Check back soon.</p></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ BRANDFOLIO ============ -->
+    <section class="pad on-cream2 scallop-top">
+      <div class="wrap">
+        <span class="course reveal">The guest list · Brandfolio</span>
+        <h2 class="h2 reveal d1" style="margin-bottom:28px">Every brand at our table.</h2>
+        <div class="chips reveal d2" role="group" aria-label="Filter brands by category" id="brand-chips"></div>
+        <div class="brandfolio reveal d2" id="brandfolio" data-draft="confirm brand categories"></div>
+      </div>
+    </section>
+
+    <!-- ============ CLOSING CTA ============ -->
+    <section class="closer pad on-yellow scallop-top">
+      <span class="float-food ff1" data-sprite="fries"></span>
+      <span class="float-food ff2" data-sprite="donut"></span>
+      <div class="wrap">
+        <span class="course reveal">Your turn</span>
+        <h2 class="h1 reveal d1" style="margin-bottom:32px">Your brand needs a show.<br>Let's pick one.</h2>
+        <div class="btn-row reveal d2">
+          <a class="btn dark" href="kiss-the-chef.html">Kiss the Chef? <span class="arrow">→</span></a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ============ CASE DETAIL: RAMAJEYAM RICE ============ -->
+  <dialog class="case-detail" id="ramajeyam" aria-labelledby="rj-title">
+    <div class="cd-head">
+      <button class="btn dark close" type="button" data-close>Close ✕</button>
+      <span class="pixel" style="font-size:10px">RAMAJEYAM RICE · RICE / FMCG STAPLE</span>
+      <h2 class="h2" id="rj-title">Graining Momentum: 80 to 12K followers</h2>
+    </div>
+    <div class="cd-body">
+      <div class="cd-stats">
+        <div><strong>80</strong><span>followers when we started</span></div>
+        <div><strong>12,000+</strong><span>engaged followers today</span></div>
+        <div><strong>100+</strong><span>comments on a typical post</span></div>
+      </div>
+      <div>
+        <h4>THE CHALLENGE</h4>
+        <p>A quality product with a barely-there Instagram: 80 followers. The goal was to turn a static product page into a community that drives awareness, trust and sales.</p>
+      </div>
+      <div>
+        <h4>WHAT WE COOKED</h4>
+        <p>The Contest Blitz. Regular contests with a simple ask and a prize people actually want: 5 free 1kg bags of rice. Every contest ended with a winners' spotlight, using real winners as social proof to fuel the next round. Alongside it, a rice mascot that rides every big movie and cricket moment.</p>
+      </div>
+      <div class="cd-steps">
+        <div>Follow the page</div>
+        <div>Like the post</div>
+        <div>Tag two friends</div>
+        <div>Winners get spotlighted, and the next round starts</div>
+      </div>
+      <div data-draft="timeframe + client quote">
+        <h4>THE RESULT</h4>
+        <p>12K+ engaged followers, with posts that routinely pull 100+ comments. The page went from a catalogue to a conversation.</p>
+      </div>
+      <div style="display:flex;align-items:end;gap:12px;flex-wrap:wrap">
+        <a class="btn" href="https://www.instagram.com/ramajeyamrice/" target="_blank" rel="noopener">See @ramajeyamrice <span class="arrow">↗</span></a>
+        <a class="btn ghost" href="https://www.instagram.com/p/DNUgV_QMgPc/" target="_blank" rel="noopener">Watch a mascot reel ↗</a>
+      </div>
+    </div>
+  </dialog>
+
+  <!-- ============ CASE DETAIL: TAMIL PAAL ============ -->
+  <dialog class="case-detail" id="tamilpaal" aria-labelledby="tp-title">
+    <div class="cd-head" style="background:var(--mint)">
+      <button class="btn dark close" type="button" data-close>Close ✕</button>
+      <span class="pixel" style="font-size:10px">TAMIL PAAL · DAIRY</span>
+      <h2 class="h2" id="tp-title">Milking the Moment: 600 to 25K followers</h2>
+    </div>
+    <div class="cd-body">
+      <div class="cd-stats">
+        <div><strong>600</strong><span>followers when we started</span></div>
+        <div><strong>25,000+</strong><span>followers today</span></div>
+        <div><strong>40x</strong><span>growth in community size</span></div>
+      </div>
+      <div data-draft="confirm challenge">
+        <h4>THE CHALLENGE</h4>
+        <p>A dairy brand with real farm-to-glass credentials, and an Instagram of 600 people who didn't know the story behind the milk.</p>
+      </div>
+      <div data-draft="confirm what we did">
+        <h4>WHAT WE COOKED</h4>
+        <p>We put the founder in front of the camera, talking straight about the factory and the dairy industry. We added milk explainers and history reels, an eight-part teaser series for the Tamil Paal event, and contests like the milk moustache challenge.</p>
+      </div>
+      <div class="cd-steps">
+        <div>Founder-led talking heads</div>
+        <div>Dairy explainers and history</div>
+        <div>Event teaser series</div>
+        <div>Community contests</div>
+      </div>
+      <div style="display:flex;align-items:end;gap:12px;flex-wrap:wrap;grid-column:1/-1">
+        <a class="btn" href="https://www.instagram.com/p/DOJEGX1iYmP/" target="_blank" rel="noopener">Watch "Don't buy Tamil Paal" ↗</a>
+        <a class="btn ghost" href="https://www.instagram.com/p/DPoTYFZCb2O/" target="_blank" rel="noopener">The dairy industry, explained ↗</a>
+      </div>
+    </div>
+  </dialog>
+
+  <script>
+    /* Courses and shows, in page order. Items and counts come from work-data.json. */
+    const COURSES = [
+      { name: "Starters", job: "make them hungry for more", ips: [
+        ["Originals", "Formats we dreamt up from scratch."], ["Trend-Based", "We ride the trend before it cools."],
+        ["AI-Based", "Made with AI, finished by hand."]] },
+      { name: "Mains", job: "bite into the meat", ips: [
+        ["Recipe", "Your product, the hero of the plate."], ["Cooking Challenge", "Real people, real kitchens, real chaos."],
+        ["ASMR", "Crunch, sizzle, pour. No words needed."], ["YouTube Shows", "Long-form shows worth the full sitting."]] },
+      { name: "Sides", job: "earn the trust", ips: [
+        ["Informational", "The story behind what's on the plate."], ["Vox Pop", "Mic in hand, straight to the street."]] },
+      { name: "Desserts", job: "bring them back", ips: [
+        ["Contests", "Prizes that turn followers into regulars."], ["Teaser Campaigns", "A drip-fed run that built hype for one event."],
+        ["Influencer", "The right creators, eating your product."]] },
+      { name: "Garnish", job: "every moment, on brand", ips: [
+        ["Mascot", "One character, endless storylines."], ["Designs", "Every festival and moment, on brand."]] },
+    ];
+    /* Display names on the page (data categories in work-data.json stay as they are) */
+    const LABELS = {
+      "Recipe": "Recipes", "Cooking Challenge": "Cooking Challenges", "ASMR": "ASMRs",
+      "Informational": "Informationals", "Vox Pop": "Vox Pops", "Influencer": "Influencer Collaborations",
+    };
+    const lab = (n) => LABELS[n] || n;
+    const FIRST = 6;
+
+    /* ---------- Brandfolio: file name in assets/img/logos, display name, category ---------- */
+    const BRANDS = [
+      ["Ramajeyam_Rice", "Ramajeyam Rice", "rice"], ["Tamil_Paal", "Tamil Paal", "dairy"], ["Cavins", "Cavin's", "dairy"],
+      ["Subway", "Subway", "restaurants"], ["Eatalica", "Eatalica", "restaurants"], ["Tibbs_Frankie", "Tibb's Frankie", "restaurants"], ["Under_Belly", "Under Belly", "restaurants"],
+      ["Brownie_Heaven", "Brownie Heaven", "bakery"], ["Lays", "Lay's", "bakery"],
+      ["Red_Bull", "Red Bull", "beverages"], ["Monster_Beverage", "Monster", "beverages"], ["Chai_Kings", "Chai Kings", "beverages"], ["Coffee_Shastra", "Coffee Shastra", "beverages"],
+      ["Counter_Culture", "Counter Culture", "beyond"], ["Nivaran90", "Nivaran 90", "beyond"], ["Dunzo", "Dunzo", "beyond"], ["LOreal_Paris", "L'Oréal Paris", "beyond"],
+      ["Garnier", "Garnier", "beyond"], ["AstraZeneca", "AstraZeneca", "beyond"], ["TCL", "TCL", "beyond"], ["MX_Player", "MX Player", "beyond"], ["Sun_Music", "Sun Music", "beyond"],
+      ["Lifestyle", "Lifestyle", "beyond"], ["Marketcity", "Marketcity", "beyond"], ["Zenly", "Zenly", "beyond"], ["Chingari", "Chingari", "beyond"], ["Fully_Filmy", "Fully Filmy", "beyond"],
+      ["Silly_Monks", "Silly Monks", "beyond"], ["Startup_Singam", "Startup Singam", "beyond"], ["StuCred", "StuCred", "beyond"], ["PropInfo", "PropInfo", "beyond"], ["Oro", "Oro", "beyond"],
+      ["Motojojo", "Motojojo", "beyond"], ["Nails_n_Beyond", "Nails n Beyond", "beyond"], ["Alia", "Alia", "beyond"], ["ABI", "ABI", "beyond"], ["GN", "GN", "beyond"],
+      ["Bad_Boy", "Bad Boy", "beyond"], ["Auto_Labs", "Auto Labs", "beyond", "dark"], ["Tamil_Nadu_Police", "Tamil Nadu Police", "beyond"],
+      ["GCTP_Greater_Chennai_Traffic_Police", "Greater Chennai Traffic Police", "beyond"], ["SDAT_Sports_Development_Authority_TN", "SDAT Tamil Nadu", "beyond"],
+    ];
+    const BRAND_CATS = [["all", "All"], ["food", "Food & drink"], ["rice", "Rice"], ["dairy", "Dairy"], ["restaurants", "Restaurants & QSR"], ["bakery", "Bakery & snacks"], ["beverages", "Beverages"], ["beyond", "Beyond food"]];
+
+    document.addEventListener("tb:ready", async () => {
+      const esc = TBWork.esc;
+      const ipId = (c) => "show-" + TBWork.folder(c);
+      const items = await TBWork.load();
+      const byCat = {};
+      items.forEach((it) => (byCat[it.category] = byCat[it.category] || []).push(it));
+      // Any category in the data that isn't in COURSES still gets a row, under its course
+      items.forEach((it) => {
+        let c = COURSES.find((c) => c.name === it.course);
+        if (!c) COURSES.push((c = { name: it.course, job: "", ips: [] }));
+        if (!c.ips.some(([n]) => n === it.category)) c.ips.push([it.category, ""]);
+      });
+      const shows = COURSES.flatMap((c) => c.ips.filter(([n]) => byCat[n]).map(([n]) => n));
+
+      /* Menu board */
+      document.getElementById("wmenu-title").textContent = `TODAY'S MENU · ${shows.length} SHOWS`;
+      document.getElementById("wmenu-cols").innerHTML = COURSES.map((c) => `
+        <div class="wmenu-col">
+          <h3>${esc(c.name)}</h3><span class="job">${esc(c.job)}</span>
+          <ul>${c.ips.filter(([n]) => byCat[n]).map(([n]) => `<li><a href="#${ipId(n)}"><span>${esc(lab(n))}</span><span class="dots"></span><b>${byCat[n].length}</b></a></li>`).join("")}</ul>
+        </div>`).join("");
+
+      /* Rows */
+      const rows = document.getElementById("wrows");
+      rows.innerHTML = COURSES.map((c) => {
+        const ips = c.ips.filter(([n]) => byCat[n]);
+        if (!ips.length) return "";
+        return `<p class="wcourse" id="course-${TBWork.folder(c.name)}"><b>${esc(c.name)}</b> · ${esc(c.job)}</p>` + ips.map(([n, hook]) => {
+          const list = byCat[n], id = ipId(n);
+          const head = `<div class="wrow-head">
+              <div><h2>${esc(lab(n))}</h2><p><span class="eps">${list.length} episode${list.length === 1 ? "" : "s"}</span>${hook ? ` · ${esc(hook)}` : ""}</p></div>
+              ${list.length > FIRST && n !== "Designs" ? `<button class="wshow" type="button" aria-expanded="false">Show all ${list.length}</button>` : ""}
+            </div>`;
+          if (n === "Designs") {
+            return `<article class="wrow" id="${id}" data-course="${esc(c.name)}" data-ip="${esc(n)}">${head}
+              <div class="wstrip">${list.map((it, i) => `
+                <a class="wslice${i === 0 ? " active" : ""}" href="${esc(it.url)}" target="_blank" rel="noopener" data-base="${esc(TBWork.base(it))}">
+                  <span class="wslice-ph"><span data-chomper="right"></span></span>
+                  <span class="wslice-label">${esc(it.title)}</span>
+                  <span class="wslice-open">${esc(it.title)} · ${TBWork.watchLabel(it).replace("Watch", "Open")}</span>
+                </a>`).join("")}</div></article>`;
+          }
+          const yt = n === "YouTube Shows";
+          return `<article class="wrow" id="${id}" data-course="${esc(c.name)}" data-ip="${esc(n)}">${head}
+            <div class="wgrid${yt ? " yt" : ""}">${list.map((it, i) => TBWork.tile(it, i >= FIRST ? "extra" : "")).join("")}</div></article>`;
+        }).join("");
+      }).join("");
+      TBWork.wire(rows);
+
+      /* "Show all N" expands the row in place */
+      rows.addEventListener("click", (e) => {
+        const b = e.target.closest(".wshow"); if (!b) return;
+        const row = b.closest(".wrow"), open = !row.classList.contains("expanded");
+        row.classList.toggle("expanded", open);
+        b.setAttribute("aria-expanded", String(open));
+        b.textContent = open ? "Show fewer" : `Show all ${row.querySelectorAll(".wt").length}`;
+        TBWork.wire(row);
+      });
+
+      /* Designs strip: load images; tap once to expand on touch, tap again to open */
+      rows.querySelectorAll(".wslice").forEach((s) => {
+        const img = new Image();
+        img.onload = () => { s.insertAdjacentHTML("afterbegin", `<img src="${s.dataset.base}.jpg" alt="">`); s.classList.add("has-media"); };
+        img.src = s.dataset.base + ".jpg";
+        s.addEventListener("mouseenter", () => { s.parentElement.querySelectorAll(".wslice").forEach((o) => o.classList.toggle("active", o === s)); });
+        s.addEventListener("click", (e) => {
+          if (!s.classList.contains("active")) {
+            e.preventDefault();
+            s.parentElement.querySelectorAll(".wslice").forEach((o) => o.classList.toggle("active", o === s));
+          }
+        });
+      });
+
+      /* Sticky bar: courses on top, the current course's shows underneath */
+      const bar = document.getElementById("wbar"), barC = document.getElementById("wbar-courses"), barI = document.getElementById("wbar-ips");
+      const live = COURSES.filter((c) => c.ips.some(([n]) => byCat[n]));
+      barC.innerHTML = live.map((c) => `<a href="#course-${TBWork.folder(c.name)}" data-c="${esc(c.name)}">${esc(c.name)}</a>`).join("");
+      let curC = null, curI = null;
+      const setCurrent = (cName, iName) => {
+        if (cName !== curC) {
+          curC = cName;
+          barC.querySelectorAll("a").forEach((a) => a.classList.toggle("on", a.dataset.c === cName));
+          const c = live.find((c) => c.name === cName);
+          barI.innerHTML = c ? c.ips.filter(([n]) => byCat[n]).map(([n]) => `<a href="#${ipId(n)}" data-i="${esc(n)}">${esc(lab(n))} <b>${byCat[n].length}</b></a>`).join("") : "";
+          curI = null;
+          const on = barC.querySelector("a.on"); if (on) on.scrollIntoView({ block: "nearest", inline: "nearest" });
+        }
+        if (iName !== curI) {
+          curI = iName;
+          barI.querySelectorAll("a").forEach((a) => a.classList.toggle("on", a.dataset.i === iName));
+          const on = barI.querySelector("a.on"); if (on && bar.classList.contains("stuck")) on.scrollIntoView({ block: "nearest", inline: "nearest" });
+        }
+      };
+      const rowEls = [...rows.querySelectorAll(".wrow")];
+      const navH = () => document.querySelector(".nav").offsetHeight;
+      let lockUntil = 0;
+      const onScroll = () => {
+        bar.classList.toggle("stuck", bar.getBoundingClientRect().top <= navH() + 2);
+        if (Date.now() < lockUntil) return; // a click just set the highlight; let the scroll land
+        const line = navH() + bar.offsetHeight + 60;
+        let cur = rowEls[0];
+        for (const r of rowEls) if (r.getBoundingClientRect().top <= line) cur = r;
+        setCurrent(cur.dataset.course, cur.dataset.ip);
+      };
+      addEventListener("scroll", onScroll, { passive: true });
+      addEventListener("scrollend", () => { lockUntil = 0; });
+      onScroll();
+
+      /* Jumps land on the row itself, just below the sticky header + bar, and highlight it at once */
+      const rowFor = (hash) => {
+        const t = document.querySelector(hash); if (!t) return null;
+        if (t.classList.contains("wrow")) return t;
+        const course = live.find((c) => "#course-" + TBWork.folder(c.name) === hash);
+        return course ? rowEls.find((r) => r.dataset.course === course.name) : null;
+      };
+      const jump = (hash, smooth) => {
+        const row = rowFor(hash); if (!row) return false;
+        setCurrent(row.dataset.course, row.dataset.ip);
+        lockUntil = Date.now() + 2500;
+        const y = row.getBoundingClientRect().top + scrollY - (navH() + bar.offsetHeight + 12);
+        scrollTo({ top: y, behavior: smooth && !matchMedia("(prefers-reduced-motion: reduce)").matches ? "smooth" : "auto" });
+        return true;
+      };
+      document.addEventListener("click", (e) => {
+        const a = e.target.closest('a[href^="#show-"], a[href^="#course-"]'); if (!a) return;
+        if (jump(a.getAttribute("href"), true)) { e.preventDefault(); history.replaceState(null, "", a.getAttribute("href")); }
+      });
+
+      const esc2 = (s) => s.replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
+      /* Brandfolio: chips + logo wall */
+      const bChips = document.getElementById("brand-chips"), wall = document.getElementById("brandfolio");
+      bChips.innerHTML = BRAND_CATS.map(([k, l]) => `<button class="chip" aria-pressed="${k === "all"}" data-f="${k}">${l}</button>`).join("");
+      wall.innerHTML = BRANDS.map(([file, name, cat, dark]) =>
+        `<div class="brand${dark ? " dark" : ""}" data-cat="${cat}"><img src="assets/img/logos/${file}.png" alt="${esc2(name)}" loading="lazy"><span>${esc2(cat === "beyond" ? "BEYOND FOOD" : cat.toUpperCase())}</span></div>`).join("")
+        + `<a class="brand" data-cat="all" href="kiss-the-chef.html" style="background:var(--yellow);text-decoration:none;border-style:dashed"><span data-chomper="right" data-color="#ff4d2e"></span><strong>Your brand?</strong><span>THERE'S A SEAT FREE</span></a>`;
+      TB.paint(wall);
+      bChips.addEventListener("click", (e) => {
+        const b = e.target.closest(".chip"); if (!b) return;
+        bChips.querySelectorAll(".chip").forEach((c) => c.setAttribute("aria-pressed", String(c === b)));
+        const f = b.dataset.f;
+        wall.querySelectorAll(".brand").forEach((el) => {
+          const c = el.dataset.cat;
+          const show = f === "all" || c === "all" || c === f || (f === "food" && c !== "beyond");
+          el.classList.toggle("hide", !show);
+        });
+      });
+
+      /* Case study dialogs (also open from a #hash link) */
+      const open = (id) => { const d = document.getElementById(id); if (d && d.showModal && !d.open) d.showModal(); };
+      document.querySelectorAll("[data-open]").forEach((b) => b.addEventListener("click", () => open(b.dataset.open)));
+      document.querySelectorAll("dialog").forEach((d) => {
+        d.querySelector("[data-close]").addEventListener("click", () => d.close());
+        d.addEventListener("click", (e) => { if (e.target === d) d.close(); });
+      });
+      if (location.hash) open(location.hash.slice(1));
+      if (/^#(show|course)-/.test(location.hash)) setTimeout(() => jump(location.hash, false), 50);
+    });
+  </script>
+</body>
+</html>

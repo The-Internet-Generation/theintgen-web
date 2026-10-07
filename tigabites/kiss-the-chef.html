@@ -1,0 +1,198 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Kiss the Chef? | Tigabites</title>
+  <meta name="description" content="Tell us what your brand is craving. Book a free 20-minute consult with Tigabites, the food and beverage marketing agency.">
+  <meta name="theme-color" content="#1c013b">
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=DM+Mono:wght@400;500&family=Press+Start+2P&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/style.css">
+  <script src="assets/js/site.js" defer></script>
+</head>
+<body>
+  <main>
+    <section class="page-head on-yellow">
+      <div class="wrap">
+        <span class="deco" data-chomper="left" data-color="#ff4d2e"></span>
+        <span class="course reveal">Page 06 · Kiss the Chef?</span>
+        <h1 class="h1 reveal d1">Tell us what your brand is craving.</h1>
+        <p class="lede reveal d2">We reply within one working day with a few ideas you can use, even if you never hire us.</p>
+      </div>
+    </section>
+
+    <section class="pad cream-scallop scallop-top">
+      <div class="wrap order">
+        <!-- ============ ORDER FORM ============ -->
+        <form class="form" id="order-form" novalidate>
+          <span class="course">Place your order</span>
+          <div class="row">
+            <div class="field"><label for="f-name">YOUR NAME *</label><input id="f-name" name="name" autocomplete="name" required placeholder="Priya Raman"></div>
+            <div class="field"><label for="f-brand">BRAND NAME *</label><input id="f-brand" name="brand" required placeholder="Sunny Side Bakes"></div>
+          </div>
+          <div class="row">
+            <div class="field"><label for="f-sell">WHAT YOU SELL</label><input id="f-sell" name="sell" placeholder="Sourdough, cakes, cookies"></div>
+            <div class="field"><label for="f-ig">INSTAGRAM HANDLE</label><input id="f-ig" name="instagram" placeholder="@yourbrand"></div>
+          </div>
+          <fieldset class="field">
+            <legend>WHAT ARE YOU CRAVING? (PICK ANY)</legend>
+            <div class="cravings">
+              <label><input type="checkbox" name="need" value="Strategy"><span>Strategy</span></label>
+              <label><input type="checkbox" name="need" value="Content"><span>Content</span></label>
+              <label><input type="checkbox" name="need" value="Social media"><span>Social media</span></label>
+              <label><input type="checkbox" name="need" value="Ads"><span>Ads</span></label>
+              <label><input type="checkbox" name="need" value="Influencers"><span>Influencers</span></label>
+              <label><input type="checkbox" name="need" value="Video"><span>Video</span></label>
+              <label><input type="checkbox" name="need" value="Branding"><span>Branding</span></label>
+              <label><input type="checkbox" name="need" value="Analytics"><span>Analytics</span></label>
+            </div>
+          </fieldset>
+          <div class="row">
+            <div class="field" data-draft="confirm budget ranges">
+              <label for="f-budget">MONTHLY BUDGET</label>
+              <select id="f-budget" name="budget">
+                <option value="">Pick a range</option>
+                <option>Under ₹25,000</option>
+                <option>₹25,000 to ₹50,000</option>
+                <option>₹50,000 to ₹1,00,000</option>
+                <option>₹1,00,000+</option>
+                <option>Not sure yet</option>
+              </select>
+            </div>
+            <div class="field"><label for="f-phone">PHONE / WHATSAPP *</label><input id="f-phone" name="phone" type="tel" autocomplete="tel" required placeholder="+91"></div>
+          </div>
+          <div class="field"><label for="f-email">EMAIL</label><input id="f-email" name="email" type="email" autocomplete="email" placeholder="you@yourbrand.com"></div>
+          <div class="field"><label for="f-note">ANYTHING ELSE ON YOUR MIND?</label><textarea id="f-note" name="note" placeholder="We're launching a new flavour in December and want people talking about it."></textarea></div>
+          <p class="error pixel" role="alert" style="font-size:9px;color:var(--tomato);margin:0"></p>
+          <div class="btn-row">
+            <button class="btn dark" type="submit">Send order via WhatsApp <span class="arrow">→</span></button>
+            <button class="btn ghost" type="button" id="send-email">Or send by email</button>
+          </div>
+          <div class="thanks" role="status">Order received. Our crew is already reading it. If WhatsApp didn't open, call us on <a href="tel:+919940237330">+91 99402 37330</a>.</div>
+        </form>
+
+        <!-- ============ LIVE ORDER TICKET ============ -->
+        <aside class="ticket-wrap" aria-label="Your order ticket">
+          <div class="ticket" id="ticket">
+            <h3>TIGABITES<br>ORDER TICKET</h3>
+            <p class="no">TABLE: <span id="t-table">YOUR BRAND</span><br><span id="t-date"></span></p>
+            <hr>
+            <div class="tl"><span>Guest</span><b data-t="name" class="empty">…</b></div>
+            <div class="tl"><span>Brand</span><b data-t="brand" class="empty">…</b></div>
+            <div class="tl"><span>Sells</span><b data-t="sell" class="empty">…</b></div>
+            <div class="tl"><span>Insta</span><b data-t="instagram" class="empty">…</b></div>
+            <hr>
+            <span>ORDER:</span>
+            <ul id="t-needs"><li style="opacity:.35;list-style:none">Nothing yet. Hungry?</li></ul>
+            <div id="t-pkg" class="tl" hidden><span>Package</span><b></b></div>
+            <hr>
+            <div class="tl"><span>Budget</span><b data-t="budget" class="empty">…</b></div>
+            <div class="tl"><span>Free consult</span><b>INCLUDED</b></div>
+            <hr>
+            <div class="tl" style="font-weight:500"><span>TOTAL</span><b>Ideas, on the house</b></div>
+            <div class="stamp">SENT TO KITCHEN</div>
+          </div>
+
+          <div class="lines">
+            <a class="line-card" href="https://wa.me/919940237330?text=Hi%20Tigabites!%20I%27d%20like%20to%20book%20a%20free%20consult." target="_blank" rel="noopener" data-draft="Calendly / booking link">
+              <span data-sprite="calendar"></span><span><small>FREE 20-MIN CONSULT</small><strong>Book a slot</strong></span></a>
+            <a class="line-card" href="https://wa.me/919940237330" target="_blank" rel="noopener">
+              <span data-sprite="chat"></span><span><small>WHATSAPP</small><strong>+91 99402 37330</strong></span></a>
+            <a class="line-card" href="tel:+919940237330">
+              <span data-sprite="phone"></span><span><small>CALL US</small><strong>+91 99402 37330</strong></span></a>
+            <a class="line-card" href="mailto:jaytesh@theintgen.com">
+              <span data-sprite="mail"></span><span><small>EMAIL</small><strong>jaytesh@theintgen.com</strong></span></a>
+            <a class="line-card" href="https://www.instagram.com/tigital.so/" target="_blank" rel="noopener">
+              <span data-social="instagram"></span><span><small>INSTAGRAM</small><strong>@tigital.so</strong></span></a>
+            <a class="line-card" href="https://www.google.com/maps/search/?api=1&amp;query=The+Internet+Generation+Chennai" target="_blank" rel="noopener">
+              <span data-chomper="right" data-color="#ff4d2e"></span><span><small>DROP BY THE KITCHEN</small><strong>The Internet Generation, Chennai ↗</strong></span></a>
+          </div>
+        </aside>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    document.addEventListener("tb:ready", () => {
+      const form = document.getElementById("order-form");
+      const ticket = document.getElementById("ticket");
+      const needsEl = document.getElementById("t-needs");
+      const pkgEl = document.getElementById("t-pkg");
+      const err = form.querySelector(".error");
+      const thanks = form.querySelector(".thanks");
+      document.getElementById("t-date").textContent = new Date().toLocaleString("en-IN", { dateStyle: "medium", timeStyle: "short" });
+
+      const pkg = new URLSearchParams(location.search).get("pkg");
+      if (pkg) { pkgEl.hidden = false; pkgEl.querySelector("b").textContent = pkg; }
+
+      const val = (n) => (form.elements[n] && form.elements[n].value.trim()) || "";
+      const needs = () => [...form.querySelectorAll('input[name="need"]:checked')].map((i) => i.value);
+
+      function render() {
+        ticket.querySelectorAll("[data-t]").forEach((b) => {
+          const v = val(b.dataset.t);
+          b.textContent = v || "…";
+          b.classList.toggle("empty", !v);
+        });
+        document.getElementById("t-table").textContent = (val("brand") || "your brand").toUpperCase();
+        const n = needs();
+        needsEl.innerHTML = n.length ? n.map((x) => `<li>${x.replace(/</g, "&lt;")}</li>`).join("") : '<li style="opacity:.35;list-style:none">Nothing yet. Hungry?</li>';
+      }
+      form.addEventListener("input", render);
+      form.addEventListener("change", render);
+
+      function message() {
+        const lines = [
+          "🍽️ NEW ORDER for Tigabites",
+          `Name: ${val("name")}`,
+          `Brand: ${val("brand")}`,
+          val("sell") && `Sells: ${val("sell")}`,
+          val("instagram") && `Instagram: ${val("instagram")}`,
+          needs().length && `Craving: ${needs().join(", ")}`,
+          pkg && `Package: ${pkg}`,
+          val("budget") && `Budget: ${val("budget")}`,
+          `Phone: ${val("phone")}`,
+          val("email") && `Email: ${val("email")}`,
+          val("note") && `Note: ${val("note")}`,
+        ];
+        return lines.filter(Boolean).join("\n");
+      }
+
+      function valid() {
+        const missing = ["name", "brand", "phone"].filter((n) => !val(n));
+        if (missing.length) {
+          err.textContent = "ONE MORE INGREDIENT: " + missing.join(", ").toUpperCase();
+          form.elements[missing[0]].focus();
+          return false;
+        }
+        err.textContent = "";
+        return true;
+      }
+
+      function sent() {
+        ticket.classList.add("sent");
+        thanks.classList.add("show");
+      }
+
+      // NEEDED: once there's a lead inbox or form backend, post the order there as well.
+      form.addEventListener("submit", (e) => {
+        e.preventDefault();
+        if (!valid()) return;
+        const url = `https://wa.me/${TB.contact.wa}?text=${encodeURIComponent(message())}`;
+        window.open(url, "_blank", "noopener");
+        // Pop-ups can be blocked, so always offer a real link too
+        thanks.innerHTML = `Order received. Our crew is already reading it. If WhatsApp didn't open, <a href="${url}" target="_blank" rel="noopener">tap here to send your order on WhatsApp</a> or call +91 99402 37330.`;
+        sent();
+      });
+      document.getElementById("send-email").addEventListener("click", () => {
+        if (!valid()) return;
+        location.href = `mailto:${TB.contact.email}?subject=${encodeURIComponent("New order: " + val("brand"))}&body=${encodeURIComponent(message())}`;
+        sent();
+      });
+    });
+  </script>
+</body>
+</html>

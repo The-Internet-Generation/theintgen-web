@@ -1,0 +1,308 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Tigabites | We feed your feed!</title>
+  <meta name="description" content="Tigabites is the digital marketing agency that only works with kitchenware, food and allied brands. 30+ brands served, 10 years in, always hungry.">
+  <meta property="og:title" content="Tigabites | We market food, only food.">
+  <meta property="og:description" content="The digital marketing agency for kitchenware, food and beverage brands. A TIG venture.">
+  <meta name="theme-color" content="#1c013b">
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=DM+Mono:wght@400;500&family=Press+Start+2P&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/style.css">
+  <script>
+    /* Play a loading game once per session (or always with ?loader=1). */
+    (function () {
+      var played = false;
+      try { played = sessionStorage.getItem("tb_played") === "1"; } catch (e) {}
+      var reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+      if (new URLSearchParams(location.search).has("loader") || (!played && !reduce)) document.documentElement.classList.add("loading");
+    })();
+  </script>
+  <script src="assets/js/site.js" defer></script>
+  <script src="assets/js/work.js" defer></script>
+  <script src="assets/js/loader-game.js" defer></script>
+</head>
+<body>
+
+  <!-- ============ LOADING GAME (one of five, cycles per visit) ============ -->
+  <div class="loader" role="dialog" aria-label="Loading game. Press Escape or Skip to go straight to the site.">
+    <button class="loader-skip">SKIP ▶▶</button>
+    <div class="loader-brand">TIGABITES</div>
+    <div class="loader-top"><span>1UP <em data-score>00000</em></span><span data-game>SNACK ATTACK</span></div>
+    <canvas width="420" height="520" aria-hidden="true"></canvas>
+    <div class="loader-bar" aria-hidden="true"><i></i></div>
+    <p class="loader-hint">LOADING YOUR APPETITE…</p>
+  </div>
+
+  <main>
+    <!-- ============ HERO ============ -->
+    <section class="hero">
+      <div class="wrap">
+        <div>
+          <h1 class="mega reveal d1">
+            <span class="line">We market food,</span>
+            <span class="line"><span class="hl">only food.</span></span>
+          </h1>
+          <p class="lede reveal d2">Tigabites is a digital marketing agency for kitchenware and F&amp;B brands. 30+ brands served, 10 years in, <strong>always hungry.</strong></p>
+          <div class="btn-row reveal d3">
+            <a class="btn" href="kiss-the-chef.html">Book a free consult <span class="arrow">→</span></a>
+            <a class="btn ghost" href="work.html">See our work</a>
+          </div>
+          <div class="hero-meta reveal d3">
+            <span>Kitchen's open: taking new brands</span>
+          </div>
+        </div>
+
+        <div class="arcade-wrap reveal d2">
+          <div class="sticker s1">WE<br>FEED<br>YOUR<br>FEED!</div>
+          <div class="sticker s2">NO<br>JUNK<br>POSTS</div>
+          <div class="arcade" aria-label="Illustration: our 8-bit mascot eating burgers, likes and social media icons">
+            <div class="arcade-hud"><span>HI-SCORE <em>45M+</em></span><span>LVL <em>F&amp;B</em></span></div>
+            <div class="arcade-maze">
+              <div class="arcade-bubble">NOM. ENGAGEMENT.</div>
+              <div class="arcade-lane">
+                <div class="conveyor">
+                  <div class="conveyor-track" aria-hidden="true">
+                    <span data-sprite="burger"></span><span data-social="instagram"></span><span data-sprite="heart"></span><span data-social="youtube"></span>
+                    <span data-sprite="cone"></span><span data-social="facebook"></span><span data-sprite="star"></span><span data-social="linkedin"></span>
+                    <span data-sprite="bowl"></span><span data-social="x"></span><span data-sprite="donut"></span><span data-social="pinterest"></span>
+                    <span data-sprite="burger"></span><span data-social="instagram"></span><span data-sprite="heart"></span><span data-social="youtube"></span>
+                    <span data-sprite="cone"></span><span data-social="facebook"></span><span data-sprite="star"></span><span data-social="linkedin"></span>
+                    <span data-sprite="bowl"></span><span data-social="x"></span><span data-sprite="donut"></span><span data-social="pinterest"></span>
+                  </div>
+                </div>
+                <div class="big-chomp" data-chomper="right"></div>
+              </div>
+              <div class="arcade-ghosts" aria-hidden="true">
+                <span data-sprite="ghost" data-color="red"></span>
+                <span data-sprite="ghost" data-color="pink"></span>
+                <span data-sprite="scared"></span>
+                <span data-sprite="ghost" data-color="orange"></span>
+              </div>
+            </div>
+            <div class="arcade-foot"><span class="blink">INSERT BRAND</span><span>CREDIT 01</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ PEEK INTO THE KITCHEN: one-click way into the work page ============ -->
+    <div class="peek-wrap">
+      <div class="wrap">
+        <a class="peek" href="work.html" aria-label="Peek into the kitchen: see all our work on Clean Plates">
+          <span class="peek-copy"><span class="pixel">PEEK INTO THE KITCHEN</span><strong>14 show formats we cook for brands.</strong></span>
+          <span class="peek-tiles" id="peek-tiles" aria-hidden="true"></span>
+          <span class="btn">See all our work <span class="arrow">→</span></span>
+        </a>
+      </div>
+    </div>
+    <script>
+      document.addEventListener("tb:ready", async () => {
+        const items = await TBWork.load();
+        const ORDER = ["Starters", "Sides", "Mains", "Garnish", "Desserts"];
+        const picks = ORDER.map((c) => items.find((it) => it.course === c && it.platform === "instagram")).filter(Boolean);
+        const box = document.getElementById("peek-tiles");
+        box.innerHTML = picks.slice(0, 5).map((it) => TBWork.tile(it).replace("</a>", `<span class="wt-course">${TBWork.esc(it.course.toUpperCase())}</span></a>`).replace(/^<a /, "<span ").replace(/<\/a>$/, "</span>").replace(/ href="[^"]*" target="_blank" rel="noopener"/, "")).join("");
+        TBWork.wire(box);
+      });
+    </script>
+
+    <!-- ============ TICKER: the chomper eats social icons as they scroll in ============ -->
+    <div class="ticker tilt social" aria-hidden="true">
+      <div class="eater"><span data-chomper="right"></span></div>
+      <div class="ticker-track">
+        <span>Fresh content</span><span data-social="instagram"></span>
+        <span>Reels worth the calories</span><span data-social="youtube"></span>
+        <span>No stale strategy</span><span data-social="facebook"></span>
+        <span>Served with data</span><span data-social="linkedin"></span>
+        <span>Zero junk posts</span><span data-social="pinterest"></span>
+        <span>Cooking in the kitchen and the timeline</span><span data-social="reddit"></span>
+        <span>Nammaku sorry thaan mukkiyam</span><span data-social="quora"></span>
+        <span>Fresh content</span><span data-social="google"></span>
+        <span>Reels worth the calories</span><span data-social="tumblr"></span>
+        <span>No stale strategy</span><span data-social="x"></span>
+        <span>Served with data</span><span data-social="threads"></span>
+        <span>Zero junk posts</span><span data-social="snapchat"></span>
+        <span>Cooking in the kitchen and the timeline</span><span data-social="tiktok"></span>
+        <span>Nammaku sorry thaan mukkiyam</span><span data-social="whatsapp"></span>
+      </div>
+    </div>
+
+    <!-- ============ PROOF ============ -->
+    <section class="proof solo pad">
+      <div class="wrap">
+        <div class="orbit reveal" aria-label="Some of the food and beverage brands we've worked with">
+          <div class="orbit-ring">
+            <div class="orbit-logo" style="--a:0deg"><span><img src="assets/img/logos/Ramajeyam_Rice.png" alt="Ramajeyam Rice"></span></div>
+            <div class="orbit-logo" style="--a:36deg"><span><img src="assets/img/logos/Tamil_Paal.png" alt="Tamil Paal"></span></div>
+            <div class="orbit-logo" style="--a:72deg"><span><img src="assets/img/logos/Subway.png" alt="Subway"></span></div>
+            <div class="orbit-logo" style="--a:108deg"><span><img src="assets/img/logos/Royal_Chef.png" alt="Royal Chef"></span></div>
+            <div class="orbit-logo" style="--a:144deg"><span><img src="assets/img/logos/Red_Bull.png" alt="Red Bull"></span></div>
+            <div class="orbit-logo" style="--a:180deg"><span><img src="assets/img/logos/Cavins.png" alt="Cavin's"></span></div>
+            <div class="orbit-logo" style="--a:216deg"><span><img src="assets/img/logos/Chai_Kings.png" alt="Chai Kings"></span></div>
+            <div class="orbit-logo" style="--a:252deg"><span><img src="assets/img/logos/Eatalica.png" alt="Eatalica"></span></div>
+            <div class="orbit-logo" style="--a:288deg"><span><img src="assets/img/logos/Brownie_Heaven.png" alt="Brownie Heaven"></span></div>
+            <div class="orbit-logo" style="--a:324deg"><span><img src="assets/img/logos/Tibbs_Frankie.png" alt="Tibb's Frankie"></span></div>
+          </div>
+          <div class="ring-plate"><div><strong>30+</strong><small>BRANDS FED</small></div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ WHAT WE COOK UP ============ -->
+    <section class="on-dark pad scallop-top">
+      <div class="wrap">
+        <div class="section-head">
+          <div>
+            <h2 class="h2 reveal d1">Eight offerings.<br>One obsession: <span class="hl">Growth.</span></h2>
+          </div>
+          <p class="reveal d2">From the first strategy doc to the last heart in the comments.</p>
+        </div>
+        <div class="tiles">
+          <a class="tile reveal" href="menu.html#things-we-do"><span class="no">01</span><h3>Strategy &amp; Positioning</h3><p>A plan with a job for every post.</p><span data-sprite="recipebook"></span></a>
+          <a class="tile reveal d1" href="menu.html#things-we-do"><span class="no">02</span><h3>Social Media Management</h3><p>Daily care so your page never goes stale.</p><span data-social="instagram"></span></a>
+          <a class="tile reveal d2" href="menu.html#things-we-do"><span class="no">03</span><h3>Influencer Marketing</h3><p>Creators who genuinely love your food.</p><span data-sprite="sparkle"></span></a>
+          <a class="tile reveal d3" href="menu.html#things-we-do"><span class="no">04</span><h3>Performance Marketing</h3><p>Meta and Google ads that pay their bill.</p><span data-sprite="fries"></span></a>
+          <a class="tile reveal" href="menu.html#things-we-do"><span class="no">05</span><h3>Video Production</h3><p>Ad films and reels, script to screen.</p><span data-sprite="moviecam"></span></a>
+          <a class="tile reveal d1" href="menu.html#things-we-do"><span class="no">06</span><h3>Branding</h3><p>The pick on a crowded shelf.</p><span data-sprite="shades"></span></a>
+          <a class="tile reveal d2" href="menu.html#things-we-do"><span class="no">07</span><h3>Content Marketing</h3><p>Posts your audience actually craves.</p><span data-sprite="burger"></span></a>
+          <a class="tile reveal d3" href="menu.html#things-we-do"><span class="no">08</span><h3>Analytics &amp; Research</h3><p>What worked, what flopped, what's next.</p><span data-sprite="magnifier"></span></a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ WHY ONLY FOOD ============ -->
+    <section class="why pad">
+      <div class="wrap">
+        <ol class="why-lines">
+          <li class="reveal">We served 30+ brands across every industry.</li>
+          <li class="reveal d1">Most of our favourites were food.</li>
+          <li class="reveal d2">So we stopped pretending and <em>picked a niche.</em></li>
+        </ol>
+        <a class="btn ghost reveal" href="first-bite.html">Read our First Bite <span class="arrow">→</span></a>
+      </div>
+    </section>
+
+    <div class="ticker alt" aria-hidden="true">
+      <div class="ticker-track">
+        <span>Rice</span><span>Dairy</span><span>Kitchenware</span><span>Bakeries</span><span>Beverages</span><span>Restaurants</span><span>QSR</span><span>Snacks</span>
+      </div>
+    </div>
+
+    <!-- ============ REVIEWS (from the TIG BrandFolio deck) ============ -->
+    <section class="pad">
+      <div class="wrap">
+        <div class="section-head">
+          <div>
+            <h2 class="h2 reveal d1">Reviews from<br>the table.</h2>
+          </div>
+          <p class="reveal d2">The good, and the ones that stung.</p>
+        </div>
+        <div class="reviews">
+          <figure class="review reveal" data-draft="edited quote: get Arjun's sign-off">
+            <div class="stars"><span data-sprite="star"></span><span data-sprite="star"></span><span data-sprite="star"></span><span data-sprite="star"></span><span data-sprite="star"></span></div>
+            <blockquote>"I've worked with Jay and his team at TIG for over two years now. As a majorly offline business, TIG was instrumental in our digital journey, for brands like Nivaran90 and for our own corporate identity. What stood out was the team's persistence and dynamic approach in the ever-changing landscape of digital promotion."</blockquote>
+            <figcaption class="who"><span class="faces"><img src="assets/img/testimonials/arjun.jpg" alt="Arjun Chinni Nambi"><img class="badge" src="assets/img/testimonials/badge-cne.jpg" alt=""></span><span><strong>Arjun Chinni Nambi</strong><br>Chinni Nambi Enterprises · Nivaran90</span></figcaption>
+          </figure>
+          <figure class="review reveal d1">
+            <div class="stars"><span data-sprite="star"></span><span data-sprite="star"></span><span data-sprite="star"></span><span data-sprite="star"></span><span data-sprite="star"></span></div>
+            <blockquote>"TIG has been a key partner in our growth journey for over two years. Their expertise in both organic and performance marketing has significantly boosted our brand reach. It's been a pleasure working with such a dedicated team, and we look forward to a long-term collaboration."</blockquote>
+            <figcaption class="who"><span class="faces"><img src="assets/img/testimonials/thiyagarajan.jpg" alt="Thiyagarajan"><img class="badge" src="assets/img/testimonials/badge-tamil-paal.jpg" alt=""></span><span><strong>Thiyagarajan</strong><br>G K Dairy · Tamil Paal</span></figcaption>
+          </figure>
+          <figure class="review reveal d2">
+            <div class="stars"><span data-sprite="star"></span><span data-sprite="star"></span><span data-sprite="star"></span><span data-sprite="star"></span><span data-sprite="star"></span></div>
+            <blockquote>"Partnering with this team has been a game-changer for our awareness campaigns. Their strategic digital and on-ground efforts helped us reach the right audience across Tamil Nadu, creating real impact and engagement. Their creative vision, execution precision, and cultural sensitivity make them a standout force in the digital marketing space. We're proud to collaborate with them."</blockquote>
+            <figcaption class="who"><span class="faces"><img src="assets/img/testimonials/rohitnathan.jpg" alt="Rohitnathan IPS"><img class="badge" src="assets/img/testimonials/badge-tn-police.jpg" alt=""></span><span><strong>Rohitnathan IPS</strong><br>Tamil Nadu Narcotics Department</span></figcaption>
+          </figure>
+        </div>
+
+        <div class="reviews lost">
+          <figure class="review reveal">
+            <div class="stars"><span data-sprite="star"></span><span data-sprite="star" data-y="#d9d2e6"></span><span data-sprite="star" data-y="#d9d2e6"></span><span data-sprite="star" data-y="#d9d2e6"></span><span data-sprite="star" data-y="#d9d2e6"></span></div>
+            <blockquote>"They failed to stick to posting dates, twice!"</blockquote>
+            <figcaption>A client we lost</figcaption>
+          </figure>
+          <figure class="review reveal d1">
+            <div class="stars"><span data-sprite="star"></span><span data-sprite="star" data-y="#d9d2e6"></span><span data-sprite="star" data-y="#d9d2e6"></span><span data-sprite="star" data-y="#d9d2e6"></span><span data-sprite="star" data-y="#d9d2e6"></span></div>
+            <blockquote>"They reshared a faulty post that got us flak."</blockquote>
+            <figcaption>A client we lost</figcaption>
+          </figure>
+        </div>
+        <p class="honest reveal">Yes, we have screwed up in the past. Makes us stronger <span aria-label="flexed biceps">💪</span></p>
+      </div>
+    </section>
+
+    <!-- ============ FEATURED PLATES ============ -->
+    <section class="pad on-cream2 scallop-top">
+      <div class="wrap">
+        <h2 class="h2 reveal" style="margin-bottom:clamp(28px,4vw,48px)">Chef's specials.</h2>
+        <div class="plates">
+          <article class="feature reveal d1">
+            <div class="feature-visual">
+              <div class="grains" aria-hidden="true"></div>
+              <span class="pixel" style="font-size:10px;position:relative">CASE STUDY · RICE / FMCG STAPLE</span>
+              <div class="counter-big">
+                <span class="from"><s>80</s> followers</span>
+                <span class="to"><span data-count="12000" data-suffix="+">12,000+</span></span>
+                <span class="lbl">ENGAGED FOLLOWERS ON INSTAGRAM</span>
+              </div>
+            </div>
+            <div class="feature-body">
+              <span class="tag">Ramajeyam Rice · @ramajeyamrice</span>
+              <h2 class="h2">Graining Momentum</h2>
+              <p>A quality product with a barely-there Instagram. We turned a static product page into a community that drives awareness, trust and sales.</p>
+              <ul>
+                <li>The Contest Blitz: follow, like, tag two friends, win 5 free 1kg bags</li>
+                <li>A winners' spotlight after every round, using real people as social proof</li>
+                <li>Posts now routinely get 100+ comments</li>
+              </ul>
+              <div class="btn-row"><a class="btn dark" href="work.html#ramajeyam">Read the full recipe <span class="arrow">→</span></a></div>
+            </div>
+          </article>
+
+          <article class="feature flip-side reveal d1">
+            <div class="feature-visual">
+              <span class="pixel" style="font-size:10px;position:relative">CASE STUDY · DAIRY</span>
+              <div class="counter-big">
+                <span class="from"><s>600</s> followers</span>
+                <span class="to"><span data-count="25000" data-suffix="+">25,000+</span></span>
+                <span class="lbl">FOLLOWERS ON INSTAGRAM</span>
+              </div>
+            </div>
+            <div class="feature-body">
+              <span class="tag">Tamil Paal · Dairy</span>
+              <h2 class="h2">Milking the Moment</h2>
+              <p data-draft="confirm the Tamil Paal story">A dairy brand with a story worth telling. We put the founder in front of the camera, explained the milk behind the brand, and gave the community reasons to show up.</p>
+              <ul data-draft="confirm the Tamil Paal story">
+                <li>Founder-led talking-head videos straight from the dairy</li>
+                <li>Milk explainers, history reels and an event teaser series</li>
+                <li>Contests like the milk moustache challenge</li>
+              </ul>
+              <div class="btn-row"><a class="btn dark" href="work.html#tamilpaal">Read the full recipe <span class="arrow">→</span></a></div>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ CLOSER ============ -->
+    <section class="closer pad on-yellow scallop-top">
+      <span class="float-food ff1" data-sprite="burger"></span>
+      <span class="float-food ff2" data-sprite="cone"></span>
+      <span class="float-food ff3" data-sprite="donut"></span>
+      <span class="float-food ff4" data-sprite="fries"></span>
+      <div class="wrap">
+        <h2 class="mega reveal d1">Hungry for more?<br>Drop a burp.</h2>
+        <div class="btn-row reveal d2">
+          <a class="btn dark" href="kiss-the-chef.html">Kiss the Chef? <span class="arrow">→</span></a>
+          <a class="btn ghost" href="menu.html">See the menu</a>
+        </div>
+      </div>
+    </section>
+  </main>
+</body>
+</html>
