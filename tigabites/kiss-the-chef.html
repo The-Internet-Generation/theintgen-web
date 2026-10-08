@@ -51,21 +51,15 @@
             </div>
           </fieldset>
           <div class="row">
-            <div class="field" data-draft="confirm budget ranges">
-              <label for="f-budget">MONTHLY BUDGET</label>
-              <select id="f-budget" name="budget">
-                <option value="">Pick a range</option>
-                <option>Under ₹25,000</option>
-                <option>₹25,000 to ₹50,000</option>
-                <option>₹50,000 to ₹1,00,000</option>
-                <option>₹1,00,000+</option>
-                <option>Not sure yet</option>
-              </select>
+            <div class="field">
+              <span class="field-label pixel">BUDGET</span>
+              <a class="rates-link" href="https://wa.me/919940237330?text=Hi%20Tigabites!%20I%27d%20like%20to%20enquire%20about%20your%20rates." target="_blank" rel="noopener"><span data-sprite="chat"></span><span>Rates are a closed-door chat. <strong>Ask us on WhatsApp ↗</strong></span></a>
             </div>
             <div class="field"><label for="f-phone">PHONE / WHATSAPP *</label><input id="f-phone" name="phone" type="tel" autocomplete="tel" required placeholder="+91"></div>
           </div>
           <div class="field"><label for="f-email">EMAIL</label><input id="f-email" name="email" type="email" autocomplete="email" placeholder="you@yourbrand.com"></div>
           <div class="field"><label for="f-note">ANYTHING ELSE ON YOUR MIND?</label><textarea id="f-note" name="note" placeholder="We're launching a new flavour in December and want people talking about it."></textarea></div>
+          <div class="hp" aria-hidden="true"><label for="f-website">Leave this empty</label><input id="f-website" name="website" tabindex="-1" autocomplete="off"></div>
           <p class="error pixel" role="alert" style="font-size:9px;color:var(--tomato);margin:0"></p>
           <div class="btn-row">
             <button class="btn dark" type="submit">Send order via WhatsApp <span class="arrow">→</span></button>
@@ -89,7 +83,7 @@
             <ul id="t-needs"><li style="opacity:.35;list-style:none">Nothing yet. Hungry?</li></ul>
             <div id="t-pkg" class="tl" hidden><span>Package</span><b></b></div>
             <hr>
-            <div class="tl"><span>Budget</span><b data-t="budget" class="empty">…</b></div>
+            <div class="tl"><span>Rates</span><b>On request</b></div>
             <div class="tl"><span>Free consult</span><b>INCLUDED</b></div>
             <hr>
             <div class="tl" style="font-weight:500"><span>TOTAL</span><b>Ideas, on the house</b></div>
@@ -153,7 +147,6 @@
           val("instagram") && `Instagram: ${val("instagram")}`,
           needs().length && `Craving: ${needs().join(", ")}`,
           pkg && `Package: ${pkg}`,
-          val("budget") && `Budget: ${val("budget")}`,
           `Phone: ${val("phone")}`,
           val("email") && `Email: ${val("email")}`,
           val("note") && `Note: ${val("note")}`,
@@ -177,10 +170,25 @@
         thanks.classList.add("show");
       }
 
-      // NEEDED: once there's a lead inbox or form backend, post the order there as well.
+      // Every order is also logged to the "Tigabites Website Leads" sheet (Tigital drive > BizDev)
+      // through its Apps Script web app. Fire-and-forget: the hand-off below never waits on it.
+      function logLead(via) {
+        const url = TB.contact.leadsEndpoint;
+        if (!url) return;
+        const data = new URLSearchParams({
+          name: val("name"), brand: val("brand"), sell: val("sell"), instagram: val("instagram"),
+          needs: needs().join(", "), pkg: pkg || "", phone: val("phone"), email: val("email"),
+          note: val("note"), via, website: val("website"),
+        });
+        try {
+          if (!(navigator.sendBeacon && navigator.sendBeacon(url, data))) fetch(url, { method: "POST", mode: "no-cors", body: data, keepalive: true });
+        } catch (e) {}
+      }
+
       form.addEventListener("submit", (e) => {
         e.preventDefault();
         if (!valid()) return;
+        logLead("WhatsApp");
         const url = `https://wa.me/${TB.contact.wa}?text=${encodeURIComponent(message())}`;
         window.open(url, "_blank", "noopener");
         // Pop-ups can be blocked, so always offer a real link too
@@ -189,6 +197,7 @@
       });
       document.getElementById("send-email").addEventListener("click", () => {
         if (!valid()) return;
+        logLead("Email");
         location.href = `mailto:${TB.contact.email}?subject=${encodeURIComponent("New order: " + val("brand"))}&body=${encodeURIComponent(message())}`;
         sent();
       });

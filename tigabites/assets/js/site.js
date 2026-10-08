@@ -12,6 +12,9 @@ TB.contact = {
   instagram: "https://www.instagram.com/tigital.so/",
   instagramHandle: "@tigital.so",
   maps: "https://www.google.com/maps/search/?api=1&query=The+Internet+Generation+Chennai",
+  // Apps Script web app that writes to the "Tigabites Website Leads" sheet (Tigital drive > BizDev).
+  // Setup steps: "Tigabites Website Leads: Apps Script setup" doc in the same folder. Empty = not logging yet.
+  leadsEndpoint: "",
 };
 
 // NEEDED: paste the TIGOM playlist link here, e.g. "https://open.spotify.com/playlist/<id>"
