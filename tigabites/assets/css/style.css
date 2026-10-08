@@ -1044,3 +1044,50 @@ html.arcade-open { overflow: hidden; }
 .play-chip:focus-visible { outline: 3px dashed var(--tomato); outline-offset: 3px; }
 .offer { bottom: 128px; }
 @media (max-width: 520px) { .play-chip .nudge { display: none; } }
+
+/* ==========================================================================
+   Clean Plates: ad film hero + product shots
+   ========================================================================== */
+.films { margin-top: clamp(28px, 4vw, 44px); display: grid; grid-template-columns: minmax(0, 1fr) 300px; gap: 16px; align-items: start; }
+.film-stage { position: relative; aspect-ratio: 16 / 9; border-radius: 22px; overflow: hidden; background: #000; border: 3px solid var(--ink); box-shadow: 8px 8px 0 color-mix(in srgb, var(--yellow) 70%, transparent); }
+.film-stage video { width: 100%; height: 100%; object-fit: cover; display: block; cursor: pointer; }
+.film-now { position: absolute; left: 14px; top: 14px; font-size: 9px; background: rgba(20,0,40,.75); color: var(--yellow); padding: 8px 10px; border-radius: 6px; pointer-events: none; }
+.film-sound { position: absolute; right: 14px; bottom: 14px; font-weight: 800; font-size: .88rem; padding: 10px 14px; border-radius: 999px; border: 2px solid var(--ink); background: var(--yellow); color: var(--purple); cursor: pointer; }
+.film-sound:focus-visible, .film-tab:focus-visible { outline: 3px dashed var(--tomato); outline-offset: 3px; }
+.film-list { display: grid; gap: 10px; }
+.film-tab {
+  position: relative; display: grid; grid-template-columns: 96px 1fr; gap: 12px; align-items: center; text-align: left; overflow: hidden;
+  padding: 8px; border-radius: 14px; cursor: pointer; background: var(--purple-2); color: var(--cream);
+  border: 2px solid color-mix(in srgb, var(--cream) 18%, transparent); transition: background .2s, border-color .2s;
+}
+.film-tab img { width: 96px; aspect-ratio: 16 / 9; object-fit: cover; border-radius: 8px; display: block; }
+.film-tab small { display: block; font-family: var(--pixel); font-size: 7px; opacity: .7; margin-bottom: 4px; }
+.film-tab b { font-size: .98rem; }
+.film-tab.on { background: var(--yellow); color: var(--purple); border-color: var(--yellow); }
+.film-progress { position: absolute; left: 0; bottom: 0; height: 3px; width: 0; background: var(--tomato); }
+@media (max-width: 900px) {
+  .films { grid-template-columns: 1fr; }
+  .film-list { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .film-tab { grid-template-columns: 1fr; }
+  .film-tab img { width: 100%; }
+}
+@media (max-width: 520px) { .film-tab small { display: none; } .film-tab b { font-size: .8rem; } }
+
+.ps-feature { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); gap: clamp(20px, 4vw, 48px); align-items: center; margin-bottom: clamp(28px, 4vw, 44px); }
+.ps-video { width: 100%; aspect-ratio: 16 / 9; object-fit: cover; border-radius: 22px; border: 3px solid var(--ink); background: #000; box-shadow: var(--shadow); display: block; }
+.ps-copy { display: grid; gap: 12px; justify-items: start; }
+.ps-copy .pixel { font-size: 9px; color: var(--purple-3); }
+.ps-copy .h3 { font-size: clamp(1.8rem, 3.4vw, 2.6rem); }
+.ps-copy p { margin: 0; max-width: 42ch; font-size: 1.05rem; }
+.ps-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+.ps-still { position: relative; padding: 0; border: 2.5px solid var(--ink); border-radius: 16px; overflow: hidden; cursor: zoom-in; background: var(--ink); aspect-ratio: 16 / 9; }
+.ps-still.wide { grid-column: span 2; grid-row: span 2; aspect-ratio: auto; }
+.ps-still img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform .5s; }
+.ps-still:hover img { transform: scale(1.05); }
+.ps-still span { position: absolute; left: 10px; bottom: 10px; font-family: var(--pixel); font-size: 7px; padding: 5px 7px; border-radius: 4px; background: rgba(20,0,40,.75); color: var(--yellow); }
+.ps-still:focus-visible { outline: 3px dashed var(--tomato); outline-offset: 3px; }
+@media (max-width: 760px) { .ps-feature { grid-template-columns: 1fr; } .ps-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+dialog.ps-lightbox { width: min(1100px, calc(100% - 24px)); padding: 0; border: 3px solid var(--ink); border-radius: 18px; background: var(--ink); overflow: hidden; }
+dialog.ps-lightbox::backdrop { background: color-mix(in srgb, var(--purple) 85%, transparent); }
+dialog.ps-lightbox img { width: 100%; display: block; }
+dialog.ps-lightbox [data-close] { position: absolute; top: 12px; right: 12px; }

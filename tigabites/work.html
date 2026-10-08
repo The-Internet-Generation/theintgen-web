@@ -22,11 +22,72 @@
         <span class="course reveal" style="color:var(--yellow)">Page 05 · Clean Plates</span>
         <h1 class="h1 reveal d1">We've mastered the playbook of marketing <span class="hl">kitchenware and FnB brands</span> for digital.</h1>
         <p class="lede reveal d2">Hard flex? Check them out yourself.</p>
+
+        <!-- Ad films: the hero reel. Plays muted and in order; tap a film to switch, or turn the sound on. -->
+        <div class="films reveal d2" id="films">
+          <div class="film-stage">
+            <video id="film" muted playsinline preload="metadata" poster="assets/video/cavins-lassi.jpg" aria-label="Cavin's ad film">
+              <source src="assets/video/cavins-lassi.mp4" type="video/mp4">
+            </video>
+            <span class="film-now pixel" id="film-now">NOW SHOWING · CAVIN'S LASSI</span>
+            <button class="film-sound" type="button" id="film-sound" aria-pressed="false">🔇 Sound off</button>
+          </div>
+          <div class="film-list" role="tablist" aria-label="Ad films">
+            <button class="film-tab on" type="button" role="tab" aria-selected="true" data-src="assets/video/cavins-lassi.mp4" data-poster="assets/video/cavins-lassi.jpg" data-title="Cavin's Lassi">
+              <img src="assets/video/cavins-lassi.jpg" alt="" loading="lazy"><span><small>AD FILM · 15 SEC</small><b>Cavin's Lassi</b></span><i class="film-progress" aria-hidden="true"></i>
+            </button>
+            <button class="film-tab" type="button" role="tab" aria-selected="false" data-src="assets/video/cavins-milkshake.mp4" data-poster="assets/video/cavins-milkshake.jpg" data-title="Cavin's Milkshake">
+              <img src="assets/video/cavins-milkshake.jpg" alt="" loading="lazy"><span><small>AD FILM · 15 SEC</small><b>Cavin's Milkshake</b></span><i class="film-progress" aria-hidden="true"></i>
+            </button>
+            <button class="film-tab" type="button" role="tab" aria-selected="false" data-src="assets/video/cavins-paneer.mp4" data-poster="assets/video/cavins-paneer.jpg" data-title="Cavin's Paneer">
+              <img src="assets/video/cavins-paneer.jpg" alt="" loading="lazy"><span><small>AD FILM · 15 SEC</small><b>Cavin's Paneer</b></span><i class="film-progress" aria-hidden="true"></i>
+            </button>
+          </div>
+        </div>
       </div>
     </section>
 
+    <!-- ============ PRODUCT SHOTS: Sepoy & Co shoot + food stills from the Cavin's films ============ -->
+    <section class="pad cream-scallop scallop-top product-shots" id="product-shots">
+      <div class="wrap">
+        <div class="section-head">
+          <div><h2 class="h2 reveal">Product shots.</h2></div>
+          <p class="reveal d1">Food that looks good enough to lick off the screen, straight from our ad film sets.</p>
+        </div>
+        <div class="ps-feature reveal">
+          <video class="ps-video" muted loop playsinline preload="none" poster="assets/video/sepoy-co.jpg" aria-label="Sepoy and Co ginger ale product shoot">
+            <source src="assets/video/sepoy-co.mp4" type="video/mp4">
+          </video>
+          <div class="ps-copy">
+            <span class="pixel">PRODUCT SHOOT</span>
+            <h3 class="h3">Sepoy &amp; Co</h3>
+            <p>Mint, ginger and fizz, lit like a still life. A product shoot for Sepoy &amp; Co's ginger ales, made with Suraj Desur Photography.</p>
+            <button class="btn ghost" type="button" id="ps-sound" aria-pressed="false">🔇 Play with sound</button>
+          </div>
+        </div>
+        <div class="ps-grid">
+          <button class="ps-still wide" type="button" data-full="assets/img/product-shots/paneer-spread.jpg"><img src="assets/img/product-shots/paneer-spread.jpg" alt="A paneer feast, from above, from the Cavin's Paneer ad film" loading="lazy"><span>CAVIN'S PANEER</span></button>
+          <button class="ps-still" type="button" data-full="assets/img/product-shots/lassi-strawberry-splash.jpg"><img src="assets/img/product-shots/lassi-strawberry-splash.jpg" alt="Strawberry hitting the lassi, from the Cavin's Lassi ad film" loading="lazy"><span>CAVIN'S LASSI</span></button>
+          <button class="ps-still" type="button" data-full="assets/img/product-shots/paneer-toss.jpg"><img src="assets/img/product-shots/paneer-toss.jpg" alt="Paneer, peppers and chillies mid-air, from the Cavin's Paneer ad film" loading="lazy"><span>CAVIN'S PANEER</span></button>
+          <button class="ps-still" type="button" data-full="assets/img/product-shots/milkshake-rabdi-splash.jpg"><img src="assets/img/product-shots/milkshake-rabdi-splash.jpg" alt="Milk splashing over rabdi, from the Cavin's Milkshake ad film" loading="lazy"><span>CAVIN'S MILKSHAKE</span></button>
+          <button class="ps-still" type="button" data-full="assets/img/product-shots/lassi-swirl.jpg"><img src="assets/img/product-shots/lassi-swirl.jpg" alt="Thick lassi, freshly poured, from the Cavin's Lassi ad film" loading="lazy"><span>CAVIN'S LASSI</span></button>
+          <button class="ps-still" type="button" data-full="assets/img/product-shots/paneer-gravy.jpg"><img src="assets/img/product-shots/paneer-gravy.jpg" alt="Paneer cubes dropping into gravy, from the Cavin's Paneer ad film" loading="lazy"><span>CAVIN'S PANEER</span></button>
+          <button class="ps-still" type="button" data-full="assets/img/product-shots/lassi-mango.jpg"><img src="assets/img/product-shots/lassi-mango.jpg" alt="Mango cubes, from the Cavin's Lassi ad film" loading="lazy"><span>CAVIN'S LASSI</span></button>
+          <button class="ps-still" type="button" data-full="assets/img/product-shots/paneer-tikka.jpg"><img src="assets/img/product-shots/paneer-tikka.jpg" alt="Paneer tikka skewers, from the Cavin's Paneer ad film" loading="lazy"><span>CAVIN'S PANEER</span></button>
+          <button class="ps-still" type="button" data-full="assets/img/product-shots/lassi-strawberry-top.jpg"><img src="assets/img/product-shots/lassi-strawberry-top.jpg" alt="Lassi topped with a strawberry, from the Cavin's Lassi ad film" loading="lazy"><span>CAVIN'S LASSI</span></button>
+          <button class="ps-still" type="button" data-full="assets/img/product-shots/milkshake-rabdi-pour.jpg"><img src="assets/img/product-shots/milkshake-rabdi-pour.jpg" alt="Rabdi in a clay pot, from the Cavin's Milkshake ad film" loading="lazy"><span>CAVIN'S MILKSHAKE</span></button>
+          <button class="ps-still" type="button" data-full="assets/img/product-shots/lassi-strawberry-drop.jpg"><img src="assets/img/product-shots/lassi-strawberry-drop.jpg" alt="A strawberry in a sea of lassi, from the Cavin's Lassi ad film" loading="lazy"><span>CAVIN'S LASSI</span></button>
+        </div>
+      </div>
+    </section>
+
+    <dialog class="ps-lightbox" id="ps-lightbox" aria-label="Product shot">
+      <button class="btn dark" type="button" data-close>Close ✕</button>
+      <img alt="">
+    </dialog>
+
     <!-- ============ MENU BOARD: every show at a glance ============ -->
-    <section class="wmenu-wrap cream-scallop scallop-top">
+    <section class="wmenu-wrap on-cream2 scallop-top">
       <div class="wrap">
         <div class="wmenu">
           <p class="wmenu-title pixel" id="wmenu-title">TODAY'S MENU</p>
@@ -369,6 +430,61 @@
       });
       if (location.hash) open(location.hash.slice(1));
       if (/^#(show|course)-/.test(location.hash)) setTimeout(() => jump(location.hash, false), 50);
+    });
+  </script>
+  <script>
+    /* Ad film reel + product shots */
+    document.addEventListener("tb:ready", () => {
+      const REDUCED = matchMedia("(prefers-reduced-motion: reduce)").matches;
+      const v = document.getElementById("film"), now = document.getElementById("film-now"), snd = document.getElementById("film-sound");
+      const tabs = [...document.querySelectorAll(".film-tab")];
+      let cur = 0;
+      const play = () => { const p = v.play(); if (p && p.catch) p.catch(() => {}); };
+      function load(i, autoplay) {
+        cur = (i + tabs.length) % tabs.length;
+        const t = tabs[cur];
+        tabs.forEach((x, j) => { x.classList.toggle("on", j === cur); x.setAttribute("aria-selected", String(j === cur)); x.querySelector(".film-progress").style.width = "0"; });
+        v.poster = t.dataset.poster;
+        v.src = t.dataset.src;
+        now.textContent = "NOW SHOWING · " + t.dataset.title.toUpperCase();
+        if (autoplay) play();
+      }
+      tabs.forEach((t, i) => t.addEventListener("click", () => load(i, true)));
+      v.addEventListener("ended", () => load(cur + 1, true));
+      v.addEventListener("timeupdate", () => { if (v.duration) tabs[cur].querySelector(".film-progress").style.width = (v.currentTime / v.duration) * 100 + "%"; });
+      v.addEventListener("click", () => (v.paused ? play() : v.pause()));
+      snd.addEventListener("click", () => {
+        v.muted = !v.muted;
+        snd.setAttribute("aria-pressed", String(!v.muted));
+        snd.textContent = v.muted ? "🔇 Sound off" : "🔊 Sound on";
+        if (!v.muted) play();
+      });
+      // Play only while the reel is on screen
+      if ("IntersectionObserver" in window && !REDUCED) {
+        new IntersectionObserver(([e]) => (e.isIntersecting ? play() : v.pause()), { threshold: 0.3 }).observe(v);
+      } else if (!REDUCED) play();
+      if (REDUCED) v.controls = true;
+
+      // Sepoy & Co loop
+      const sv = document.querySelector(".ps-video"), ss = document.getElementById("ps-sound");
+      if ("IntersectionObserver" in window && !REDUCED) {
+        new IntersectionObserver(([e]) => { if (e.isIntersecting) { const p = sv.play(); if (p && p.catch) p.catch(() => {}); } else sv.pause(); }, { threshold: 0.3 }).observe(sv);
+      } else sv.controls = true;
+      ss.addEventListener("click", () => {
+        sv.muted = !sv.muted;
+        ss.setAttribute("aria-pressed", String(!sv.muted));
+        ss.textContent = sv.muted ? "🔇 Play with sound" : "🔊 Sound on";
+        if (!sv.muted) { sv.currentTime = 0; const p = sv.play(); if (p && p.catch) p.catch(() => {}); }
+      });
+
+      // Stills open bigger
+      const lb = document.getElementById("ps-lightbox"), img = lb.querySelector("img");
+      document.querySelectorAll(".ps-still").forEach((b) => b.addEventListener("click", () => {
+        img.src = b.dataset.full; img.alt = b.querySelector("img").alt;
+        if (lb.showModal) lb.showModal();
+      }));
+      lb.querySelector("[data-close]").addEventListener("click", () => lb.close());
+      lb.addEventListener("click", (e) => { if (e.target === lb) lb.close(); });
     });
   </script>
 </body>
