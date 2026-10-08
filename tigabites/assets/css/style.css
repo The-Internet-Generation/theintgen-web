@@ -970,3 +970,77 @@ main { overflow-x: clip; } /* the tilted ticker is scaled past the edges; clip i
 .rates-link:hover { transform: translateY(-2px); }
 .rates-link .sprite { width: 26px; flex: none; }
 .hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+
+/* ==========================================================================
+   Arcade: replayable minigames + Hall of Fame
+   ========================================================================== */
+.arcade-ov {
+  position: fixed; inset: 0; z-index: 110; background: var(--purple); color: var(--yellow);
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px;
+  padding: 56px 16px 24px; overflow-y: auto;
+}
+.arcade-ov[hidden] { display: none; }
+html.arcade-open { overflow: hidden; }
+.arcade-ov canvas { width: min(420px, 100%); height: auto; aspect-ratio: 420 / 520; max-height: 64vh; border: 3px solid var(--blue); border-radius: 14px; background: #0d001f; touch-action: none; display: block; margin-inline: auto; }
+.ao-play { display: grid; gap: 12px; justify-items: center; width: min(420px, 100%); }
+.ao-play[hidden], .ao-menu[hidden], .ao-over[hidden] { display: none; }
+.ao-sub { font-family: var(--pixel); font-size: 10px; line-height: 1.7; color: var(--cream); text-align: center; margin: 0; }
+.ao-menu { display: grid; gap: 22px; width: min(720px, 100%); }
+.ao-games { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 12px; }
+.ao-game {
+  display: grid; gap: 10px; justify-items: start; text-align: left; padding: 18px; cursor: pointer;
+  background: var(--purple-2); color: var(--cream); border: 2px solid color-mix(in srgb, var(--cream) 22%, transparent); border-radius: 16px;
+  transition: transform .2s, background .2s, color .2s;
+}
+.ao-game:hover, .ao-game:focus-visible { background: var(--yellow); color: var(--purple); transform: translateY(-3px); outline: none; }
+.ao-game .sprite { width: 28px; }
+.ao-game b { font-family: var(--pixel); font-size: 11px; line-height: 1.5; }
+.ao-game small { font-family: var(--mono); font-size: .78rem; opacity: .75; }
+.ao-over { display: grid; gap: 16px; justify-items: center; width: min(460px, 100%); }
+.ao-score { margin: 0; text-align: center; font-weight: 800; font-size: clamp(3rem, 12vw, 5rem); letter-spacing: -.04em; line-height: .9; color: var(--yellow); }
+.ao-score small { display: block; font-family: var(--pixel); font-size: 9px; letter-spacing: 0; color: var(--cream); margin-top: 8px; }
+.ao-save { display: grid; gap: 8px; width: 100%; }
+.ao-save[hidden] { display: none; }
+.ao-row { display: flex; gap: 8px; }
+.ao-row input { flex: 1; min-width: 0; font: inherit; font-family: var(--pixel); font-size: 12px; text-transform: uppercase; padding: 14px; border-radius: 12px; border: 2.5px solid var(--yellow); background: var(--ink); color: var(--yellow); }
+.ao-row input:focus { outline: 3px dashed var(--tomato); outline-offset: 2px; }
+.ao-msg { margin: 0; min-height: 1.2em; font-size: .9rem; color: var(--cream); text-align: center; }
+.ao-board { width: 100%; }
+.ao-actions { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
+.ao-actions .btn.ghost { color: var(--yellow); }
+
+.board { list-style: none; margin: 10px 0 0; padding: 0; display: grid; gap: 4px; font-family: var(--pixel); font-size: 11px; }
+.board li { display: grid; grid-template-columns: 3ch 1fr auto; gap: 12px; align-items: center; padding: 10px 12px; border-radius: 8px; background: color-mix(in srgb, var(--cream) 7%, transparent); color: var(--cream); }
+.board li:first-child { background: var(--yellow); color: var(--purple); }
+.board li.you { outline: 2px dashed var(--tomato); }
+.board .nm { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.board .sc { font-variant-numeric: tabular-nums; }
+.board-empty { margin: 10px 0 0; font-size: .95rem; color: var(--cream); opacity: .85; text-align: center; }
+
+/* Hall of Fame on the home page */
+.hof { max-width: 640px; }
+.hof-tabs { display: flex; flex-wrap: wrap; gap: 8px; }
+.hof-tabs button { font-family: var(--pixel); font-size: 9px; padding: 10px 12px; border-radius: 999px; cursor: pointer; background: transparent; color: var(--cream); border: 2px solid color-mix(in srgb, var(--cream) 35%, transparent); }
+.hof-tabs button[aria-selected="true"] { background: var(--yellow); color: var(--purple); border-color: var(--yellow); }
+.hof-board { margin-top: 12px; min-height: 120px; }
+.hof-board .board-empty { text-align: left; }
+.hof-cta { margin-top: 20px; }
+.linkish { background: none; border: 0; padding: 0; font: inherit; font-weight: 800; color: var(--yellow); cursor: pointer; text-decoration: underline; text-underline-offset: 4px; }
+.press-play { background: none; border: 0; padding: 0; font: inherit; color: var(--yellow); cursor: pointer; }
+.press-play:focus-visible { outline: 2px dashed var(--tomato); outline-offset: 3px; }
+
+/* Floating "Play now" button */
+.play-chip {
+  position: fixed; left: 18px; bottom: 74px; z-index: 53; display: inline-flex; align-items: center; gap: 8px;
+  padding: 8px 12px 8px 8px; border-radius: 999px; cursor: pointer;
+  background: var(--yellow); color: var(--purple); border: 2.5px solid var(--ink); box-shadow: 4px 4px 0 var(--ink);
+  font-family: var(--pixel); font-size: 9px; transform: translateX(-140%); transition: transform .5s cubic-bezier(.3,1.4,.5,1);
+}
+.play-chip.in { transform: none; }
+.play-chip .sprite { width: 22px; }
+.play-chip .nudge { font-family: var(--display); font-size: .82rem; font-weight: 700; max-width: 220px; overflow: hidden; white-space: nowrap; transition: max-width .4s, opacity .3s; }
+.play-chip.quiet .nudge { max-width: 0; opacity: 0; }
+.play-chip:hover .nudge, .play-chip:focus-visible .nudge { max-width: 220px; opacity: 1; }
+.play-chip:focus-visible { outline: 3px dashed var(--tomato); outline-offset: 3px; }
+.offer { bottom: 128px; }
+@media (max-width: 520px) { .play-chip .nudge { display: none; } }

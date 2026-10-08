@@ -1,16 +1,22 @@
 /* ==========================================================================
-   TIGABITES loading screen — five 5-second chomper mini-games.
-   A different game plays on each visit (cycles through the list).
-   Plays once per session on the home page.
-   ?loader=1 forces it; ?loader=1&game=2 forces a specific game (0-4).
+   TIGABITES chomper mini-games.
+   - Loading screen: a 5-second round, once per session on the home page.
+     A different game plays on each visit. ?loader=1 forces it; &game=0-4 picks one.
+   - Arcade (assets/js/arcade.js): the same five games, longer rounds, with a
+     shared high-score board. Both use TBGame.run() below.
    ========================================================================== */
 (function () {
-  const root = document.documentElement;
-  const el = document.querySelector(".loader");
-  if (!el) return;
-  if (!root.classList.contains("loading")) { el.remove(); return; }
+  const TB = window.TB;
+  const GAME_NAMES = ["SNACK ATTACK", "HOP & CHOMP", "LANE MUNCHER", "WHACK-A-SNACK", "POWER PELLET"];
 
-  const W = 420, H = 520, GAME_MS = 5000, OUTRO_MS = 1300;
+  /**
+   * Run one round in a container holding: canvas, [data-score], .loader-bar i,
+   * .loader-hint, [data-game] and an optional .loader-skip.
+   * opts: { el, idx, durationMs, mode: "loader" | "arcade", onEnd(score, skipped) }
+   */
+  function runGame(opts) {
+  const el = opts.el;
+  const W = 420, H = 520, GAME_MS = opts.durationMs || 5000, OUTRO_MS = opts.mode === "arcade" ? 1000 : 1300;
   const canvas = el.querySelector("canvas");
   const ctx = canvas.getContext("2d");
   const dpr = Math.min(2, window.devicePixelRatio || 1);
@@ -38,7 +44,7 @@
     });
     return (cache[key] = c);
   }
-  const TB = window.TB, P = TB.palette;
+  const P = TB.palette;
   const sprite = (name, over = {}, px = 3) => bake(name + JSON.stringify(over) + px, TB.sprites[name], Object.assign({}, P, over), px);
   const FOODS = ["burger", "cone", "donut", "pizza", "fries", "cherry", "cup"];
   const GHOSTS = ["#ff4d2e", "#ff8fc7", "#3fe0e0", "#ffb347"];
@@ -308,16 +314,11 @@
     },
   ];
 
-  /* ---- Pick this visit's game (cycles through all five) ---- */
-  const q = new URLSearchParams(location.search);
-  let idx = 0;
-  try { idx = (parseInt(localStorage.getItem("tb_game_idx") || "0", 10) || 0) % GAMES.length; } catch (e) {}
-  if (q.has("game")) idx = Math.abs(parseInt(q.get("game"), 10) || 0) % GAMES.length;
-  try { localStorage.setItem("tb_game_idx", String((idx + 1) % GAMES.length)); } catch (e) {}
-  const game = GAMES[idx];
+  const game = GAMES[opts.idx % GAMES.length];
   if (nameEl) nameEl.textContent = game.name;
-  hintEl.innerHTML = game.hint + "<br>LOADING YOUR APPETITE…";
+  hintEl.innerHTML = game.hint + (opts.mode === "arcade" ? "" : "<br>LOADING YOUR APPETITE…");
   game.init();
+  if (opts.mode === "arcade") S.input = true; // no autopilot when someone is actually playing
 
   /* ---- Loop ---- */
   let t0 = 0, last = 0, phase = "play", outroT = 0, raf, finished = false;
@@ -345,7 +346,7 @@
       ctx.fillText("BURP!", W / 2, H / 2 - 30);
       ctx.font = '12px "Press Start 2P", monospace'; ctx.fillStyle = "#fff6dc";
       ctx.fillText("SCORE " + S.score, W / 2, H / 2 + 6);
-      ctx.fillText(S.score >= 600 ? "NOW THAT'S AN APPETITE" : "APPETITE: LOADED", W / 2, H / 2 + 34);
+      ctx.fillText(opts.mode === "arcade" ? "TIME'S UP!" : S.score >= 600 ? "NOW THAT'S AN APPETITE" : "APPETITE: LOADED", W / 2, H / 2 + 34);
     }
     ctx.restore();
   }
@@ -365,13 +366,14 @@
     raf = requestAnimationFrame(loop);
   }
 
-  function finish() {
+  function finish(skipped) {
     if (finished) return;
     finished = true;
     cancelAnimationFrame(raf);
-    try { sessionStorage.setItem("tb_played", "1"); } catch (e) {}
-    el.classList.add("done");
-    setTimeout(() => { root.classList.remove("loading"); el.remove(); }, 600);
+    clearTimeout(safety);
+    removeEventListener("keydown", onKeyDown);
+    removeEventListener("keyup", onKeyUp);
+    if (opts.onEnd) opts.onEnd(S.score, skipped === true);
   }
 
   /* ---- Controls ---- */
@@ -383,20 +385,46 @@
   canvas.addEventListener("pointermove", (e) => { takeOver(); [S.ptr.x, S.ptr.y] = toCanvas(e); });
   canvas.addEventListener("pointerdown", (e) => { takeOver(); [S.ptr.x, S.ptr.y] = toCanvas(e); S.ptr.tap = true; });
   const keyMap = { ArrowLeft: "l", a: "l", ArrowRight: "r", d: "r", ArrowUp: "u", w: "u", ArrowDown: "d", s: "d", " ": "act", Enter: "act" };
-  addEventListener("keydown", (e) => {
+  function onKeyDown(e) {
     if (finished) return;
-    if (e.key === "Escape") return finish();
+    if (e.key === "Escape") return finish(true);
     const k = keyMap[e.key];
     if (k) { takeOver(); S.keys[k] = true; S.ptr.x = null; e.preventDefault(); }
-  });
-  addEventListener("keyup", (e) => {
+  }
+  function onKeyUp(e) {
     const k = keyMap[e.key];
     if (k) S.keys[k] = false;
     if (k === "l" || k === "r") S.ptr.x = game.pac ? game.pac.x : null;
-  });
-  el.querySelector(".loader-skip").addEventListener("click", finish);
+  }
+  addEventListener("keydown", onKeyDown);
+  addEventListener("keyup", onKeyUp);
+  const skip = el.querySelector(".loader-skip");
+  if (skip) skip.onclick = () => finish(true);
 
-  const start = () => { raf = requestAnimationFrame(loop); };
+  let safety = 0;
+  const start = () => { safety = setTimeout(() => finish(), GAME_MS + OUTRO_MS + 4000); raf = requestAnimationFrame(loop); };
   (document.fonts && document.fonts.load) ? document.fonts.load('10px "Press Start 2P"').then(start, start) : start();
-  setTimeout(finish, GAME_MS + OUTRO_MS + 4000); // safety net
+  return { stop: () => finish(true) };
+  }
+
+  window.TBGame = { run: runGame, names: GAME_NAMES };
+
+  /* ---- Loading screen: once per session on the home page ---- */
+  const root = document.documentElement;
+  const el = document.querySelector(".loader");
+  if (!el) return;
+  if (!root.classList.contains("loading")) { el.remove(); return; }
+  const q = new URLSearchParams(location.search);
+  let idx = 0;
+  try { idx = (parseInt(localStorage.getItem("tb_game_idx") || "0", 10) || 0) % GAME_NAMES.length; } catch (e) {}
+  if (q.has("game")) idx = Math.abs(parseInt(q.get("game"), 10) || 0) % GAME_NAMES.length;
+  try { localStorage.setItem("tb_game_idx", String((idx + 1) % GAME_NAMES.length)); } catch (e) {}
+  runGame({
+    el, idx, durationMs: 5000, mode: "loader",
+    onEnd() {
+      try { sessionStorage.setItem("tb_played", "1"); } catch (e) {}
+      el.classList.add("done");
+      setTimeout(() => { root.classList.remove("loading"); el.remove(); document.dispatchEvent(new CustomEvent("tb:loader-done")); }, 600);
+    },
+  });
 })();

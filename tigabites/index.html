@@ -25,6 +25,7 @@
   <script src="assets/js/site.js" defer></script>
   <script src="assets/js/work.js" defer></script>
   <script src="assets/js/loader-game.js" defer></script>
+  <script src="assets/js/arcade.js" defer></script>
 </head>
 <body>
 
@@ -84,7 +85,7 @@
                 <span data-sprite="ghost" data-color="orange"></span>
               </div>
             </div>
-            <div class="arcade-foot"><span class="blink">INSERT BRAND</span><span>CREDIT 01</span></div>
+            <div class="arcade-foot"><button class="blink press-play" type="button" data-arcade-open>▶ PRESS PLAY</button><span>CREDIT 01</span></div>
           </div>
         </div>
       </div>
@@ -115,20 +116,22 @@
     <div class="ticker tilt social" aria-hidden="true">
       <div class="eater"><span data-chomper="right"></span></div>
       <div class="ticker-track">
+        <span>We feed your feed!</span><span data-social="threads"></span>
         <span>Fresh content</span><span data-social="instagram"></span>
         <span>Reels worth the calories</span><span data-social="youtube"></span>
         <span>No stale strategy</span><span data-social="facebook"></span>
         <span>Served with data</span><span data-social="linkedin"></span>
         <span>Zero junk posts</span><span data-social="pinterest"></span>
         <span>Cooking in the kitchen and the timeline</span><span data-social="reddit"></span>
-        <span>Nammaku sorry thaan mukkiyam</span><span data-social="quora"></span>
+        <span>Nammaku sorru thaan mukkiyam</span><span data-social="quora"></span>
+        <span>We feed your feed!</span><span data-social="whatsapp"></span>
         <span>Fresh content</span><span data-social="google"></span>
         <span>Reels worth the calories</span><span data-social="tumblr"></span>
         <span>No stale strategy</span><span data-social="x"></span>
         <span>Served with data</span><span data-social="threads"></span>
         <span>Zero junk posts</span><span data-social="snapchat"></span>
         <span>Cooking in the kitchen and the timeline</span><span data-social="tiktok"></span>
-        <span>Nammaku sorry thaan mukkiyam</span><span data-social="whatsapp"></span>
+        <span>Nammaku sorru thaan mukkiyam</span><span data-social="whatsapp"></span>
       </div>
     </div>
 
@@ -232,7 +235,7 @@
             <figcaption>A client we lost</figcaption>
           </figure>
         </div>
-        <p class="honest reveal">Yes, we have screwed up in the past. Makes us stronger <span aria-label="flexed biceps">💪</span></p>
+        <p class="honest reveal">Our mistakes only humble us and make us stronger <span aria-label="folded hands and flexed biceps">🙏 💪</span></p>
       </div>
     </section>
 
@@ -286,6 +289,19 @@
             </div>
           </article>
         </div>
+      </div>
+    </section>
+
+    <!-- ============ HALL OF FAME: the minigame high-score board ============ -->
+    <section class="pad on-dark scallop-top" id="high-scores">
+      <div class="wrap">
+        <div class="section-head">
+          <div>
+            <h2 class="h2 reveal">Hall of Fame.</h2>
+          </div>
+          <p class="reveal d1">Five snack games, one board each. Think you can out-eat the chomper? <button class="linkish" type="button" data-arcade-open>Play now ▶</button></p>
+        </div>
+        <div class="hof reveal d1" id="hof"><p class="board-empty">Loading the board…</p></div>
       </div>
     </section>
 
