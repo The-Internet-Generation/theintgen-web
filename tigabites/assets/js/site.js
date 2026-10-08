@@ -264,7 +264,6 @@ TB.socialSVG = function (name) {
 const PAGES = [
   ["index.html", "Home", "Start here"],
   ["first-bite.html", "First Bite", "Our story"],
-  ["digi-chefs.html", "The Digi-chefs", "The humans"],
   ["menu.html", "The Menu", "What we cook"],
   ["work.html", "Clean Plates", "The proof"],
   ["kiss-the-chef.html", "Kiss the Chef?", "Say hi"],

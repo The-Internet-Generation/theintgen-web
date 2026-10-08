@@ -7,6 +7,10 @@
 /tigom       /tigom/      301
 /tigabites   /tigabites/  301
 
+# Tigabites team page was retired (Oct 2026)
+/tigabites/digi-chefs        /tigabites/first-bite   301
+/tigabites/digi-chefs.html   /tigabites/first-bite   301
+
 /tigital/blog     /tigital/blog/    301
 
 # Short URLs → tiggigs subpages

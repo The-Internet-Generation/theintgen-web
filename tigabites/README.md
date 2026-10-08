@@ -8,7 +8,6 @@ Lives at `theintgen.com/tigabites`: copy this folder into `theintgen-web/` and p
 |---|---|
 | `index.html` | Home (with a 5-second loading game: one of five, cycling per visit) |
 | `first-bite.html` | First Bite: story, founder note, Kitchen Rules |
-| `digi-chefs.html` | The Digi-chefs: team |
 | `menu.html` | The Menu: services, packages, a la carte, FAQ |
 | `work.html` | Clean Plates (`/tigabites/work`): menu board, sticky course bar, one row per show, Designs strip, case studies, brandfolio |
 | `licked-clean-plates.html` | Retired; redirects to `work.html` |
@@ -35,8 +34,6 @@ Client logos live in `assets/img/logos/`.
 
 ## Still to fill (all marked `data-draft` in the HTML)
 - TIGOM Spotify playlist link (`TB.spotifyPlaylist` in site.js)
-- Nitya and Meenakshi: nicknames, roles, lines, favourite foods; team photos (`assets/img/team-<name>.jpg`)
-- Real testimonials (the current ones are placeholders and must be replaced before launch)
 - Tamil Paal case study details, Ramajeyam timeframe, brand categories in the brandfolio
 - Package contents, budget ranges, lead inbox / form backend, consult booking link
 - Founder video / voice-over, showreel
