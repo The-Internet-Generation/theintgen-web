@@ -9,8 +9,8 @@ TB.contact = {
   phone: "+91 99402 37330",
   wa: "919940237330",
   email: "jaytesh@theintgen.com",
-  instagram: "https://www.instagram.com/tigital.so/",
-  instagramHandle: "@tigital.so",
+  instagram: "https://www.instagram.com/tigabites/",
+  instagramHandle: "@tigabites",
   maps: "https://www.google.com/maps/search/?api=1&query=The+Internet+Generation+Chennai",
   // Apps Script web app that writes to the "Tigabites Website Leads" sheet (Tigital drive > BizDev).
   // Setup steps: "Tigabites Website Leads: Apps Script setup" doc in the same folder. Empty = not logging yet.
@@ -288,7 +288,7 @@ function buildNav() {
   nav.className = "nav";
   nav.innerHTML = `
     <div class="wrap">
-      <a class="logo" href="index.html" aria-label="Tigabites home"><span data-chomper="right"></span><span>Tiga<b>bites</b></span></a>
+      <a class="logo" href="index.html" aria-label="Tigabites home"><img src="assets/img/brand/tigabites-logo.png" alt="Tigabites" width="900" height="229"></a>
       <nav aria-label="Main"><ul class="nav-links">${links}</ul></nav>
       <a class="btn nav-cta" href="kiss-the-chef.html">Book a free consult <span class="arrow">→</span></a>
       <button class="burger" aria-label="Open menu" aria-expanded="false" aria-controls="menu-sheet">
@@ -301,7 +301,7 @@ function buildNav() {
   sheet.id = "menu-sheet";
   sheet.setAttribute("aria-hidden", "true");
   sheet.innerHTML = `
-    <header><span class="logo" style="color:var(--yellow)"><span data-chomper="right"></span><span>Tigabites</span></span>
+    <header><span class="logo"><img src="assets/img/brand/tigabites-logo.png" alt="Tigabites" width="900" height="229"></span>
     <button class="close">CLOSE ✕</button></header>
     <ol>${sheetLinks}</ol>
     <p class="pixel" style="font-size:10px;color:var(--yellow);margin-top:30px">TODAY'S SPECIAL: A FREE 20-MIN CONSULT</p>`;

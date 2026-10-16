@@ -51,7 +51,7 @@
     ov.setAttribute("aria-label", "Tigabites arcade");
     ov.innerHTML = `
       <button class="loader-skip ao-close" type="button">CLOSE ✕</button>
-      <div class="loader-brand">TIGABITES ARCADE</div>
+      <div class="loader-brand"><img class="loader-logo" src="assets/img/brand/tigabites-logo.png" alt="Tigabites"><span>ARCADE</span></div>
       <div class="ao-menu">
         <p class="ao-sub">PICK A GAME · ${ROUND_MS / 1000} SECONDS · BEAT THE BOARD</p>
         <div class="ao-games">${NAMES().map((n, i) => `<button type="button" class="ao-game" data-g="${i}"><span data-chomper="right"></span><b>${n}</b><small data-best="${i}">BEST —</small></button>`).join("")}</div>
