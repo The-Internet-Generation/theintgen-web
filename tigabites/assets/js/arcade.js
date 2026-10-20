@@ -18,18 +18,37 @@
     set(k, v) { try { localStorage.setItem(k, v); } catch (e) {} },
   };
 
-  /* ---- Scores API ---- */
+  /* ---- Scores API ----
+     Goes through our own /tigabites/api/scores proxy first (some mobile networks in
+     India block supabase.co, which showed up as "Failed to fetch"), then falls back
+     to Supabase directly, e.g. on a local preview with no Pages Functions. */
+  const API = "/tigabites/api/scores";
+  async function viaProxyOrDirect(proxy, direct) {
+    try { const r = await proxy(); if (r.status !== 404 && r.status !== 405 && r.status < 500) return r; } catch (e) {}
+    return direct();
+  }
   async function topScores(game, limit = 10) {
-    const r = await fetch(`${SB.url}/rest/v1/tigabites_scores?select=name,score&game=eq.${game}&order=score.desc,created_at.asc&limit=${limit}`, { headers: { apikey: SB.key } });
+    const r = await viaProxyOrDirect(
+      () => fetch(`${API}?game=${game}`, { cache: "no-store" }),
+      () => fetch(`${SB.url}/rest/v1/tigabites_scores?select=name,score&game=eq.${game}&order=score.desc,created_at.asc&limit=${limit}`, { headers: { apikey: SB.key } })
+    );
     if (!r.ok) throw new Error("board unavailable");
     return r.json();
   }
   async function submitScore(game, name, score) {
-    const r = await fetch(`${SB.url}/rest/v1/rpc/submit_tigabites_score`, {
-      method: "POST",
-      headers: { apikey: SB.key, "Content-Type": "application/json" },
-      body: JSON.stringify({ p_game: game, p_name: name, p_score: score }),
-    });
+    let r;
+    try {
+      r = await viaProxyOrDirect(
+        () => fetch(API, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ game, name, score }) }),
+        () => fetch(`${SB.url}/rest/v1/rpc/submit_tigabites_score`, {
+          method: "POST",
+          headers: { apikey: SB.key, "Content-Type": "application/json" },
+          body: JSON.stringify({ p_game: game, p_name: name, p_score: score }),
+        })
+      );
+    } catch (e) {
+      throw new Error("Couldn't reach the board. Check your connection and tap Save again.");
+    }
     if (!r.ok) {
       let msg = "Couldn't save that one. Try again in a minute.";
       try { const j = await r.json(); if (/too many/.test(j.message)) msg = "The board's busy. Try again in a minute."; } catch (e) {}
@@ -55,6 +74,13 @@
       <div class="ao-menu">
         <p class="ao-sub">PICK A GAME · ${ROUND_MS / 1000} SECONDS · BEAT THE BOARD</p>
         <div class="ao-games">${NAMES().map((n, i) => `<button type="button" class="ao-game" data-g="${i}"><span data-chomper="right"></span><b>${n}</b><small data-best="${i}">BEST —</small></button>`).join("")}</div>
+        <p class="ao-hof-link"><button class="btn ghost" type="button" data-view-hof>🏆 Just looking? View the Hall of Fame</button></p>
+      </div>
+      <div class="ao-hof" hidden>
+        <p class="ao-sub">HALL OF FAME · TOP 10 PER GAME</p>
+        <div class="hof-tabs" role="tablist" aria-label="Choose a game">${NAMES().map((n, i) => `<button role="tab" type="button" data-hg="${i}" aria-selected="${i === 0}">${n}</button>`).join("")}</div>
+        <div class="ao-board"></div>
+        <div class="ao-actions"><button class="btn" type="button" data-hof-play>Play ${esc(NAMES()[0])}</button><button class="btn ghost" type="button" data-menu>All games</button></div>
       </div>
       <div class="ao-play" hidden>
         <div class="loader-top"><span>1UP <em data-score>00000</em></span><span data-game></span></div>
@@ -79,18 +105,33 @@
     ov.querySelector(".ao-close").addEventListener("click", close);
     ov.querySelectorAll(".ao-game").forEach((b) => b.addEventListener("click", () => play(+b.dataset.g)));
     ov.querySelector("[data-again]").addEventListener("click", () => play(current));
-    ov.querySelector("[data-menu]").addEventListener("click", showMenu);
+    ov.querySelectorAll("[data-menu]").forEach((b) => b.addEventListener("click", showMenu));
+    ov.querySelector("[data-view-hof]").addEventListener("click", () => showHof());
+    ov.querySelectorAll("[data-hg]").forEach((t) => t.addEventListener("click", () => showHof(+t.dataset.hg)));
+    ov.querySelector("[data-hof-play]").addEventListener("click", () => play(ovHofGame));
     ov.querySelector(".ao-save").addEventListener("submit", onSave);
     ov.addEventListener("keydown", (e) => { if (e.key === "Escape" && !run) close(); });
   }
-  const show = (part) => ["menu", "play", "over"].forEach((p) => (ov.querySelector(".ao-" + p).hidden = p !== part));
+  const show = (part) => ["menu", "play", "over", "hof"].forEach((p) => (ov.querySelector(".ao-" + p).hidden = p !== part));
 
-  function open(game) {
+  function open(game, view) {
     if (!ov) build();
     lastFocus = document.activeElement;
     ov.hidden = false;
     document.documentElement.classList.add("arcade-open");
-    if (Number.isInteger(game)) play(game); else showMenu();
+    if (view === "hof") showHof(Number.isInteger(game) ? game : 0);
+    else if (Number.isInteger(game)) play(game); else showMenu();
+  }
+  // Scores only, no playing required
+  let ovHofGame = 0;
+  function showHof(g = ovHofGame) {
+    ovHofGame = g;
+    show("hof");
+    const box = ov.querySelector(".ao-hof");
+    box.querySelectorAll("[data-hg]").forEach((t) => t.setAttribute("aria-selected", String(+t.dataset.hg === g)));
+    box.querySelector("[data-hof-play]").textContent = "Play " + NAMES()[g];
+    loadBoard(box.querySelector(".ao-board"), g);
+    box.querySelector(`[data-hg="${g}"]`).focus();
   }
   function close() {
     if (run) { const r = run; run = null; r.stop(); }
@@ -195,7 +236,7 @@
     const t = e.target.closest("[data-arcade-open]");
     if (!t) return;
     e.preventDefault();
-    open(t.dataset.game != null ? +t.dataset.game : undefined);
+    open(t.dataset.game != null ? +t.dataset.game : undefined, t.dataset.arcadeOpen || undefined);
   });
 
   window.TBArcade = { open };

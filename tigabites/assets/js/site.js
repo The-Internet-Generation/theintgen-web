@@ -375,6 +375,24 @@ function buildMunchRail() {
   addEventListener("scroll", update, { passive: true });
   addEventListener("resize", layout);
   layout();
+
+  // The chomper is the scrollbar: grab it (or tap anywhere on the line) to scroll the page.
+  const scrollToRailY = (clientY) => {
+    const r = rail.getBoundingClientRect(), m = rail.querySelector(".rail-muncher").offsetHeight;
+    const p = Math.min(1, Math.max(0, (clientY - r.top - m / 2) / (r.height - m)));
+    scrollTo({ top: p * (document.documentElement.scrollHeight - innerHeight), behavior: "instant" });
+  };
+  rail.addEventListener("pointerdown", (e) => {
+    e.preventDefault();
+    rail.setPointerCapture(e.pointerId);
+    rail.classList.add("dragging");
+    document.documentElement.style.scrollBehavior = "auto";
+    scrollToRailY(e.clientY);
+  });
+  rail.addEventListener("pointermove", (e) => { if (rail.hasPointerCapture(e.pointerId)) scrollToRailY(e.clientY); });
+  const release = () => { rail.classList.remove("dragging"); document.documentElement.style.scrollBehavior = ""; };
+  rail.addEventListener("pointerup", release);
+  rail.addEventListener("pointercancel", release);
 }
 
 function buildFooter() {

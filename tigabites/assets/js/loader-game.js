@@ -224,7 +224,7 @@
 
     /* 3 — Whack-a-Snack: snacks pop up on plates; tap to send the chomper */
     {
-      name: "WHACK-A-SNACK", hint: "TAP A PLATE TO CHOMP IT · SKIP THE GHOSTS",
+      name: "WHACK-A-SNACK", hint: "TAP A PLATE TO CHOMP IT · SKIP THE GHOSTS", cursor: "pointer",
       init() {
         this.cells = [];
         for (let r = 0; r < 3; r++) for (let c = 0; c < 3; c++) this.cells.push({ x: 90 + c * 120, y: 130 + r * 130, item: null, life: 0 });
@@ -253,9 +253,11 @@
       },
       draw() {
         bg("box");
+        // the plate under the pointer lights up, so you can see where you're aiming
+        const aim = S.input && S.ptr.x != null ? this.cells.reduce((b, c) => (Math.hypot(c.x - S.ptr.x, c.y - S.ptr.y) < Math.hypot(b.x - S.ptr.x, b.y - S.ptr.y) ? c : b)) : null;
         for (const c of this.cells) {
-          ctx.fillStyle = "#2c0a58"; ctx.beginPath(); ctx.ellipse(c.x, c.y + 18, 44, 14, 0, 0, Math.PI * 2); ctx.fill();
-          ctx.strokeStyle = "#3b5bff"; ctx.lineWidth = 2; ctx.stroke();
+          ctx.fillStyle = c === aim ? "#4a1690" : "#2c0a58"; ctx.beginPath(); ctx.ellipse(c.x, c.y + 18, 44, 14, 0, 0, Math.PI * 2); ctx.fill();
+          ctx.strokeStyle = c === aim ? "#fddf29" : "#3b5bff"; ctx.lineWidth = c === aim ? 3 : 2; ctx.stroke();
           if (c.item) drawItem(c.item);
         }
         drawPac(this.pac.x, this.pac.y, this.pac.dir);
@@ -318,6 +320,8 @@
   if (nameEl) nameEl.textContent = game.name;
   hintEl.innerHTML = game.hint + (opts.mode === "arcade" ? "" : "<br>LOADING YOUR APPETITE…");
   game.init();
+  // Steering games hide the cursor (the chomper is the cursor); aiming games need to see it
+  canvas.style.cursor = game.cursor || "";
   if (opts.mode === "arcade") S.input = true; // no autopilot when someone is actually playing
 
   /* ---- Loop ---- */

@@ -694,6 +694,13 @@ html:not(.loading) .loader { display: none; }
   filter: drop-shadow(1px 1px 0 var(--ink));
 }
 .munch-rail .face { position: absolute; inset: 0; }
+/* The chomper replaces the browser scrollbar: hide the native one, let people drag the chomper */
+html { scrollbar-width: none; }
+html::-webkit-scrollbar { display: none; }
+.munch-rail { pointer-events: auto; cursor: grab; touch-action: none; }
+.munch-rail.dragging { cursor: grabbing; }
+.munch-rail .rail-muncher { transition: transform .15s; }
+.munch-rail:hover .rail-muncher, .munch-rail.dragging .rail-muncher { transform: scale(1.25); }
 .munch-rail .face.up, .munch-rail.going-up .face.down { display: none; }
 .munch-rail.going-up .face.up { display: block; }
 @media (max-width: 760px) {
@@ -983,7 +990,11 @@ main { overflow-x: clip; } /* the tilted ticker is scaled past the edges; clip i
 html.arcade-open { overflow: hidden; }
 .arcade-ov canvas { width: min(420px, 100%); height: auto; aspect-ratio: 420 / 520; max-height: 64vh; border: 3px solid var(--blue); border-radius: 14px; background: #0d001f; touch-action: none; display: block; margin-inline: auto; }
 .ao-play { display: grid; gap: 12px; justify-items: center; width: min(420px, 100%); }
-.ao-play[hidden], .ao-menu[hidden], .ao-over[hidden] { display: none; }
+.ao-play[hidden], .ao-menu[hidden], .ao-over[hidden], .ao-hof[hidden] { display: none; }
+.ao-hof { display: grid; gap: 16px; justify-items: center; width: min(560px, 100%); }
+.ao-hof .hof-tabs { justify-content: center; }
+.ao-hof-link { margin: 0; text-align: center; }
+.ao-hof-link .btn.ghost { color: var(--yellow); }
 .ao-sub { font-family: var(--pixel); font-size: 10px; line-height: 1.7; color: var(--cream); text-align: center; margin: 0; }
 .ao-menu { display: grid; gap: 22px; width: min(720px, 100%); }
 .ao-games { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 12px; }
